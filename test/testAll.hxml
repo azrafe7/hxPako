@@ -1,0 +1,4 @@
+-main ImportAll
+-cp ../pako/
+-cp ../pako/zlib
+-neko TestAll.n
