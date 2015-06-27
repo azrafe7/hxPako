@@ -8,13 +8,6 @@ typedef Options = {
   @:optional var table_index:Int;
 }
 
-@:enum abstract Type(Int)
-{
-  var CODES:Int = 0;
-  var LENS:Int = 1;
-  var DISTS:Int = 2;
-}
-
 class InfTrees
 {
   //var utils = require('../utils/common');
@@ -24,6 +17,10 @@ class InfTrees
   static var ENOUGH_DISTS:Int = 592;
   //static var ENOUGH:Int = (ENOUGH_LENS+ENOUGH_DISTS);
 
+  static var CODES:Int = 0;
+  static var LENS:Int = 1;
+  static var DISTS:Int = 2;
+  
   static var lbase:Array<Int> = [ /* Length codes 257..285 base */
     3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
     35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0
@@ -58,21 +55,21 @@ class InfTrees
   static var left:Int = 0;                   /* number of prefix codes available */
   static var used:Int = 0;              /* code entries in table used */
   static var huff:Int = 0;              /* Huffman code */
-  static var incr:Int;              /* for incrementing code, index */
-  static var fill:Int;              /* index for replicating entries */
-  static var low:Int;               /* low bits for current root entry */
-  static var mask:Int;              /* mask for low root bits */
-  static var next:Int;             /* next available space in table */
-  static var base:Null<Int> = null;     /* base value table to use */
+  static var incr:Int = 0;              /* for incrementing code, index */
+  static var fill:Int = 0;              /* index for replicating entries */
+  static var low:Int = 0;               /* low bits for current root entry */
+  static var mask:Int = 0;              /* mask for low root bits */
+  static var next:Int = 0;             /* next available space in table */
+  static var base = null;     /* base value table to use */
   static var base_index:Int = 0;
   //  static var shoextra;    /* extra bits table to use */
-  static var end:Null<Int>;                    /* use base and extra for symbol > end */
+  static var end = null;                    /* use base and extra for symbol > end */
   static var count = new UInt16Array(MAXBITS+1); //[MAXBITS+1];    /* number of codes of each length */
   static var offs = new UInt16Array(MAXBITS+1); //[MAXBITS+1];     /* offsets in table for each length */
-  static var extra:Null<Int> = null;
+  static var extra = null;
   static var extra_index:Int = 0;
 
-  static public function inflate_table(type:Type, lens, lens_index, codes, table, table_index, work, opts)
+  static public function inflate_table(type:Int, lens, lens_index, codes, table, table_index, work, opts)
   {
     bits = opts.bits;
       //here = opts.here; /* table entry for duplication */
@@ -118,7 +115,8 @@ class InfTrees
     }
     sym = 0;
     while (sym < codes) {
-      count[lens[lens_index + sym]]++;
+      //NOTE(hx): watch out!
+      count[lens[lens_index + sym]]+=1;
       sym++;
     }
 
@@ -173,15 +171,21 @@ class InfTrees
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++) {
+    len = 1;
+    while (len < MAXBITS) {
       offs[len + 1] = offs[len] + count[len];
+      len++;
     }
 
     /* sort symbols by length, by symbol order within each length */
-    for (sym = 0; sym < codes; sym++) {
-      if (lens[lens_index + sym] !== 0) {
-        work[offs[lens[lens_index + sym]]++] = sym;
+    sym = 0;
+    while (sym < codes) {
+      if (lens[lens_index + sym] != 0) {
+        //NOTE(hx): watch out!
+        work[offs[lens[lens_index + sym]]] = sym;
+        offs[lens[lens_index + sym]] += 1;
       }
+      sym++;
     }
 
     /*
@@ -218,11 +222,11 @@ class InfTrees
     /* set up for code type */
     // poor man optimization - use if-else instead of switch,
     // to avoid deopts in old v8
-    if (type === CODES) {
+    if (type == CODES) {
       base = extra = work;    /* dummy value--not used */
       end = 19;
 
-    } else if (type === LENS) {
+    } else if (type == LENS) {
       base = lbase;
       base_index -= 257;
       extra = lext;
@@ -247,14 +251,14 @@ class InfTrees
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type === LENS && used > ENOUGH_LENS) ||
-      (type === DISTS && used > ENOUGH_DISTS)) {
+    if ((type == LENS && used > ENOUGH_LENS) ||
+      (type == DISTS && used > ENOUGH_DISTS)) {
       return 1;
     }
 
     var i=0;
     /* process all codes and make table entries */
-    for (;;) {
+    while (true) {
       i++;
       /* create table entry */
       here_bits = len - drop;
@@ -278,14 +282,15 @@ class InfTrees
       do {
         fill -= incr;
         table[next + (huff >> drop) + fill] = (here_bits << 24) | (here_op << 16) | here_val |0;
-      } while (fill !== 0);
+      } while (fill != 0);
 
       /* backwards increment the len-bit code huff */
       incr = 1 << (len - 1);
-      while (huff & incr) {
+      //NOTE(hx): cond
+      while ((huff & incr) != 0) {
         incr >>= 1;
       }
-      if (incr !== 0) {
+      if (incr != 0) {
         huff &= incr - 1;
         huff += incr;
       } else {
@@ -294,15 +299,17 @@ class InfTrees
 
       /* go to next symbol, update count, len */
       sym++;
-      if (--count[len] === 0) {
-        if (len === max) { break; }
+      //NOTE(hx): assign
+      count[len] -= 1;
+      if ((count[len]) == 0) {
+        if (len == max) { break; }
         len = lens[lens_index + work[sym]];
       }
 
       /* create new sub-table if needed */
-      if (len > root && (huff & mask) !== low) {
+      if (len > root && (huff & mask) != low) {
         /* if first time, transition to sub-tables */
-        if (drop === 0) {
+        if (drop == 0) {
           drop = root;
         }
 
@@ -321,8 +328,8 @@ class InfTrees
 
         /* check for enough space */
         used += 1 << curr;
-        if ((type === LENS && used > ENOUGH_LENS) ||
-          (type === DISTS && used > ENOUGH_DISTS)) {
+        if ((type == LENS && used > ENOUGH_LENS) ||
+          (type == DISTS && used > ENOUGH_DISTS)) {
           return 1;
         }
 
@@ -338,7 +345,7 @@ class InfTrees
     /* fill in remaining table entry if code is incomplete (guaranteed to have
      at most one remaining entry, since if the code is incomplete, the
      maximum code length that was allowed to get this far is one bit) */
-    if (huff !== 0) {
+    if (huff != 0) {
       //table.op[next + huff] = 64;            /* invalid code marker */
       //table.bits[next + huff] = len - drop;
       //table.val[next + huff] = 0;
@@ -349,5 +356,5 @@ class InfTrees
     //opts.table_index += used;
     opts.bits = root;
     return 0;
-  };
+  }
 }
