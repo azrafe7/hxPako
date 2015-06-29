@@ -1,6 +1,7 @@
 package pako.zlib;
 
 import haxe.io.UInt8Array;
+import pako.zlib.Deflate.DeflateState;
 
 class ZStream
 {
@@ -21,7 +22,7 @@ class ZStream
   /* last error message, NULL if no error */
   public var msg = ''/*Z_NULL*/;
   /* not visible by applications */
-  var state = null;
+  public var state:DeflateState = null;
   /* best guess about the data type: binary or text */
   public var data_type:Constants.DataType = Constants.DataType.Z_UNKNOWN /*Z_UNKNOWN*/;
   /* adler32 value of the uncompressed data */

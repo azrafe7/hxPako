@@ -9,6 +9,7 @@ import pako.zlib.ZStream;
 import pako.zlib.GZHeader;
 import pako.zlib.InfTrees;
 import pako.zlib.Trees;
+import pako.zlib.Deflate;
 
 class ImportAll
 {

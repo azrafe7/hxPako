@@ -1,5 +1,7 @@
 package pako.zlib;
 
+import haxe.io.UInt16Array;
+
 
 class GZHeader
 {
@@ -12,7 +14,7 @@ class GZHeader
   /* operating system */
   public var os:Int          = 0;
   /* pointer to extra field or Z_NULL if none */
-  public var extra:Null<Int> = null;
+  public var extra:UInt16Array = null;
   /* extra field length (valid if extra != Z_NULL) */
   public var extra_len:Int   = 0; // Actually, we don't need it in JS,
                        // but leave for few code modifications

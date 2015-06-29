@@ -7,6 +7,14 @@ class Common
   static public function arraySet(dest:ArrayBufferView, src:ArrayBufferView, src_offs:Int, len:Int, dest_offs:Int) {
     dest.buffer.blit(dest_offs, src.buffer, src_offs, len);
   }
+  
+  //NOTE(hx): moved here from Trees and Deflate
+  static public function zero(buf:ArrayBufferView) { 
+    var start = buf.byteOffset;
+    var len = buf.byteLength; 
+    while (--len >= start) { buf.buffer.fill(start, len, 0); } 
+  }
+  
 }
 
 /*'use strict';

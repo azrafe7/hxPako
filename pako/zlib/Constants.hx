@@ -1,7 +1,7 @@
 package pako.zlib;
 
 /* Allowed flush values; see deflate() and inflate() below for details */
-@:enum abstract Flush(Int) 
+@:enum abstract Flush(Int) to Int
 {
   var Z_NO_FLUSH =         0;
   var Z_PARTIAL_FLUSH =    1;
@@ -27,6 +27,8 @@ package pako.zlib;
   var Z_BUF_ERROR =       -5;
   var Z_VERSION_ERROR =   -6; //NOTE(hx): commented out in pako.js
 }
+
+//NOTE(hx): check recursion and inline behaviour in abstract with comparison functions (CompressionLevel and Strategy)
 
 /* compression levels */
 abstract CompressionLevel(Int) to Int
@@ -75,13 +77,46 @@ abstract CompressionLevel(Int) to Int
 	@:op(A >= B) static function floatGte(a:Float, b:CompressionLevel):Bool;
 }
 
-@:enum abstract Strategy(Int)
+@:enum abstract Strategy(Int) to Int
 {
   var Z_FILTERED =               1;
   var Z_HUFFMAN_ONLY =           2;
   var Z_RLE =                    3;
   var Z_FIXED =                  4;
   var Z_DEFAULT_STRATEGY =       0;
+	
+  // forward comparison operators
+  @:op(A == B) static function eq(a:Strategy, b:Strategy):Bool;
+	@:op(A == B) @:commutative static function eqInt(a:Strategy, b:Int):Bool;
+	@:op(A == B) @:commutative static function eqFloat(a:Strategy, b:Float):Bool;
+
+	@:op(A != B) static function neq(a:Strategy, b:Strategy):Bool;
+	@:op(A != B) @:commutative static function neqInt(a:Strategy, b:Int):Bool;
+	@:op(A != B) @:commutative static function neqFloat(a:Strategy, b:Float):Bool;
+
+	@:op(A < B) static function lt(a:Strategy, b:Strategy):Bool;
+	@:op(A < B) static function ltInt(a:Strategy, b:Int):Bool;
+	@:op(A < B) static function intLt(a:Int, b:Strategy):Bool;
+	@:op(A < B) static function ltFloat(a:Strategy, b:Float):Bool;
+	@:op(A < B) static function floatLt(a:Float, b:Strategy):Bool;
+
+	@:op(A <= B) static function lte(a:Strategy, b:Strategy):Bool;
+	@:op(A <= B) static function lteInt(a:Strategy, b:Int):Bool;
+	@:op(A <= B) static function intLte(a:Int, b:Strategy):Bool;
+	@:op(A <= B) static function lteFloat(a:Strategy, b:Float):Bool;
+	@:op(A <= B) static function floatLte(a:Float, b:Strategy):Bool;
+
+	@:op(A > B) static function gt(a:Strategy, b:Strategy):Bool;
+	@:op(A > B) static function gtInt(a:Strategy, b:Int):Bool;
+	@:op(A > B) static function intGt(a:Int, b:Strategy):Bool;
+	@:op(A > B) static function gtFloat(a:Strategy, b:Float):Bool;
+	@:op(A > B) static function floatGt(a:Float, b:Strategy):Bool;
+
+	@:op(A >= B) static function gte(a:Strategy, b:Strategy):Bool;
+	@:op(A >= B) static function gteInt(a:Strategy, b:Int):Bool;
+	@:op(A >= B) static function intGte(a:Int, b:Strategy):Bool;
+	@:op(A >= B) static function gteFloat(a:Strategy, b:Float):Bool;
+	@:op(A >= B) static function floatGte(a:Float, b:Strategy):Bool;
 }
 
 /* Possible values of the data_type field (though see inflate()) */
@@ -98,4 +133,6 @@ abstract CompressionLevel(Int) to Int
 {
   var Z_DEFLATED =               8;
   //var Z_NULL =                 null; // Use -1 or null inline, depending on var type
+  
+	@:op(A + B) @:commutative static function addInt(a:Method, b:Int):Int;  
 }
