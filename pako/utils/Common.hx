@@ -1,4 +1,15 @@
-'use strict';
+package pako.utils;
+import haxe.io.ArrayBufferView;
+
+class Common
+{
+  //NOTE(hx): blit
+  static public function arraySet(dest:ArrayBufferView, src:ArrayBufferView, src_offs:Int, len:Int, dest_offs:Int) {
+    dest.buffer.blit(dest_offs, src.buffer, src_offs, len);
+  }
+}
+
+/*'use strict';
 
 
 var TYPED_OK =  (typeof Uint8Array !== 'undefined') &&
@@ -6,7 +17,7 @@ var TYPED_OK =  (typeof Uint8Array !== 'undefined') &&
                 (typeof Int32Array !== 'undefined');
 
 
-exports.assign = function (obj /*from1, from2, from3, ...*/) {
+exports.assign = function (obj /*from1, from2, from3, ...*//*) {
   var sources = Array.prototype.slice.call(arguments, 1);
   while (sources.length) {
     var source = sources.shift();
@@ -100,3 +111,4 @@ exports.setTyped = function (on) {
 };
 
 exports.setTyped(TYPED_OK);
+*/

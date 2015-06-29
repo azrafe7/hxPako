@@ -63,13 +63,13 @@ class InfTrees
   static var base = null;     /* base value table to use */
   static var base_index:Int = 0;
   //  static var shoextra;    /* extra bits table to use */
-  static var end = null;                    /* use base and extra for symbol > end */
+  static var end = 0;                    /* use base and extra for symbol > end */
   static var count = new UInt16Array(MAXBITS+1); //[MAXBITS+1];    /* number of codes of each length */
   static var offs = new UInt16Array(MAXBITS+1); //[MAXBITS+1];     /* offsets in table for each length */
   static var extra = null;
   static var extra_index:Int = 0;
 
-  static public function inflate_table(type:Int, lens, lens_index, codes, table, table_index, work, opts)
+  static public function inflate_table(type:Int, lens, lens_index, codes, table, table_index, work, opts:Options)
   {
     bits = opts.bits;
       //here = opts.here; /* table entry for duplication */

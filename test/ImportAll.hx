@@ -8,12 +8,13 @@ import pako.zlib.Messages;
 import pako.zlib.ZStream;
 import pako.zlib.GZHeader;
 import pako.zlib.InfTrees;
+import pako.zlib.Trees;
 
 class ImportAll
 {
 	static public function main() {
-    trace(Messages.get(Error.Z_NEED_DICT));
     var zs = new ZStream();
     var gzhdr = new GZHeader();
+    trace(Messages.get(Error.Z_NEED_DICT));
 	}
 }

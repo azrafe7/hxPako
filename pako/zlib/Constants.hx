@@ -29,12 +29,50 @@ package pako.zlib;
 }
 
 /* compression levels */
-abstract CompressionLevel(Int) from Int to Int
+abstract CompressionLevel(Int) to Int
 {
   static public inline var Z_NO_COMPRESSION =         0;
   static public inline var Z_BEST_SPEED =             1;
   static public inline var Z_BEST_COMPRESSION =       9;
   static public inline var Z_DEFAULT_COMPRESSION =   -1;
+  
+  @:from static function fromInt(i:Int) {
+    if (i < Z_DEFAULT_COMPRESSION || i > Z_BEST_COMPRESSION) throw "Invalid CompressionLevel!";
+    return cast i;
+  }
+	
+  // forward comparison operators
+  @:op(A == B) static function eq(a:CompressionLevel, b:CompressionLevel):Bool;
+	@:op(A == B) @:commutative static function eqInt(a:CompressionLevel, b:Int):Bool;
+	@:op(A == B) @:commutative static function eqFloat(a:CompressionLevel, b:Float):Bool;
+
+	@:op(A != B) static function neq(a:CompressionLevel, b:CompressionLevel):Bool;
+	@:op(A != B) @:commutative static function neqInt(a:CompressionLevel, b:Int):Bool;
+	@:op(A != B) @:commutative static function neqFloat(a:CompressionLevel, b:Float):Bool;
+
+	@:op(A < B) static function lt(a:CompressionLevel, b:CompressionLevel):Bool;
+	@:op(A < B) static function ltInt(a:CompressionLevel, b:Int):Bool;
+	@:op(A < B) static function intLt(a:Int, b:CompressionLevel):Bool;
+	@:op(A < B) static function ltFloat(a:CompressionLevel, b:Float):Bool;
+	@:op(A < B) static function floatLt(a:Float, b:CompressionLevel):Bool;
+
+	@:op(A <= B) static function lte(a:CompressionLevel, b:CompressionLevel):Bool;
+	@:op(A <= B) static function lteInt(a:CompressionLevel, b:Int):Bool;
+	@:op(A <= B) static function intLte(a:Int, b:CompressionLevel):Bool;
+	@:op(A <= B) static function lteFloat(a:CompressionLevel, b:Float):Bool;
+	@:op(A <= B) static function floatLte(a:Float, b:CompressionLevel):Bool;
+
+	@:op(A > B) static function gt(a:CompressionLevel, b:CompressionLevel):Bool;
+	@:op(A > B) static function gtInt(a:CompressionLevel, b:Int):Bool;
+	@:op(A > B) static function intGt(a:Int, b:CompressionLevel):Bool;
+	@:op(A > B) static function gtFloat(a:CompressionLevel, b:Float):Bool;
+	@:op(A > B) static function floatGt(a:Float, b:CompressionLevel):Bool;
+
+	@:op(A >= B) static function gte(a:CompressionLevel, b:CompressionLevel):Bool;
+	@:op(A >= B) static function gteInt(a:CompressionLevel, b:Int):Bool;
+	@:op(A >= B) static function intGte(a:Int, b:CompressionLevel):Bool;
+	@:op(A >= B) static function gteFloat(a:CompressionLevel, b:Float):Bool;
+	@:op(A >= B) static function floatGte(a:Float, b:CompressionLevel):Bool;
 }
 
 @:enum abstract Strategy(Int)
