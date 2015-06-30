@@ -1,5 +1,6 @@
 package pako.utils;
 import haxe.io.ArrayBufferView;
+import haxe.io.UInt8Array;
 
 class Common
 {
@@ -15,6 +16,36 @@ class Common
     while (--len >= start) { buf.buffer.fill(start, len, 0); } 
   }
   
+  //NOTE(hx): if ArrayBufferView.EMULATED it will be a copy
+  // reduce buffer size, avoiding mem copy
+  static public function shrinkBuf(buf:UInt8Array, size:Int) {
+    if (buf.length == size) { return buf; }
+    return buf.subarray(0, size);
+  }
+  
+  //NOTE(hx): blit
+  // Join array of chunks to single array.
+  static public function flattenChunks(chunks:Array<UInt8Array>) {
+    var i, l, len, pos, chunk:UInt8Array, result:UInt8Array;
+
+    // calculate data length
+    len = 0;
+    l = chunks.length;
+    for (i in 0...l) {
+      len += chunks[i].length;
+    }
+
+    // join chunks
+    result = new UInt8Array(len);
+    pos = 0;
+    for (i in 0...l) {
+      chunk = chunks[i];
+      result.view.buffer.blit(pos, chunk.view.buffer, 0, chunk.length);
+      pos += chunk.length;
+    }
+
+    return result;
+  }
 }
 
 /*'use strict';

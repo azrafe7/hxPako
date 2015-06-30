@@ -1,7 +1,7 @@
 package pako.zlib;
 
 /* Allowed flush values; see deflate() and inflate() below for details */
-@:enum abstract Flush(Int) to Int
+@:enum abstract Flush(Int) to Int from Int
 {
   var Z_NO_FLUSH =         0;
   var Z_PARTIAL_FLUSH =    1;

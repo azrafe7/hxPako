@@ -11,6 +11,9 @@ import pako.zlib.InfTrees;
 import pako.zlib.Trees;
 import pako.zlib.Deflate;
 import pako.zlib.InfFast;
+import pako.zlib.Inflate;
+import pako.Deflate;
+
 
 class ImportAll
 {
