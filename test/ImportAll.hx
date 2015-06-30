@@ -10,6 +10,7 @@ import pako.zlib.GZHeader;
 import pako.zlib.InfTrees;
 import pako.zlib.Trees;
 import pako.zlib.Deflate;
+import pako.zlib.InfFast;
 
 class ImportAll
 {

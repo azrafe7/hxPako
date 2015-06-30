@@ -1,6 +1,8 @@
 package pako.zlib;
 
+import haxe.io.Int32Array;
 import haxe.io.UInt16Array;
+import pako.zlib.Constants.Error;
 
 
 typedef Options = {
@@ -21,27 +23,27 @@ class InfTrees
   static var LENS:Int = 1;
   static var DISTS:Int = 2;
   
-  static var lbase:Array<Int> = [ /* Length codes 257..285 base */
+  static var lbase:UInt16Array = UInt16Array.fromArray([ /* Length codes 257..285 base */
     3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
     35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0
-  ];
+  ]);
 
-  static var lext:Array<Int> = [ /* Length codes 257..285 extra */
+  static var lext:UInt16Array = UInt16Array.fromArray([ /* Length codes 257..285 extra */
     16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18,
     19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 72, 78
-  ];
+  ]);
 
-  static var dbase:Array<Int> = [ /* Distance codes 0..29 base */
+  static var dbase:UInt16Array = UInt16Array.fromArray([ /* Distance codes 0..29 base */
     1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
     257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
     8193, 12289, 16385, 24577, 0, 0
-  ];
+  ]);
 
-  static var dext:Array<Int> = [ /* Distance codes 0..29 extra */
+  static var dext:UInt16Array = UInt16Array.fromArray([ /* Distance codes 0..29 extra */
     16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22,
     23, 23, 24, 24, 25, 25, 26, 26, 27, 27,
     28, 28, 29, 29, 64, 64
-  ];
+  ]);
 
   static var bits:Int = 0;
 
@@ -60,16 +62,16 @@ class InfTrees
   static var low:Int = 0;               /* low bits for current root entry */
   static var mask:Int = 0;              /* mask for low root bits */
   static var next:Int = 0;             /* next available space in table */
-  static var base = null;     /* base value table to use */
+  static var base:UInt16Array = null;     /* base value table to use */
   static var base_index:Int = 0;
   //  static var shoextra;    /* extra bits table to use */
   static var end = 0;                    /* use base and extra for symbol > end */
   static var count = new UInt16Array(MAXBITS+1); //[MAXBITS+1];    /* number of codes of each length */
   static var offs = new UInt16Array(MAXBITS+1); //[MAXBITS+1];     /* offsets in table for each length */
-  static var extra = null;
+  static var extra:UInt16Array = null;
   static var extra_index:Int = 0;
 
-  static public function inflate_table(type:Int, lens, lens_index, codes, table, table_index, work, opts:Options)
+  static public function inflate_table(type:Int, lens:UInt16Array, lens_index, codes, table:Int32Array, table_index, work:UInt16Array, opts:Options):Error
   {
     bits = opts.bits;
       //here = opts.here; /* table entry for duplication */
@@ -143,7 +145,7 @@ class InfTrees
       table[table_index++] = (1 << 24) | (64 << 16) | 0;
 
       opts.bits = 1;
-      return 0;     /* no symbols, but wait for decoding to report error */
+      return Z_OK;     /* no symbols, but wait for decoding to report error */
     }
     min = 1;
     while (min < max) {
@@ -161,12 +163,12 @@ class InfTrees
       left <<= 1;
       left -= count[len];
       if (left < 0) {
-        return -1;
+        return Z_ERRNO;
       }        /* over-subscribed */
       len++;
     }
     if (left > 0 && (type == CODES || max != 1)) {
-      return -1;                      /* incomplete set */
+      return Z_ERRNO;                      /* incomplete set */
     }
 
     /* generate offsets into symbol table for each length for sorting */
@@ -253,7 +255,7 @@ class InfTrees
     /* check available table space */
     if ((type == LENS && used > ENOUGH_LENS) ||
       (type == DISTS && used > ENOUGH_DISTS)) {
-      return 1;
+      return Z_STREAM_END;
     }
 
     var i=0;
@@ -330,7 +332,7 @@ class InfTrees
         used += 1 << curr;
         if ((type == LENS && used > ENOUGH_LENS) ||
           (type == DISTS && used > ENOUGH_DISTS)) {
-          return 1;
+          return Z_STREAM_END;
         }
 
         /* point entry in root table to sub-table */
@@ -355,6 +357,6 @@ class InfTrees
     /* set return parameters */
     //opts.table_index += used;
     opts.bits = root;
-    return 0;
+    return Z_OK;
   }
 }

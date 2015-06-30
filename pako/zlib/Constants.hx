@@ -120,7 +120,7 @@ abstract CompressionLevel(Int) to Int
 }
 
 /* Possible values of the data_type field (though see inflate()) */
-@:enum abstract DataType(Int)
+@:enum abstract DataType(Int) from Int
 {
   var Z_BINARY =                 0;
   var Z_TEXT =                   1;
@@ -129,7 +129,7 @@ abstract CompressionLevel(Int) to Int
 }
 
 /* The deflate compression method */
-@:enum abstract Method(Int)
+@:enum abstract Method(Int) to Int
 {
   var Z_DEFLATED =               8;
   //var Z_NULL =                 null; // Use -1 or null inline, depending on var type
