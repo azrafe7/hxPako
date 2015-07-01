@@ -2,7 +2,7 @@ package pako.zlib;
 
 import haxe.io.Int32Array;
 import haxe.io.UInt16Array;
-import pako.zlib.Constants.Error;
+import pako.zlib.Constants;
 
 
 typedef Options = {
@@ -71,7 +71,7 @@ class InfTrees
   static var extra:UInt16Array = null;
   static var extra_index:Int = 0;
 
-  static public function inflate_table(type:Int, lens:UInt16Array, lens_index, codes, table:Int32Array, table_index, work:UInt16Array, opts:Options):Error
+  static public function inflate_table(type:Int, lens:UInt16Array, lens_index, codes, table:Int32Array, table_index, work:UInt16Array, opts:Options):ErrorStatus
   {
     bits = opts.bits;
       //here = opts.here; /* table entry for duplication */

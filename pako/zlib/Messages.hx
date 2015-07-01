@@ -1,7 +1,7 @@
 package pako.zlib;
 
 import haxe.ds.IntMap;
-import pako.zlib.Constants.Error;
+import pako.zlib.Constants;
 
 //NOTE(hx): might as well refactor Error to be over string
 class Messages
@@ -18,7 +18,7 @@ class Messages
     Z_VERSION_ERROR =>  'incompatible version' /* Z_VERSION_ERROR (-6) */
   ];
   
-  static public function get(error:pako.zlib.Constants.Error) {
+  static public function get(error:ErrorStatus) {
     return "ERROR: " + map.get(error);
   }
 }

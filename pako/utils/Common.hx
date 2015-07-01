@@ -1,4 +1,5 @@
 package pako.utils;
+
 import haxe.io.ArrayBufferView;
 import haxe.io.UInt8Array;
 

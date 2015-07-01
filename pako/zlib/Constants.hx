@@ -1,5 +1,7 @@
 package pako.zlib;
 
+class Constants { }
+
 /* Allowed flush values; see deflate() and inflate() below for details */
 @:enum abstract Flush(Int) to Int from Int
 {
@@ -15,7 +17,7 @@ package pako.zlib;
 /* Return codes for the compression/decompression functions. Negative values
 * are errors, positive values are used for special but normal events.
 */
-@:enum abstract Error(Int) to Int
+@:enum abstract ErrorStatus(Int) to Int
 {
   var Z_OK =               0;
   var Z_STREAM_END =       1;
