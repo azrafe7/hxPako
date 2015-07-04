@@ -12,6 +12,44 @@ class Constants { }
   var Z_FINISH =           4;
   var Z_BLOCK =            5;
   var Z_TREES =            6;
+ 
+  @:from static function fromInt(i:Int) {
+    if (i < Z_NO_FLUSH || i > Z_TREES) throw "Invalid Flush!";
+    return cast i;
+  }
+	
+  // forward comparison operators
+  @:op(A == B) static function eq(a:Flush, b:Flush):Bool;
+	@:op(A == B) @:commutative static function eqInt(a:Flush, b:Int):Bool;
+	@:op(A == B) @:commutative static function eqFloat(a:Flush, b:Float):Bool;
+
+	@:op(A != B) static function neq(a:Flush, b:Flush):Bool;
+	@:op(A != B) @:commutative static function neqInt(a:Flush, b:Int):Bool;
+	@:op(A != B) @:commutative static function neqFloat(a:Flush, b:Float):Bool;
+
+	@:op(A < B) static function lt(a:Flush, b:Flush):Bool;
+	@:op(A < B) static function ltInt(a:Flush, b:Int):Bool;
+	@:op(A < B) static function intLt(a:Int, b:Flush):Bool;
+	@:op(A < B) static function ltFloat(a:Flush, b:Float):Bool;
+	@:op(A < B) static function floatLt(a:Float, b:Flush):Bool;
+
+	@:op(A <= B) static function lte(a:Flush, b:Flush):Bool;
+	@:op(A <= B) static function lteInt(a:Flush, b:Int):Bool;
+	@:op(A <= B) static function intLte(a:Int, b:Flush):Bool;
+	@:op(A <= B) static function lteFloat(a:Flush, b:Float):Bool;
+	@:op(A <= B) static function floatLte(a:Float, b:Flush):Bool;
+
+	@:op(A > B) static function gt(a:Flush, b:Flush):Bool;
+	@:op(A > B) static function gtInt(a:Flush, b:Int):Bool;
+	@:op(A > B) static function intGt(a:Int, b:Flush):Bool;
+	@:op(A > B) static function gtFloat(a:Flush, b:Float):Bool;
+	@:op(A > B) static function floatGt(a:Float, b:Flush):Bool;
+
+	@:op(A >= B) static function gte(a:Flush, b:Flush):Bool;
+	@:op(A >= B) static function gteInt(a:Flush, b:Int):Bool;
+	@:op(A >= B) static function intGte(a:Int, b:Flush):Bool;
+	@:op(A >= B) static function gteFloat(a:Flush, b:Float):Bool;
+	@:op(A >= B) static function floatGte(a:Float, b:Flush):Bool;
 }
 
 /* Return codes for the compression/decompression functions. Negative values
