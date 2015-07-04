@@ -5,16 +5,17 @@ import haxe.io.UInt8Array;
 
 class Common
 {
-  //NOTE(hx): blit
+  //NOTE(hx): blit (reset pos to respective offsets?)
   static public function arraySet(dest:ArrayBufferView, src:ArrayBufferView, src_offs:Int, len:Int, dest_offs:Int) {
     dest.buffer.blit(dest_offs, src.buffer, src_offs, len);
+    
   }
   
   //NOTE(hx): moved here from Trees and Deflate
   static public function zero(buf:ArrayBufferView) { 
     var start = buf.byteOffset;
     var len = buf.byteLength; 
-    while (--len >= start) { buf.buffer.fill(start, len, 0); } 
+    buf.buffer.fill(start, len, 0);
   }
   
   //NOTE(hx): if ArrayBufferView.EMULATED it will be a copy
