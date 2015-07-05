@@ -45,34 +45,34 @@ class InfTrees
     28, 28, 29, 29, 64, 64
   ]);
 
-  static var bits:Int = 0;
-
-  static var len:Int = 0;               /* a code's length in bits */
-  static var sym:Int = 0;               /* index of code symbols */
-  static var min:Int = 0;               /* minimum code lengths */
-  static var max:Int = 0;          /* maximum code lengths */
-  static var root:Int = 0;              /* number of index bits for root table */
-  static var curr:Int = 0;              /* number of index bits for current table */
-  static var drop:Int = 0;              /* code bits to drop for sub-table */
-  static var left:Int = 0;                   /* number of prefix codes available */
-  static var used:Int = 0;              /* code entries in table used */
-  static var huff:Int = 0;              /* Huffman code */
-  static var incr:Int = 0;              /* for incrementing code, index */
-  static var fill:Int = 0;              /* index for replicating entries */
-  static var low:Int = 0;               /* low bits for current root entry */
-  static var mask:Int = 0;              /* mask for low root bits */
-  static var next:Int = 0;             /* next available space in table */
-  static var base:UInt16Array = null;     /* base value table to use */
-  static var base_index:Int = 0;
-  //  static var shoextra;    /* extra bits table to use */
-  static var end = 0;                    /* use base and extra for symbol > end */
-  static var count = new UInt16Array(MAXBITS+1); //[MAXBITS+1];    /* number of codes of each length */
-  static var offs = new UInt16Array(MAXBITS+1); //[MAXBITS+1];     /* offsets in table for each length */
-  static var extra:UInt16Array = null;
-  static var extra_index:Int = 0;
-
   static public function inflate_table(type:Int, lens:UInt16Array, lens_index, codes, table:Int32Array, table_index, work:UInt16Array, opts:Options):ErrorStatus
   {
+    var bits:Int = 0;
+
+    var len:Int = 0;               /* a code's length in bits */
+    var sym:Int = 0;               /* index of code symbols */
+    var min:Int = 0;               /* minimum code lengths */
+    var max:Int = 0;          /* maximum code lengths */
+    var root:Int = 0;              /* number of index bits for root table */
+    var curr:Int = 0;              /* number of index bits for current table */
+    var drop:Int = 0;              /* code bits to drop for sub-table */
+    var left:Int = 0;                   /* number of prefix codes available */
+    var used:Int = 0;              /* code entries in table used */
+    var huff:Int = 0;              /* Huffman code */
+    var incr:Int = 0;              /* for incrementing code, index */
+    var fill:Int = 0;              /* index for replicating entries */
+    var low:Int = 0;               /* low bits for current root entry */
+    var mask:Int = 0;              /* mask for low root bits */
+    var next:Int = 0;             /* next available space in table */
+    var base:UInt16Array = null;     /* base value table to use */
+    var base_index:Int = 0;
+    //  var shoextra;    /* extra bits table to use */
+    var end = 0;                    /* use base and extra for symbol > end */
+    var count = new UInt16Array(MAXBITS+1); //[MAXBITS+1];    /* number of codes of each length */
+    var offs = new UInt16Array(MAXBITS+1); //[MAXBITS+1];     /* offsets in table for each length */
+    var extra:UInt16Array = null;
+    var extra_index:Int = 0;
+
     bits = opts.bits;
       //here = opts.here; /* table entry for duplication */
     
