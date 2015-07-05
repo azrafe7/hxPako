@@ -1,4 +1,7 @@
+-resource fixtures\samples\lorem_utf_100k.txt@lorem_utf_100k.txt
 -cp ..
--main ImportAll
+-main Main
 -debug
+-lib utest
+-lib buddy
 -D fdb

@@ -35,7 +35,7 @@ class ImportAll
     
   #if sys
     trace("...");
-    var input = Sys.stdin().readLine();
+    //var input = Sys.stdin().readLine();
   #end
     
     misc();
@@ -74,9 +74,9 @@ class ImportAll
 
   static function quit() {
   #if flash
-    flash.system.System.exit(1);
+    flash.system.System.exit(0);
   #elseif sys
-    Sys.exit(1);
+    Sys.exit(0);
   #end
   }
 }

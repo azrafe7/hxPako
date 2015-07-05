@@ -105,7 +105,7 @@ class Inflate
   static inline var DEF_WBITS = MAX_WBITS;
 
 
-  static function ZSWAP32(q:Int) {
+  static function ZSWAP32(q:Int):Int {
     return  (((q >>> 24) & 0xff) +
             ((q >>> 8) & 0xff00) +
             ((q & 0xff00) << 8) +

@@ -194,7 +194,7 @@ class Inflate
    * push(chunk, true);  // push last chunk
    * ```
    **/
-  public function push(data:UInt8Array, mode:Dynamic) {
+  public function push(data:UInt8Array, mode:Dynamic = false) {
     var strm = this.strm;
     var chunkSize = this.options.chunkSize;
     var status, _mode:Flush;

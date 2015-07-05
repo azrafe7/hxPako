@@ -1,154 +1,201 @@
 package;
 
+import haxe.io.Path;
+import haxe.io.UInt8Array;
+import haxe.Resource;
+import pako.zlib.Adler32;
+import pako.zlib.Constants;
+import pako.zlib.CRC32;
+import pako.zlib.Messages;
+import pako.zlib.ZStream;
+import pako.zlib.GZHeader;
+import pako.zlib.InfTrees;
+import pako.zlib.Trees;
+import pako.zlib.Deflate;
+import pako.zlib.InfFast;
+import pako.zlib.Inflate;
+import pako.Deflate;
+import pako.Inflate;
+import pako.utils.Common;
+#if sys
+import sys.io.File;
+#end
 import buddy.*;
+import utest.Assert;
+import Helpers;
+
 using buddy.Should;
 
 
-class Main implements Buddy<[MoreTests, Tests2]> { }
+class Main implements Buddy<[Misc, Chunks]> { }
 
-class MoreTests extends BuddySuite {
+class Misc extends BuddySuite {
     public function new() {
-        // A test suite:
-        describe("Using 2Buddy", {
-            var experience = "?";
-            var mood = "?";
+      
+      describe('ArrayBuffer', {
 
-            // Executed before each "it":
-            before({
-                experience = "great";
-            });
+        var file   = Path.join(["./", 'fixtures/samples/lorem_utf_100k.txt']);
+      
+      #if sys
+        var bytes = File.getBytes(file);
+      #else
+        var bytes = Resource.getBytes('lorem_utf_100k.txt');
+      #end
+        
+        trace(bytes.length);
+      
+        var sample = UInt8Array.fromBytes(bytes);
+        trace(bytes.length, sample.length);
+        var deflated = Deflate.deflate(sample);
 
-            it("should be a great testing experience", {
-                experience.should.be("great");
-            });
-
-            it("should really make the tester happy", {
-                mood.should.be("happy");
-            });
-
-            // Executed after each "it":
-            after({
-                mood = "happy";
-            });
+        it('Deflate ArrayBuffer', {
+          Assert.isTrue(Helpers.cmpBuf(deflated, Deflate.deflate(sample)));
         });
+
+        it('Inflate ArrayBuffer', {
+          Assert.isTrue(Helpers.cmpBuf(sample, Inflate.inflate(deflated)));
+        });
+      });
     }
 }
 
-class Tests2 extends BuddySuite {
-    public function new() {
-        // A test suite:
-        describe("Using TestsBuddy", {
-            var experience = "?";
-            var mood = "?";
+class Chunks extends BuddySuite {
+  public function new() {
+    
+    describe('Small input chunks', {
 
-            // Executed before each "it":
-            before({
-                experience = "great";
-            });
+      it('deflate 100b by 1b chunk', {
+        var buf = randomBuf(100);
+        var deflated = Deflate.deflate(buf);
+        testChunk(buf, deflated, new pako.Deflate(), 1);
+      });
 
-            it("should be a great testing experience", {
-                experience.should.be("great");
-            });
+      it('deflate 20000b by 10b chunk', {
+        var buf = randomBuf(20000);
+        var deflated = Deflate.deflate(buf);
+        testChunk(buf, deflated, new pako.Deflate(), 10);
+      });
 
-            it("should really make the tester happy", {
-                mood.should.be("happy");
-            });
+      it('inflate 100b result by 1b chunk', {
+        var buf = randomBuf(100);
+        var deflated = Deflate.deflate(buf);
+        testChunk(deflated, buf, new pako.Inflate(), 1);
+      });
 
-            // Executed after each "it":
-            after({
-                mood = "happy";
-            });
-        });
+      it('inflate 20000b result by 10b chunk', {
+        var buf = randomBuf(20000);
+        var deflated = Deflate.deflate(buf);
+        testChunk(deflated, buf, new pako.Inflate(), 10);
+      });
+
+    });
+
+
+    describe('Dummy push (force end)', {
+
+      var file   = Path.join(["./", 'fixtures/samples/lorem_utf_100k.txt']);
+      
+      #if sys
+        var bytes = File.getBytes(file);
+      #else
+        var bytes = Resource.getBytes('lorem_utf_100k.txt');
+      #end
+
+      it('deflate end', {
+        var data = UInt8Array.fromBytes(bytes);
+
+        var deflator = new pako.Deflate();
+        deflator.push(data);
+        deflator.push(new UInt8Array(0), true);
+
+        Assert.isTrue(Helpers.cmpBuf(deflator.result, Deflate.deflate(data)));
+      });
+
+      it('inflate end', {
+        var data = Deflate.deflate(UInt8Array.fromBytes(bytes));
+
+        var inflator = new pako.Inflate();
+        inflator.push(data);
+        inflator.push(new UInt8Array(0), true);
+
+        Assert.isTrue(Helpers.cmpBuf(inflator.result, Inflate.inflate(data)));
+      });
+
+    });
+
+
+    describe('Edge condition', {
+
+      it('should be ok on buffer border', {
+        var i;
+        var data = new UInt8Array(1024 * 16 + 1);
+
+        for (i in 0...data.length) {
+          data[i] = Math.floor(Math.random() * 255.999);
+        }
+
+        var deflated = Deflate.deflate(data);
+        trace(deflated.length);
+
+        var inflator = new Inflate();
+
+        //NOTE(hx): there was an error in pako.js which copied out of bounds (deflated[length])
+        for (i in 0...deflated.length) {
+          if (i == 16395) {
+            var x = i;
+            trace(i + " " + inflator.err);
+          }
+          inflator.push(deflated.subarray(i, i+1), false);
+          Assert.isTrue(inflator.err == ErrorStatus.Z_OK, 'Inflate failed with status ' + inflator.err);
+        }
+
+        inflator.push(new UInt8Array(0), true);
+
+        Assert.isTrue(inflator.err == ErrorStatus.Z_OK, 'Inflate failed with status ' + inflator.err);
+        trace(data == null);
+        trace(inflator.result == null);
+        Assert.isTrue(Helpers.cmpBuf(data, inflator.result));
+      });
+
+    });
+  }
+  
+  function randomBuf(size) {
+    var buf = new UInt8Array(size);
+    for (i in 0...size) {
+      buf[i] = Math.round(Math.random() * 256);
     }
+    return buf;
+  }
+
+  function testChunk(buf:UInt8Array, expected, packer:Dynamic, chunkSize) {
+    var i, _in, count, pos, size, expFlushCount;
+
+    var onData = @:privateAccess packer._onData;
+    var flushCount = 0;
+
+    packer.onData = function(buffer) {
+      flushCount++;
+      onData(buffer);
+    };
+
+    count = Math.ceil(buf.length / chunkSize);
+    pos = 0;
+    for (i in 0...count) {
+      size = (buf.length - pos) < chunkSize ? buf.length - pos : chunkSize;
+      _in = new UInt8Array(size);
+      Common.arraySet(cast _in, cast buf, pos, size, 0);
+      var mode:Bool = i == count - 1;
+      packer.push(_in, mode);
+      pos += chunkSize;
+    }
+
+    //expected count of onData calls. 16384 output chunk size
+    expFlushCount = Math.ceil(packer.result.byteLength / 16384);
+
+    Assert.isTrue(packer.err == ErrorStatus.Z_OK, 'Packer error: ' + packer.err);
+    Assert.isTrue(Helpers.cmpBuf(packer.result, expected), 'Result is different');
+    Assert.equals(flushCount, expFlushCount, 'onData called ' + flushCount + 'times, expected: ' + expFlushCount);
+  }
+
 }
-
-
-/*var assert = require('assert');
-var fs = require('fs');
-var path  = require('path');
-
-var c = require('../lib/zlib/constants');
-var msg = require('../lib/zlib/messages');
-var zlib_deflate = require('../lib/zlib/deflate.js');
-var zstream = require('../lib/zlib/zstream');
-
-var pako  = require('../index');
-
-
-var short_sample = 'hello world';
-var long_sample = fs.readFileSync(path.join(__dirname, 'fixtures/samples/lorem_en_100k.txt'));
-
-function testDeflate(data, opts, flush) {
-  var deflator = new pako.Deflate(opts);
-  deflator.push(data, flush);
-  deflator.push(data, true);
-
-  assert.equal(deflator.err, false, msg[deflator.err]);
-}
-
-describe('Deflate support', function() {
-  it('stored', function() {
-    testDeflate(short_sample, {level: 0, chunkSize: 200}, 0);
-    testDeflate(short_sample, {level: 0, chunkSize: 10}, 5);
-  });
-  it('fast', function() {
-    testDeflate(short_sample, {level: 1, chunkSize: 10}, 5);
-    testDeflate(long_sample, {level: 1, memLevel: 1, chunkSize: 10}, 0);
-  });
-  it('slow', function() {
-    testDeflate(short_sample, {level: 4, chunkSize: 10}, 5);
-    testDeflate(long_sample, {level: 9, memLevel: 1, chunkSize: 10}, 0);
-  });
-  it('rle', function() {
-    testDeflate(short_sample, {strategy: 3}, 0);
-    testDeflate(short_sample, {strategy: 3, chunkSize: 10}, 5);
-    testDeflate(long_sample, {strategy: 3, chunkSize: 10}, 0);
-  });
-  it('huffman', function() {
-    testDeflate(short_sample, {strategy: 2}, 0);
-    testDeflate(short_sample, {strategy: 2, chunkSize: 10}, 5);
-    testDeflate(long_sample, {strategy: 2, chunkSize: 10}, 0);
-
-  });
-});
-
-describe('Deflate states', function() {
-  //in port checking input parameters was removed
-  it('inflate bad parameters', function () {
-    var ret, strm;
-
-    ret = zlib_deflate.deflate(null, 0);
-    assert(ret === c.Z_STREAM_ERROR);
-
-    strm = new zstream();
-
-    ret = zlib_deflate.deflateInit(null);
-    assert(ret === c.Z_STREAM_ERROR);
-
-    ret = zlib_deflate.deflateInit(strm, 6);
-    assert(ret === c.Z_OK);
-
-    ret = zlib_deflate.deflateSetHeader(null);
-    assert(ret === c.Z_STREAM_ERROR);
-
-    strm.state.wrap = 1;
-    ret = zlib_deflate.deflateSetHeader(strm, null);
-    assert(ret === c.Z_STREAM_ERROR);
-
-    strm.state.wrap = 2;
-    ret = zlib_deflate.deflateSetHeader(strm, null);
-    assert(ret === c.Z_OK);
-
-    ret = zlib_deflate.deflate(strm, c.Z_FINISH);
-    assert(ret === c.Z_BUF_ERROR);
-
-    ret = zlib_deflate.deflateEnd(null);
-    assert(ret === c.Z_STREAM_ERROR);
-
-    //BS_NEED_MORE
-    strm.state.status = 5;
-    ret = zlib_deflate.deflateEnd(strm);
-    assert(ret === c.Z_STREAM_ERROR);
-  });
-});
-*/

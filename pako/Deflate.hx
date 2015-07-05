@@ -230,7 +230,7 @@ class Deflate
    * push(chunk, true);  // push last chunk
    * ```
    **/
-  public function push(data:UInt8Array, mode:Dynamic) {
+  public function push(data:UInt8Array, mode:Dynamic = false) {
     var strm = this.strm;
     var chunkSize = this.options.chunkSize;
     var status, _mode:Flush;
@@ -240,7 +240,7 @@ class Deflate
     //NOTE(hx): search codebase for ~~
     //_mode = (mode == ~~mode) ? mode : ((mode == true) ? Z_FINISH : Z_NO_FLUSH);
     if (Std.is(mode, Int)) _mode = mode;
-    else if (Std.is(mode, Bool)) _mode = mode ? Z_NO_FLUSH : Z_FINISH;
+    else if (Std.is(mode, Bool)) _mode = mode ? Z_FINISH : Z_NO_FLUSH;
     else throw "Invalid mode.";
 
     // Convert data if needed
