@@ -325,16 +325,16 @@ class Inflate
     var put;                    /* next output INDEX */
     var have, left;             /* available input and output */
     var hold = 0;                   /* bit buffer */
-    var bits;                   /* bits in bit buffer */
+    var bits = 0;                   /* bits in bit buffer */
     var _in, _out;              /* save starting available input and output */
-    var copy;                   /* number of stored or match bytes to copy */
+    var copy = 0;                   /* number of stored or match bytes to copy */
     var from;                   /* where to copy match bytes from */
     var from_source;
     var here = 0;               /* current decoding table entry */
     var here_bits = 0, here_op = 0, here_val = 0; // paked "here" denormalized (JS specific)
     //var last;                   /* parent table entry */
     var last_bits, last_op, last_val; // paked "last" denormalized (JS specific)
-    var len;                    /* length to copy for repeats, bits to drop */
+    var len = 0;                    /* length to copy for repeats, bits to drop */
     var ret:ErrorStatus;                    /* return code */
     var hbuf = new UInt8Array(4);    /* buffer for gzip header crc calculation */
     var opts;
@@ -370,12 +370,13 @@ class Inflate
     ret = Z_OK;
 
     //NOTE(hx): this huge block is a state machine implemented with continue to emulate gotos.
-    //A major difference with the js version is that in haxe switch cases don't have break,
+    //A major difference with the js version is that, in haxe, switch cases don't have break,
     //so it's worth double checking this section
-    var goto_inf_leave = false;
+    var inf_leave = false;
     //inf_leave: // goto emulation
     while (true) {
-      goto_inf_leave = false;
+      if (inf_leave) break;
+      inf_leave = false;
       switch (state.mode) {
       case HEAD:
         if (state.wrap == 0) {
@@ -385,14 +386,14 @@ class Inflate
         //=== NEEDBITS(16);
         while (bits < 16) {
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; // out of this while 
           }
           have--;
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (goto_inf_leave) continue; //inf_leave
+        if (inf_leave) continue; //inf_leave
         //===//
         if ((state.wrap & 2 != 0) && hold == 0x8b1f) {  /* gzip header */
           state.check = 0/*crc32(0L, Z_NULL, 0)*/;
@@ -418,7 +419,7 @@ class Inflate
           ((((hold & 0xff)/*BITS(8)*/ << 8) + (hold >> 8)) % 31) != 0) {
           strm.msg = 'incorrect header check';
           state.mode = BAD;
-          break;
+          continue; //inf_leave
         }
         if ((hold & 0x0f)/*BITS(4)*/ != Z_DEFLATED) {
           strm.msg = 'unknown compression method';
@@ -446,19 +447,18 @@ class Inflate
         hold = 0;
         bits = 0;
         //===//
-        continue; //inf_leave
       case FLAGS:
         //=== NEEDBITS(16); */
         while (bits < 16) {
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; // out of this while 
           }
           have--;
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (goto_inf_leave) continue; //inf_leave
+        if (inf_leave) continue; //inf_leave
         //===//
         state.flags = hold;
         if ((state.flags & 0xff) != Z_DEFLATED) {
@@ -491,14 +491,14 @@ class Inflate
         //=== NEEDBITS(32); */
         while (bits < 32) {
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; // out of this while 
           }
           have--;
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (goto_inf_leave) continue; //inf_leave
+        if (inf_leave) continue; //inf_leave
         //===//
         if (state.head != null) {
           state.head.time = hold;
@@ -522,14 +522,14 @@ class Inflate
         //=== NEEDBITS(16); */
         while (bits < 16) {
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; // out of this while 
           }
           have--;
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (goto_inf_leave) continue; //inf_leave
+        if (inf_leave) continue; //inf_leave
         //===//
         if (state.head != null) {
           state.head.xflags = (hold & 0xff);
@@ -553,14 +553,14 @@ class Inflate
           //=== NEEDBITS(16); */
           while (bits < 16) {
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; // out of this while 
             }
             have--;
             hold += input[next++] << bits;
             bits += 8;
           }
-          if (goto_inf_leave) continue; //inf_leave
+          if (inf_leave) continue; //inf_leave
           //===//
           state.length = hold;
           if (state.head != null) {
@@ -615,14 +615,20 @@ class Inflate
             next += copy;
             state.length -= copy;
           }
-          if (state.length != 0) continue; //inf_leave
+          if (state.length != 0) {
+            inf_leave = true;
+            continue; //inf_leave
+          }
         }
         state.length = 0;
         state.mode = NAME;
         /* falls through */
       case NAME:
         if (state.flags & 0x0800 != 0) {
-          if (have == 0) continue; //inf_leave
+          if (have == 0) {
+            inf_leave = true;
+            continue; //inf_leave
+          }
           copy = 0;
           do {
             // TODO: 2 or 1 bytes?
@@ -639,7 +645,10 @@ class Inflate
           }
           have -= copy;
           next += copy;
-          if (len != 0) continue; //inf_leave
+          if (len != 0) {
+            inf_leave = true;
+            continue; //inf_leave
+          }
         }
         else if (state.head != null) {
           state.head.name = null;
@@ -649,7 +658,10 @@ class Inflate
         /* falls through */
       case COMMENT:
         if (state.flags & 0x1000 != 0) {
-          if (have == 0) continue; //inf_leave
+          if (have == 0) {
+            inf_leave = true;
+            continue; //inf_leave
+          }
           copy = 0;
           do {
             len = input[next + copy++];
@@ -664,7 +676,10 @@ class Inflate
           }
           have -= copy;
           next += copy;
-          if (len != 0) continue; //inf_leave
+          if (len != 0) {
+            inf_leave = true;
+            continue; //inf_leave
+          }
         }
         else if (state.head != null) {
           state.head.comment = null;
@@ -676,14 +691,14 @@ class Inflate
           //=== NEEDBITS(16); */
           while (bits < 16) {
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; //out of this while
             }
             have--;
             hold += input[next++] << bits;
             bits += 8;
           }
-          if (goto_inf_leave) continue; //inf_leave
+          if (inf_leave) continue; //inf_leave
           //===//
           if (hold != (state.check & 0xffff)) {
             strm.msg = 'header crc mismatch';
@@ -705,14 +720,14 @@ class Inflate
         //=== NEEDBITS(32); */
         while (bits < 32) {
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; //out of this while
           }
           have--;
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (goto_inf_leave) continue;
+        if (inf_leave) continue;
         //===//
         strm.adler = state.check = ZSWAP32(hold);
         //=== INITBITS();
@@ -752,14 +767,14 @@ class Inflate
         //=== NEEDBITS(3); */
         while (bits < 3) {
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; //out of this while
           }
           have--;
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (goto_inf_leave) continue;
+        if (inf_leave) continue;
         //===//
         state.last = (hold & 0x01) == 1/*BITS(1)*/;
         //--- DROPBITS(1) ---//
@@ -782,6 +797,7 @@ class Inflate
             hold >>>= 2;
             bits -= 2;
             //---//
+            inf_leave = true;
             continue; //inf_leave
           }
         case 2:                             /* dynamic block */
@@ -804,14 +820,14 @@ class Inflate
         //=== NEEDBITS(32); */
         while (bits < 32) {
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; //out of this while
           }
           have--;
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (goto_inf_leave) continue; //inf_leave
+        if (inf_leave) continue; //inf_leave
         //===//
         if ((hold & 0xffff) != ((hold >>> 16) ^ 0xffff)) {
           strm.msg = 'invalid stored block lengths';
@@ -826,7 +842,10 @@ class Inflate
         bits = 0;
         //===//
         state.mode = COPY_;
-        if (flush == Z_TREES) continue; //inf_leave
+        if (flush == Z_TREES) {
+          inf_leave = true;
+          continue; //inf_leave
+        }
         /* falls through */
       case COPY_:
         state.mode = COPY;
@@ -836,7 +855,10 @@ class Inflate
         if (copy != 0) {
           if (copy > have) { copy = have; }
           if (copy > left) { copy = left; }
-          if (copy == 0) continue; //inf_leave
+          if (copy == 0) {
+            inf_leave = true;
+            continue; //inf_leave
+          }
           //--- zmemcpy(put, next, copy); ---
           Common.arraySet(cast output, cast input, next, copy, put);
           //---//
@@ -853,14 +875,14 @@ class Inflate
         //=== NEEDBITS(14); */
         while (bits < 14) {
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; //out of this while
           }
           have--;
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (goto_inf_leave) continue; //inf_leave
+        if (inf_leave) continue; //inf_leave
         //===//
         state.nlen = (hold & 0x1f)/*BITS(5)*/ + 257;
         //--- DROPBITS(5) ---//
@@ -893,14 +915,14 @@ class Inflate
           //=== NEEDBITS(3);
           while (bits < 3) {
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; //out of inner while
             }
             have--;
             hold += input[next++] << bits;
             bits += 8;
           }
-          if (goto_inf_leave) break; //out of outer while
+          if (inf_leave) break; //out of outer while
           //===//
           state.lens[order[state.have++]] = (hold & 0x07);//BITS(3);
           //--- DROPBITS(3) ---//
@@ -908,7 +930,7 @@ class Inflate
           bits -= 3;
           //---//
         }
-        if (goto_inf_leave) continue; //inf_leave
+        if (inf_leave) continue; //inf_leave
         while (state.have < 19) {
           state.lens[order[state.have++]] = 0;
         }
@@ -943,7 +965,7 @@ class Inflate
             if ((here_bits) <= bits) break; //out of inner while
             //--- PULLBYTE() ---//
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; //out of inner while
             }
             have--;
@@ -951,7 +973,7 @@ class Inflate
             bits += 8;
             //---//
           }
-          if (goto_inf_leave) break; //out of outer while
+          if (inf_leave) break; //out of outer while
           if (here_val < 16) {
             //--- DROPBITS(here.bits) ---//
             hold = hold >>> here_bits;
@@ -965,14 +987,14 @@ class Inflate
               n = here_bits + 2;
               while (bits < n) {
                 if (have == 0) { 
-                  goto_inf_leave = true;
+                  inf_leave = true;
                   break; //out of this while
                 }
                 have--;
                 hold += input[next++] << bits;
                 bits += 8;
               }
-              if (goto_inf_leave) break; //out of outer while
+              if (inf_leave) break; //out of outer while
               //===//
               //--- DROPBITS(here.bits) ---//
               hold >>>= here_bits;
@@ -995,14 +1017,14 @@ class Inflate
               n = here_bits + 3;
               while (bits < n) {
                 if (have == 0) { 
-                  goto_inf_leave = true;
+                  inf_leave = true;
                   break; //out of this while
                 }
                 have--;
                 hold += input[next++] << bits;
                 bits += 8;
               }
-              if (goto_inf_leave) break; //out of outer while
+              if (inf_leave) break; //out of outer while
               //===//
               //--- DROPBITS(here.bits) ---//
               hold >>>= here_bits;
@@ -1020,14 +1042,14 @@ class Inflate
               n = here_bits + 7;
               while (bits < n) {
                 if (have == 0) { 
-                  goto_inf_leave = true;
+                  inf_leave = true;
                   break; //out of this while
                 }
                 have--;
                 hold += input[next++] << bits;
                 bits += 8;
               }
-              if (goto_inf_leave) break; //out of outer while
+              if (inf_leave) break; //out of outer while
               //===//
               //--- DROPBITS(here.bits) ---//
               hold >>>= here_bits;
@@ -1052,7 +1074,7 @@ class Inflate
         }
 
         /* handle error breaks in while */
-        if (goto_inf_leave || state.mode == BAD) continue; //inf_leave
+        if (inf_leave || state.mode == BAD) continue; //inf_leave
 
         /* check for end-of-block code (better have one) */
         if (state.lens[256] == 0) {
@@ -1097,7 +1119,10 @@ class Inflate
         }
         //Tracev((stderr, 'inflate:       codes ok\n'));
         state.mode = LEN_;
-        if (flush == Z_TREES) continue; //inf_leave
+        if (flush == Z_TREES) {
+          inf_leave = true;
+          continue; //inf_leave
+        }
         /* falls through */
       case LEN_:
         state.mode = LEN;
@@ -1139,7 +1164,7 @@ class Inflate
           if (here_bits <= bits) { break; }
           //--- PULLBYTE() ---//
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; //out of this while
           }
           have--;
@@ -1147,7 +1172,7 @@ class Inflate
           bits += 8;
           //---//
         }
-        if (goto_inf_leave) continue; //inf_leave
+        if (inf_leave) continue; //inf_leave
         if (here_op != 0 && (here_op & 0xf0) == 0) {
           last_bits = here_bits;
           last_op = here_op;
@@ -1162,7 +1187,7 @@ class Inflate
             if ((last_bits + here_bits) <= bits) { break; }
             //--- PULLBYTE() ---//
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; //out of this while
             }
             have--;
@@ -1170,7 +1195,7 @@ class Inflate
             bits += 8;
             //---//
           }
-          if (goto_inf_leave) continue; //inf_leave
+          if (inf_leave) continue; //inf_leave
           //--- DROPBITS(last.bits) ---//
           hold >>>= last_bits;
           bits -= last_bits;
@@ -1210,14 +1235,14 @@ class Inflate
           n = state.extra;
           while (bits < n) {
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; //out of this while
             }
             have--;
             hold += input[next++] << bits;
             bits += 8;
           }
-          if (goto_inf_leave) continue; //inf_leave
+          if (inf_leave) continue; //inf_leave
           //===//
           state.length += hold & ((1 << state.extra) -1)/*BITS(state.extra)*/;
           //--- DROPBITS(state.extra) ---//
@@ -1240,7 +1265,7 @@ class Inflate
           if ((here_bits) <= bits) { break; }
           //--- PULLBYTE() ---//
           if (have == 0) { 
-            goto_inf_leave = true;
+            inf_leave = true;
             break; //out of this while
           }
           have--;
@@ -1248,7 +1273,7 @@ class Inflate
           bits += 8;
           //---//
         }
-        if (goto_inf_leave) continue; //inf_leave
+        if (inf_leave) continue; //inf_leave
         if ((here_op & 0xf0) == 0) {
           last_bits = here_bits;
           last_op = here_op;
@@ -1263,7 +1288,7 @@ class Inflate
             if ((last_bits + here_bits) <= bits) { break; }
             //--- PULLBYTE() ---//
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; //out of this while
             }
             have--;
@@ -1271,7 +1296,7 @@ class Inflate
             bits += 8;
             //---//
           }
-          if (goto_inf_leave) continue; //inf_leave
+          if (inf_leave) continue; //inf_leave
           //--- DROPBITS(last.bits) ---//
           hold >>>= last_bits;
           bits -= last_bits;
@@ -1298,14 +1323,14 @@ class Inflate
           n = state.extra;
           while (bits < n) {
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; //out of this while
             }
             have--;
             hold += input[next++] << bits;
             bits += 8;
           }
-          if (goto_inf_leave) continue; //inf_leave
+          if (inf_leave) continue; //inf_leave
           //===//
           state.offset += hold & ((1 << state.extra) -1)/*BITS(state.extra)*/;
           //--- DROPBITS(state.extra) ---//
@@ -1325,7 +1350,10 @@ class Inflate
         state.mode = MATCH;
         /* falls through */
       case MATCH:
-        if (left == 0) continue; //inf_leave
+        if (left == 0) {
+          inf_leave = true;
+          continue; //inf_leave
+        }
         copy = _out - left;
         if (state.offset > copy) {         /* copy from window */
           copy = state.offset - copy;
@@ -1374,7 +1402,10 @@ class Inflate
         } while (--copy != 0);
         if (state.length == 0) { state.mode = LEN; }
       case LIT:
-        if (left == 0) continue; //inf_leave
+        if (left == 0) {
+          inf_leave = true;
+          continue; //inf_leave
+        }
         output[put++] = state.length;
         left--;
         state.mode = LEN;
@@ -1383,7 +1414,7 @@ class Inflate
           //=== NEEDBITS(32);
           while (bits < 32) {
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; //out of this while
             }
             have--;
@@ -1391,7 +1422,7 @@ class Inflate
             hold |= input[next++] << bits;
             bits += 8;
           }
-          if (goto_inf_leave) continue; //inf_leave
+          if (inf_leave) continue; //inf_leave
           //===//
           _out -= left;
           strm.total_out += _out;
@@ -1422,14 +1453,14 @@ class Inflate
           //=== NEEDBITS(32);
           while (bits < 32) {
             if (have == 0) { 
-              goto_inf_leave = true;
+              inf_leave = true;
               break; //out of this while
             }
             have--;
             hold += input[next++] << bits;
             bits += 8;
           }
-          if (goto_inf_leave) continue; //inf_leave
+          if (inf_leave) continue; //inf_leave
           //===//
           if (hold != (state.total & 0xffffffff)) {
             strm.msg = 'incorrect length check';
@@ -1446,9 +1477,11 @@ class Inflate
         /* falls through */
       case DONE:
         ret = Z_STREAM_END;
+        inf_leave = true;
         continue; //inf_leave
       case BAD:
         ret = Z_DATA_ERROR;
+        inf_leave = true;
         continue; //inf_leave
       case MEM:
         return Z_MEM_ERROR;

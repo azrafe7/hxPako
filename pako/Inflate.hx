@@ -205,7 +205,7 @@ class Inflate
     //NOTE(hx): search codebase for ~~
     //_mode = (mode == ~~mode) ? mode : ((mode == true) ? Z_FINISH : Z_NO_FLUSH);
     if (Std.is(mode, Int)) _mode = mode;
-    else if (Std.is(mode, Bool)) _mode = mode ? Z_FINISH : Z_NO_FLSH;
+    else if (Std.is(mode, Bool)) _mode = mode ? Z_FINISH : Z_NO_FLUSH;
     else throw "Invalid mode.";
 
     // Convert data if needed

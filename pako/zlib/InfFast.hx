@@ -105,9 +105,12 @@ class InfFast
     /* decode literals and length/distances until end-of-block or not enough
        input data or output space */
 
-    var goto_top = false;
+    var exit_top = false;
     //top:
     do {
+      if (exit_top) break;
+      exit_top = false;
+      
       if (bits < 15) {
         hold += input[_in++] << bits;
         bits += 8;
@@ -117,8 +120,6 @@ class InfFast
 
       here = lcode[hold & lmask];
 
-      goto_top = false;
-      
       //dolen:
       while (true) { // Goto emulation
         op = here >>> 24/*here.bits*/;
@@ -175,7 +176,7 @@ class InfFast
               if (dist > dmax) {
                 strm.msg = 'invalid distance too far back';
                 state.mode = Inflate.BAD;
-                goto_top = true;
+                exit_top = true;
                 break; //out of dodist
               }
   //#endif
@@ -189,7 +190,7 @@ class InfFast
                   if (state.sane != 0) {
                     strm.msg = 'invalid distance too far back';
                     state.mode = Inflate.BAD;
-                    goto_top = true;
+                    exit_top = true;
                     break; //out of dodist
                   }
 
@@ -295,7 +296,7 @@ class InfFast
             else {
               strm.msg = 'invalid distance code';
               state.mode = Inflate.BAD;
-              goto_top = true;
+              exit_top = true;
               break; //out of dodist
             }
 
@@ -303,7 +304,7 @@ class InfFast
             
           } // end of dodist
           
-          if (goto_top) break; //out of dolen
+          if (exit_top) break; //out of dolen
         }
         else if ((op & 64) == 0) {              /* 2nd level length code */
           here = lcode[(here & 0xffff)/*here.val*/ + (hold & ((1 << op) - 1))];
@@ -312,20 +313,20 @@ class InfFast
         else if (op & 32 != 0) {                     /* end-of-block */
           //Tracevv((stderr, "inflate:         end of block\n"));
           state.mode = Inflate.TYPE;
-          goto_top = true;
+          exit_top = true;
           break; //out of dolen
         }
         else {
           strm.msg = 'invalid literal/length code';
           state.mode = Inflate.BAD;
-          goto_top = true;
+          exit_top = true;
           break; //out of dolen
         }
 
         break; // need to emulate goto via "continue"
       } // end of dolen
       
-      if (goto_top) continue; //top
+      if (exit_top) continue; //top
       
     } while (_in < last && _out < end);
     // end of top
