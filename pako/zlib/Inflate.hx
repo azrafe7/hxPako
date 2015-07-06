@@ -276,7 +276,7 @@ class Inflate
    output will fall in the output data, making match copies simpler and faster.
    The advantage may be dependent on the size of the processor's data caches.
    */
-  static function updatewindow(strm:ZStream, src, end, copy) {
+  static function updatewindow(strm:ZStream, src:UInt8Array, end, copy) {
     var dist;
     var state = strm.inflateState;
 

@@ -7,8 +7,7 @@ class Common
 {
   //NOTE(hx): blit (reset pos to respective offsets?)
   static public function arraySet(dest:ArrayBufferView, src:ArrayBufferView, src_offs:Int, len:Int, dest_offs:Int) {
-    dest.buffer.blit(dest_offs, src.buffer, src_offs, len);
-    
+    dest.buffer.blit(dest.byteOffset + dest_offs, src.buffer, src.byteOffset + src_offs, len);
   }
   
   //NOTE(hx): moved here from Trees and Deflate

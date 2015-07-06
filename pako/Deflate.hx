@@ -341,7 +341,7 @@ class Deflate
     this.chunks = [];
     this.err = status;
     this.msg = this.strm.msg;
-  };
+  }
 
 
   /**
