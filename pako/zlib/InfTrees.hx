@@ -45,7 +45,7 @@ class InfTrees
     28, 28, 29, 29, 64, 64
   ]);
 
-  static public function inflate_table(type:Int, lens:UInt16Array, lens_index, codes, table:Int32Array, table_index, work:UInt16Array, opts:Options):ErrorStatus
+  static public function inflate_table(type:Int, lens:UInt16Array, lens_index, codes, table:Int32Array, table_index, work:UInt16Array, opts:Options):Int
   {
     var bits:Int = 0;
 
@@ -145,7 +145,7 @@ class InfTrees
       table[table_index++] = (1 << 24) | (64 << 16) | 0;
 
       opts.bits = 1;
-      return Z_OK;     /* no symbols, but wait for decoding to report error */
+      return ErrorStatus.Z_OK;     /* no symbols, but wait for decoding to report error */
     }
     min = 1;
     while (min < max) {
@@ -163,12 +163,12 @@ class InfTrees
       left <<= 1;
       left -= count[len];
       if (left < 0) {
-        return Z_ERRNO;
+        return ErrorStatus.Z_ERRNO;
       }        /* over-subscribed */
       len++;
     }
     if (left > 0 && (type == CODES || max != 1)) {
-      return Z_ERRNO;                      /* incomplete set */
+      return ErrorStatus.Z_ERRNO;                      /* incomplete set */
     }
 
     /* generate offsets into symbol table for each length for sorting */
@@ -255,7 +255,7 @@ class InfTrees
     /* check available table space */
     if ((type == LENS && used > ENOUGH_LENS) ||
       (type == DISTS && used > ENOUGH_DISTS)) {
-      return Z_STREAM_END;
+      return ErrorStatus.Z_STREAM_END;
     }
 
     var i=0;
@@ -332,7 +332,7 @@ class InfTrees
         used += 1 << curr;
         if ((type == LENS && used > ENOUGH_LENS) ||
           (type == DISTS && used > ENOUGH_DISTS)) {
-          return Z_STREAM_END;
+          return ErrorStatus.Z_STREAM_END;
         }
 
         /* point entry in root table to sub-table */
@@ -357,6 +357,6 @@ class InfTrees
     /* set return parameters */
     //opts.table_index += used;
     opts.bits = root;
-    return Z_OK;
+    return ErrorStatus.Z_OK;
   }
 }

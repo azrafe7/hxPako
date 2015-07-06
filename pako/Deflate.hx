@@ -13,12 +13,12 @@ import pako.zlib.GZHeader;
 
 
 typedef DeflateOptions = {
-  @:optional var level:CompressionLevel;
-  @:optional var method:Method;
+  @:optional var level:Int;
+  @:optional var method:Int;
   @:optional var chunkSize:Int;
   @:optional var windowBits:Int;
   @:optional var memLevel:Int;
-  @:optional var strategy:Strategy;
+  @:optional var strategy:Int;
   @:optional var raw:Bool;
   @:optional var gzip:Bool;
   @:optional var header:GZHeader;
@@ -136,11 +136,11 @@ class Deflate
 {
   static var DEFAULT_OPTIONS:DeflateOptions = {
     level: CompressionLevel.Z_DEFAULT_COMPRESSION,
-    method: Z_DEFLATED,
+    method: Method.Z_DEFLATED,
     chunkSize: 16384,
     windowBits: 15,
     memLevel: 8,
-    strategy: Z_DEFAULT_STRATEGY,
+    strategy: Strategy.Z_DEFAULT_STRATEGY,
     raw: false,
     gzip: false,
     header: null,
@@ -149,7 +149,7 @@ class Deflate
   
   public var options:DeflateOptions = null;
   
-  public var err:ErrorStatus    = Z_OK;      // error code, if happens (0 = Z_OK)
+  public var err:Int    = ErrorStatus.Z_OK;      // error code, if happens (0 = Z_OK)
   public var msg:String    = '';     // error message
   public var ended:Bool  = false;  // used to avoid multiple onEnd() calls
   public var chunks:Array<UInt8Array> = [];     // chunks of compressed data
@@ -192,7 +192,7 @@ class Deflate
       this.options.strategy
     );
 
-    if (status != Z_OK) {
+    if (status != ErrorStatus.Z_OK) {
       throw Messages.get(status);
     }
 
@@ -233,14 +233,14 @@ class Deflate
   public function push(data:UInt8Array, mode:Dynamic = false) {
     var strm = this.strm;
     var chunkSize = this.options.chunkSize;
-    var status, _mode:Flush;
+    var status, _mode:Int;
 
     if (this.ended) { return false; }
 
     //NOTE(hx): search codebase for ~~
     //_mode = (mode == ~~mode) ? mode : ((mode == true) ? Z_FINISH : Z_NO_FLUSH);
     if (Std.is(mode, Int)) _mode = mode;
-    else if (Std.is(mode, Bool)) _mode = mode ? Z_FINISH : Z_NO_FLUSH;
+    else if (Std.is(mode, Bool)) _mode = mode ? Flush.Z_FINISH : Flush.Z_NO_FLUSH;
     else throw "Invalid mode.";
 
     // Convert data if needed
@@ -265,12 +265,12 @@ class Deflate
       }
       status = ZlibDeflate.deflate(strm, _mode);    /* no bad return value */
 
-      if (status != Z_STREAM_END && status != Z_OK) {
+      if (status != ErrorStatus.Z_STREAM_END && status != ErrorStatus.Z_OK) {
         this.onEnd(status);
         this.ended = true;
         return false;
       }
-      if (strm.avail_out == 0 || (strm.avail_in == 0 && (_mode == Z_FINISH || _mode == Z_SYNC_FLUSH))) {
+      if (strm.avail_out == 0 || (strm.avail_in == 0 && (_mode == Flush.Z_FINISH || _mode == Flush.Z_SYNC_FLUSH))) {
         //NOTE(hx): only supporting UInt8Array
         /*if (this.options.to === 'string') {
           this.onData(strings.buf2binstring(utils.shrinkBuf(strm.output, strm.next_out)));
@@ -279,19 +279,19 @@ class Deflate
           this.onData(Common.shrinkBuf(strm.output, strm.next_out));
         }
       }
-    } while ((strm.avail_in > 0 || strm.avail_out == 0) && status != Z_STREAM_END);
+    } while ((strm.avail_in > 0 || strm.avail_out == 0) && status != ErrorStatus.Z_STREAM_END);
 
     // Finalize on the last chunk.
-    if (_mode == Z_FINISH) {
+    if (_mode == Flush.Z_FINISH) {
       status = ZlibDeflate.deflateEnd(this.strm);
       this.onEnd(status);
       this.ended = true;
-      return status == Z_OK;
+      return status == ErrorStatus.Z_OK;
     }
 
     // callback interim results if Z_SYNC_FLUSH.
-    if (_mode == Z_SYNC_FLUSH) {
-      this.onEnd(Z_OK);
+    if (_mode == Flush.Z_SYNC_FLUSH) {
+      this.onEnd(ErrorStatus.Z_OK);
       strm.avail_out = 0;
       return true;
     }
@@ -326,11 +326,11 @@ class Deflate
    * or if an error happened. By default - join collected chunks,
    * free memory and fill `results` / `err` properties.
    **/
-  public var onEnd:ErrorStatus->Void;
+  public var onEnd:Int->Void;
   
-  function _onEnd(status:ErrorStatus) {
+  function _onEnd(status:Int) {
     // On success - join
-    if (status == Z_OK) {
+    if (status == ErrorStatus.Z_OK) {
       //NOTE(hx): only supporting UInt8Array
       /*if (this.options.to === 'string') {
         this.result = this.chunks.join('');

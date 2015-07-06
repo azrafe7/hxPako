@@ -987,7 +987,7 @@ class Trees
     //NOTE(hx): check loop with two inc clauses
     while (n <= 31) {
       if ((black_mask & 1 == 1) && (s.dyn_ltree[n*2]/*.Freq*/ != 0)) {
-        return Z_BINARY;
+        return DataType.Z_BINARY;
       }
       n++;
       black_mask >>>= 1;
@@ -996,18 +996,18 @@ class Trees
     /* Check for textual ("white-listed") bytes. */
     if (s.dyn_ltree[9 * 2]/*.Freq*/ != 0 || s.dyn_ltree[10 * 2]/*.Freq*/ != 0 ||
         s.dyn_ltree[13 * 2]/*.Freq*/ != 0) {
-      return Z_TEXT;
+      return DataType.Z_TEXT;
     }
     for (n in 32...LITERALS) {
       if (s.dyn_ltree[n * 2]/*.Freq*/ != 0) {
-        return Z_TEXT;
+        return DataType.Z_TEXT;
       }
     }
 
     /* There are no "black-listed" or "white-listed" bytes:
      * this stream either is empty or has tolerated ("gray-listed") bytes only.
      */
-    return Z_BINARY;
+    return DataType.Z_BINARY;
   }
 
 
@@ -1078,7 +1078,7 @@ class Trees
     if (s.level > 0) {
 
       /* Check if the file is binary or text */
-      if (s.strm.data_type == Z_UNKNOWN) {
+      if (s.strm.data_type == DataType.Z_UNKNOWN) {
         s.strm.data_type = detect_data_type(s);
       }
 
@@ -1125,7 +1125,7 @@ class Trees
        */
       _tr_stored_block(s, buf, stored_len, last);
 
-    } else if (s.strategy == Z_FIXED || static_lenb == opt_lenb) {
+    } else if (s.strategy == Strategy.Z_FIXED || static_lenb == opt_lenb) {
 
       send_bits(s, (STATIC_TREES<<1) + (last ? 1 : 0), 3);
       compress_block(s, static_ltree, static_dtree);

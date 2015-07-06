@@ -485,7 +485,7 @@ class Deflate
    * NOTE: this function should be optimized to avoid extra copying from
    * window to pending_buf.
    */
-  static function deflate_stored(s:DeflateState, flush:Flush) {
+  static function deflate_stored(s:DeflateState, flush:Int) {
     /* Stored blocks are limited to 0xffff bytes, pending_buf is limited
      * to pending_buf_size, and each stored block has a 5 byte header:
      */
@@ -508,7 +508,7 @@ class Deflate
   //      }
 
         fill_window(s);
-        if (s.lookahead == 0 && flush == Z_NO_FLUSH) {
+        if (s.lookahead == 0 && flush == Flush.Z_NO_FLUSH) {
           return BS_NEED_MORE;
         }
 
@@ -554,7 +554,7 @@ class Deflate
 
     s.insert = 0;
 
-    if (flush == Z_FINISH) {
+    if (flush == Flush.Z_FINISH) {
       /*** FLUSH_BLOCK(s, 1); ***/
       flush_block_only(s, true);
       if (s.strm.avail_out == 0) {
@@ -595,7 +595,7 @@ class Deflate
        */
       if (s.lookahead < MIN_LOOKAHEAD) {
         fill_window(s);
-        if (s.lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+        if (s.lookahead < MIN_LOOKAHEAD && flush == Flush.Z_NO_FLUSH) {
           return BS_NEED_MORE;
         }
         if (s.lookahead == 0) {
@@ -686,7 +686,7 @@ class Deflate
       }
     }
     s.insert = ((s.strstart < (MIN_MATCH-1)) ? s.strstart : MIN_MATCH-1);
-    if (flush == Z_FINISH) {
+    if (flush == Flush.Z_FINISH) {
       /*** FLUSH_BLOCK(s, 1); ***/
       flush_block_only(s, true);
       if (s.strm.avail_out == 0) {
@@ -726,7 +726,7 @@ class Deflate
        */
       if (s.lookahead < MIN_LOOKAHEAD) {
         fill_window(s);
-        if (s.lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+        if (s.lookahead < MIN_LOOKAHEAD && flush == Flush.Z_NO_FLUSH) {
           return BS_NEED_MORE;
         }
         if (s.lookahead == 0) { break; } /* flush the current block */
@@ -760,7 +760,7 @@ class Deflate
         /* longest_match() sets match_start */
 
         if (s.match_length <= 5 &&
-           (s.strategy == Z_FILTERED || (s.match_length == MIN_MATCH && s.strstart - s.match_start > 4096/*TOO_FAR*/))) {
+           (s.strategy == Strategy.Z_FILTERED || (s.match_length == MIN_MATCH && s.strstart - s.match_start > 4096/*TOO_FAR*/))) {
 
           /* If prev_match is also MIN_MATCH, match_start is garbage
            * but we will ignore the current match anyway.
@@ -846,7 +846,7 @@ class Deflate
       s.match_available = false;
     }
     s.insert = s.strstart < MIN_MATCH-1 ? s.strstart : MIN_MATCH-1;
-    if (flush == Z_FINISH) {
+    if (flush == Flush.Z_FINISH) {
       /*** FLUSH_BLOCK(s, 1); ***/
       flush_block_only(s, true);
       if (s.strm.avail_out == 0) {
@@ -887,7 +887,7 @@ class Deflate
        */
       if (s.lookahead <= MAX_MATCH) {
         fill_window(s);
-        if (s.lookahead <= MAX_MATCH && flush == Z_NO_FLUSH) {
+        if (s.lookahead <= MAX_MATCH && flush == Flush.Z_NO_FLUSH) {
           return BS_NEED_MORE;
         }
         if (s.lookahead == 0) { break; } /* flush the current block */
@@ -944,7 +944,7 @@ class Deflate
       }
     }
     s.insert = 0;
-    if (flush == Z_FINISH) {
+    if (flush == Flush.Z_FINISH) {
       /*** FLUSH_BLOCK(s, 1); ***/
       flush_block_only(s, true);
       if (s.strm.avail_out == 0) {
@@ -976,7 +976,7 @@ class Deflate
       if (s.lookahead == 0) {
         fill_window(s);
         if (s.lookahead == 0) {
-          if (flush == Z_NO_FLUSH) {
+          if (flush == Flush.Z_NO_FLUSH) {
             return BS_NEED_MORE;
           }
           break;      /* flush the current block */
@@ -1000,7 +1000,7 @@ class Deflate
       }
     }
     s.insert = 0;
-    if (flush == Z_FINISH) {
+    if (flush == Flush.Z_FINISH) {
       /*** FLUSH_BLOCK(s, 1); ***/
       flush_block_only(s, true);
       if (s.strm.avail_out == 0) {
@@ -1074,11 +1074,11 @@ class Deflate
     var s:DeflateState;
 
     if (strm == null || strm.deflateState == null) {
-      return err(strm, Z_STREAM_ERROR);
+      return err(strm, ErrorStatus.Z_STREAM_ERROR);
     }
 
     strm.total_in = strm.total_out = 0;
-    strm.data_type = Z_UNKNOWN;
+    strm.data_type = DataType.Z_UNKNOWN;
 
     s = strm.deflateState;
     s.pending = 0;
@@ -1094,15 +1094,15 @@ class Deflate
       0  // crc32(0, Z_NULL, 0)
     :
       1; // adler32(0, Z_NULL, 0)
-    s.last_flush = Z_NO_FLUSH;
+    s.last_flush = Flush.Z_NO_FLUSH;
     Trees._tr_init(s);
-    return Z_OK;
+    return ErrorStatus.Z_OK;
   }
 
 
   static public function deflateReset(strm:ZStream) {
     var ret = deflateResetKeep(strm);
-    if (ret == Z_OK) {
+    if (ret == ErrorStatus.Z_OK) {
       lm_init(strm.deflateState);
     }
     return ret;
@@ -1110,16 +1110,16 @@ class Deflate
 
 
   static public function deflateSetHeader(strm:ZStream, head) {
-    if (strm == null || strm.deflateState == null) { return Z_STREAM_ERROR; }
-    if (strm.deflateState.wrap != 2) { return Z_STREAM_ERROR; }
+    if (strm == null || strm.deflateState == null) { return ErrorStatus.Z_STREAM_ERROR; }
+    if (strm.deflateState.wrap != 2) { return ErrorStatus.Z_STREAM_ERROR; }
     strm.deflateState.gzhead = head;
-    return Z_OK;
+    return ErrorStatus.Z_OK;
   }
 
 
-  static public function deflateInit2(strm:ZStream, level:CompressionLevel, method:Method, windowBits, memLevel, strategy:Strategy) {
+  static public function deflateInit2(strm:ZStream, level:Int, method:Int, windowBits, memLevel, strategy:Int) {
     if (strm == null) { // == Z_NULL
-      return Z_STREAM_ERROR;
+      return ErrorStatus.Z_STREAM_ERROR;
     }
     var wrap = 1;
 
@@ -1138,10 +1138,10 @@ class Deflate
     }
 
 
-    if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != Z_DEFLATED ||
+    if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != Method.Z_DEFLATED ||
       windowBits < 8 || windowBits > 15 || level < 0 || level > 9 ||
       strategy < 0 || strategy > Strategy.Z_FIXED) {
-      return err(strm, Z_STREAM_ERROR);
+      return err(strm, ErrorStatus.Z_STREAM_ERROR);
     }
 
 
@@ -1189,27 +1189,27 @@ class Deflate
     return deflateReset(strm);
   }
 
-  static public function deflateInit(strm:ZStream, level:CompressionLevel) {
-    return deflateInit2(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY);
+  static public function deflateInit(strm:ZStream, level:Int) {
+    return deflateInit2(strm, level, Method.Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL, Strategy.Z_DEFAULT_STRATEGY);
   }
 
 
-  static public function deflate(strm:ZStream, flush:Flush) {
+  static public function deflate(strm:ZStream, flush:Int) {
     var old_flush, s:DeflateState;
     var beg, val; // for gzip header write only
 
     //NOTE(hx): chech flush
     if (strm == null || strm.deflateState == null ||
-        flush > Z_BLOCK || flush < 0) {
-      return strm != null ? err(strm, Z_STREAM_ERROR) : Z_STREAM_ERROR;
+        flush > Flush.Z_BLOCK || flush < 0) {
+      return strm != null ? err(strm, ErrorStatus.Z_STREAM_ERROR) : ErrorStatus.Z_STREAM_ERROR;
     }
 
     s = strm.deflateState;
 
     if (strm.output == null ||
         (strm.input == null && strm.avail_in != 0) ||
-        (s.status == FINISH_STATE && flush != Z_FINISH)) {
-      return err(strm, (strm.avail_out == 0) ? Z_BUF_ERROR : Z_STREAM_ERROR);
+        (s.status == FINISH_STATE && flush != Flush.Z_FINISH)) {
+      return err(strm, (strm.avail_out == 0) ? ErrorStatus.Z_BUF_ERROR : ErrorStatus.Z_STREAM_ERROR);
     }
 
     s.strm = strm; /* just in case */
@@ -1232,7 +1232,7 @@ class Deflate
           put_byte(s, 0);
           //NOTE(hx): 
           put_byte(s, s.level == 9 ? 2 :
-                      (s.strategy >= Z_HUFFMAN_ONLY || s.level < 2 ?
+                      (s.strategy >= Strategy.Z_HUFFMAN_ONLY || s.level < 2 ?
                        4 : 0));
           put_byte(s, OS_CODE);
           s.status = BUSY_STATE;
@@ -1250,7 +1250,7 @@ class Deflate
           put_byte(s, (s.gzhead.time >> 16) & 0xff);
           put_byte(s, (s.gzhead.time >> 24) & 0xff);
           put_byte(s, s.level == 9 ? 2 :
-                      (s.strategy >= Z_HUFFMAN_ONLY || s.level < 2 ?
+                      (s.strategy >= Strategy.Z_HUFFMAN_ONLY || s.level < 2 ?
                        4 : 0));
           put_byte(s, s.gzhead.os & 0xff);
           if (s.gzhead.extra != null && s.gzhead.extra.length > 0) {
@@ -1266,10 +1266,10 @@ class Deflate
       }
       else // DEFLATE header
       {
-        var header = (Z_DEFLATED + ((s.w_bits - 8) << 4)) << 8;
+        var header = (Method.Z_DEFLATED + ((s.w_bits - 8) << 4)) << 8;
         var level_flags = -1;
 
-        if (s.strategy >= Z_HUFFMAN_ONLY || s.level < 2) {
+        if (s.strategy >= Strategy.Z_HUFFMAN_ONLY || s.level < 2) {
           level_flags = 0;
         } else if (s.level < 6) {
           level_flags = 1;
@@ -1429,7 +1429,7 @@ class Deflate
          * return OK instead of BUF_ERROR at next call of deflate:
          */
         s.last_flush = -1;
-        return Z_OK;
+        return ErrorStatus.Z_OK;
       }
 
       /* Make sure there is something to do and avoid duplicate consecutive
@@ -1437,21 +1437,21 @@ class Deflate
        * returning Z_STREAM_END instead of Z_BUF_ERROR.
        */
     } else if (strm.avail_in == 0 && rank(flush) <= rank(old_flush) &&
-      flush != Z_FINISH) {
-      return err(strm, Z_BUF_ERROR);
+      flush != Flush.Z_FINISH) {
+      return err(strm, ErrorStatus.Z_BUF_ERROR);
     }
 
     /* User must not provide more input after the first FINISH: */
     if (s.status == FINISH_STATE && strm.avail_in != 0) {
-      return err(strm, Z_BUF_ERROR);
+      return err(strm, ErrorStatus.Z_BUF_ERROR);
     }
 
     /* Start a new block or continue the current one.
      */
     if (strm.avail_in != 0 || s.lookahead != 0 ||
-      (flush != Z_NO_FLUSH && s.status != FINISH_STATE)) {
-      var bstate = (s.strategy == Z_HUFFMAN_ONLY) ? deflate_huff(s, flush) :
-        (s.strategy == Z_RLE ? deflate_rle(s, flush) :
+      (flush != Flush.Z_NO_FLUSH && s.status != FINISH_STATE)) {
+      var bstate = (s.strategy == Strategy.Z_HUFFMAN_ONLY) ? deflate_huff(s, flush) :
+        (s.strategy == Strategy.Z_RLE ? deflate_rle(s, flush) :
           configuration_table[s.level].func(s, flush));
 
       if (bstate == BS_FINISH_STARTED || bstate == BS_FINISH_DONE) {
@@ -1462,7 +1462,7 @@ class Deflate
           s.last_flush = -1;
           /* avoid BUF_ERROR next call, see above */
         }
-        return Z_OK;
+        return ErrorStatus.Z_OK;
         /* If flush != Z_NO_FLUSH && avail_out == 0, the next call
          * of deflate should use the same flush parameter to make sure
          * that the flush is complete. So we don't have to output an
@@ -1472,16 +1472,16 @@ class Deflate
          */
       }
       if (bstate == BS_BLOCK_DONE) {
-        if (flush == Z_PARTIAL_FLUSH) {
+        if (flush == Flush.Z_PARTIAL_FLUSH) {
           Trees._tr_align(s);
         }
-        else if (flush != Z_BLOCK) { /* FULL_FLUSH or SYNC_FLUSH */
+        else if (flush != Flush.Z_BLOCK) { /* FULL_FLUSH or SYNC_FLUSH */
 
           Trees._tr_stored_block(s, 0, 0, false);
           /* For a full flush, this empty block will be recognized
            * as a special marker by inflate_sync().
            */
-          if (flush == Z_FULL_FLUSH) {
+          if (flush == Flush.Z_FULL_FLUSH) {
             /*** CLEAR_HASH(s); ***/             /* forget history */
             Common.zero(cast s.head); // Fill with NIL (= 0);
 
@@ -1495,15 +1495,15 @@ class Deflate
         flush_pending(strm);
         if (strm.avail_out == 0) {
           s.last_flush = -1; /* avoid BUF_ERROR at next call, see above */
-          return Z_OK;
+          return ErrorStatus.Z_OK;
         }
       }
     }
     //Assert(strm->avail_out > 0, "bug2");
     //if (strm.avail_out <= 0) { throw new Error("bug2");}
 
-    if (flush != Z_FINISH) { return Z_OK; }
-    if (s.wrap <= 0) { return Z_STREAM_END; }
+    if (flush != Flush.Z_FINISH) { return ErrorStatus.Z_OK; }
+    if (s.wrap <= 0) { return ErrorStatus.Z_STREAM_END; }
 
     /* Write the trailer */
     if (s.wrap == 2) {
@@ -1528,14 +1528,14 @@ class Deflate
      */
     if (s.wrap > 0) { s.wrap = -s.wrap; }
     /* write the trailer only once! */
-    return s.pending != 0 ? Z_OK : Z_STREAM_END;
+    return s.pending != 0 ? ErrorStatus.Z_OK : ErrorStatus.Z_STREAM_END;
   }
 
   static public function deflateEnd(strm:ZStream) {
     var status;
 
     if (strm == null/*== Z_NULL*/ || strm.deflateState == null/*== Z_NULL*/) {
-      return Z_STREAM_ERROR;
+      return ErrorStatus.Z_STREAM_ERROR;
     }
 
     status = strm.deflateState.status;
@@ -1547,12 +1547,12 @@ class Deflate
       status != BUSY_STATE &&
       status != FINISH_STATE
     ) {
-      return err(strm, Z_STREAM_ERROR);
+      return err(strm, ErrorStatus.Z_STREAM_ERROR);
     }
 
     strm.deflateState = null;
 
-    return status == BUSY_STATE ? err(strm, Z_DATA_ERROR) : Z_OK;
+    return status == BUSY_STATE ? err(strm, ErrorStatus.Z_DATA_ERROR) : ErrorStatus.Z_OK;
   }
 }
 
@@ -1577,7 +1577,7 @@ class DeflateState
   var wrap:Int = 0;              /* bit 0 true for zlib, bit 1 true for gzip */
   var gzhead:GZHeader = null;         /* gzip header information to write */
   var gzindex:Int = 0;           /* where in extra, name, or comment */
-  var method:Method = Z_DEFLATED; /* can only be DEFLATED */
+  var method:Int = Method.Z_DEFLATED; /* can only be DEFLATED */
   var last_flush:Int = -1;   /* value of flush param for previous deflate call */
 
   var w_size:Int = 0;  /* LZ77 window size (32K by default) */
@@ -1651,9 +1651,9 @@ class DeflateState
    * greater than this length. This saves time but degrades compression.
    * max_insert_length is used only for compression levels <= 3.
    */
-
-  var level:CompressionLevel = CompressionLevel.Z_NO_COMPRESSION;     /* compression level (1..9) */
-  var strategy:Strategy = Strategy.Z_DEFAULT_STRATEGY;  /* favor or force Huffman coding*/
+  
+  var level:Int = CompressionLevel.Z_NO_COMPRESSION;     /* compression level (1..9) */
+  var strategy:Int = Strategy.Z_DEFAULT_STRATEGY;  /* favor or force Huffman coding*/
 
   var good_match:Int = 0;
   /* Use a faster search when the previous match is longer than this */

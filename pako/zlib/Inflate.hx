@@ -117,7 +117,7 @@ class Inflate
   static public function inflateResetKeep(strm:ZStream) {
     var state:InflateState;
 
-    if (strm == null || strm.inflateState == null) { return Z_STREAM_ERROR; }
+    if (strm == null || strm.inflateState == null) { return ErrorStatus.Z_STREAM_ERROR; }
     state = strm.inflateState;
     strm.total_in = strm.total_out = state.total = 0;
     strm.msg = ''; /*Z_NULL*/
@@ -138,13 +138,13 @@ class Inflate
     state.sane = 1;
     state.back = -1;
     //Tracev((stderr, "inflate: reset\n"));
-    return Z_OK;
+    return ErrorStatus.Z_OK;
   }
 
   static public function inflateReset(strm:ZStream) {
     var state;
 
-    if (strm == null || strm.inflateState == null) { return Z_STREAM_ERROR; }
+    if (strm == null || strm.inflateState == null) { return ErrorStatus.Z_STREAM_ERROR; }
     state = strm.inflateState;
     state.wsize = 0;
     state.whave = 0;
@@ -158,7 +158,7 @@ class Inflate
     var state:InflateState;
 
     /* get the state */
-    if (strm == null || strm.inflateState == null) { return Z_STREAM_ERROR; }
+    if (strm == null || strm.inflateState == null) { return ErrorStatus.Z_STREAM_ERROR; }
     state = strm.inflateState;
 
     /* extract wrap request from windowBits parameter */
@@ -175,7 +175,7 @@ class Inflate
 
     /* set number of window bits, free window if different */
     if (windowBits != 0 && (windowBits < 8 || windowBits > 15)) {
-      return Z_STREAM_ERROR;
+      return ErrorStatus.Z_STREAM_ERROR;
     }
     if (state.window != null && state.wbits != windowBits) {
       state.window = null;
@@ -191,7 +191,7 @@ class Inflate
     var ret;
     var state:InflateState;
 
-    if (strm == null) { return Z_STREAM_ERROR; }
+    if (strm == null) { return ErrorStatus.Z_STREAM_ERROR; }
     //strm.msg = Z_NULL;                 /* in case we return an error */
 
     state = new InflateState();
@@ -201,7 +201,7 @@ class Inflate
     strm.inflateState = state;
     state.window = null/*Z_NULL*/;
     ret = inflateReset2(strm, windowBits);
-    if (ret != Z_OK) {
+    if (ret != ErrorStatus.Z_OK) {
       strm.inflateState = null/*Z_NULL*/;
     }
     return ret;
@@ -318,7 +318,7 @@ class Inflate
     return 0;
   }
 
-  static public function inflate(strm:ZStream, flush) {
+  static public function inflate(strm:ZStream, flush:Int):Int {
     var state:InflateState;
     var input, output;          // input/output buffers
     var next;                   /* next input INDEX */
@@ -335,7 +335,7 @@ class Inflate
     //var last;                   /* parent table entry */
     var last_bits, last_op, last_val; // paked "last" denormalized (JS specific)
     var len = 0;                    /* length to copy for repeats, bits to drop */
-    var ret:ErrorStatus;                    /* return code */
+    var ret:Int;                    /* return code */
     var hbuf = new UInt8Array(4);    /* buffer for gzip header crc calculation */
     var opts;
 
@@ -347,7 +347,7 @@ class Inflate
 
     if (strm == null || strm.inflateState == null || strm.output == null ||
         (strm.input == null && strm.avail_in != 0)) {
-      return Z_STREAM_ERROR;
+      return ErrorStatus.Z_STREAM_ERROR;
     }
 
     state = strm.inflateState;
@@ -367,7 +367,7 @@ class Inflate
 
     _in = have;
     _out = left;
-    ret = Z_OK;
+    ret = ErrorStatus.Z_OK;
 
     //NOTE(hx): this huge block is a state machine implemented with continue to emulate gotos.
     //A major difference with the js version is that, in haxe, switch cases don't have break,
@@ -421,7 +421,7 @@ class Inflate
           state.mode = BAD;
           continue; //inf_leave
         }
-        if ((hold & 0x0f)/*BITS(4)*/ != Z_DEFLATED) {
+        if ((hold & 0x0f)/*BITS(4)*/ != Method.Z_DEFLATED) {
           strm.msg = 'unknown compression method';
           state.mode = BAD;
           continue; //inf_leave
@@ -461,7 +461,7 @@ class Inflate
         if (inf_leave) continue; //inf_leave
         //===//
         state.flags = hold;
-        if ((state.flags & 0xff) != Z_DEFLATED) {
+        if ((state.flags & 0xff) != Method.Z_DEFLATED) {
           strm.msg = 'unknown compression method';
           state.mode = BAD;
           continue; //inf_leave
@@ -746,13 +746,13 @@ class Inflate
           state.hold = hold;
           state.bits = bits;
           //---
-          return Z_NEED_DICT;
+          return ErrorStatus.Z_NEED_DICT;
         }
         strm.adler = state.check = 1/*adler32(0L, Z_NULL, 0)*/;
         state.mode = TYPE;
         /* falls through */
       case TYPE:
-        if (flush == Z_BLOCK || flush == Z_TREES) continue; //inf_leave
+        if (flush == Flush.Z_BLOCK || flush == Flush.Z_TREES) continue; //inf_leave
         state.mode = TYPEDO;
         /* falls through */
       case TYPEDO:
@@ -792,7 +792,7 @@ class Inflate
           //Tracev((stderr, "inflate:     fixed codes block%s\n",
           //        state.last ? " (last)" : ""));
           state.mode = LEN_;             /* decode codes */
-          if (flush == Z_TREES) {
+          if (flush == Flush.Z_TREES) {
             //--- DROPBITS(2) ---//
             hold >>>= 2;
             bits -= 2;
@@ -842,7 +842,7 @@ class Inflate
         bits = 0;
         //===//
         state.mode = COPY_;
-        if (flush == Z_TREES) {
+        if (flush == Flush.Z_TREES) {
           inf_leave = true;
           continue; //inf_leave
         }
@@ -945,7 +945,7 @@ class Inflate
         ret = InfTrees.inflate_table(CODES, state.lens, 0, 19, state.lencode, 0, state.work, opts);
         state.lenbits = opts.bits;
 
-        if (ret != Z_OK) {
+        if (ret != ErrorStatus.Z_OK) {
           strm.msg = 'invalid code lengths set';
           state.mode = BAD;
           continue; //inf_leave
@@ -1095,7 +1095,7 @@ class Inflate
         state.lenbits = opts.bits;
         // state.lencode = state.next;
 
-        if (ret != Z_OK) {
+        if (ret != ErrorStatus.Z_OK) {
           strm.msg = 'invalid literal/lengths set';
           state.mode = BAD;
           continue; //inf_leave
@@ -1112,14 +1112,14 @@ class Inflate
         state.distbits = opts.bits;
         // state.distcode = state.next;
 
-        if (ret != Z_OK) {
+        if (ret != ErrorStatus.Z_OK) {
           strm.msg = 'invalid distances set';
           state.mode = BAD;
           continue; //inf_leave
         }
         //Tracev((stderr, 'inflate:       codes ok\n'));
         state.mode = LEN_;
-        if (flush == Z_TREES) {
+        if (flush == Flush.Z_TREES) {
           inf_leave = true;
           continue; //inf_leave
         }
@@ -1476,19 +1476,19 @@ class Inflate
         state.mode = DONE;
         /* falls through */
       case DONE:
-        ret = Z_STREAM_END;
+        ret = ErrorStatus.Z_STREAM_END;
         inf_leave = true;
         continue; //inf_leave
       case BAD:
-        ret = Z_DATA_ERROR;
+        ret = ErrorStatus.Z_DATA_ERROR;
         inf_leave = true;
         continue; //inf_leave
       case MEM:
-        return Z_MEM_ERROR;
+        return ErrorStatus.Z_MEM_ERROR;
       case SYNC:
-        return Z_STREAM_ERROR;
+        return ErrorStatus.Z_STREAM_ERROR;
       default:
-        return Z_STREAM_ERROR;
+        return ErrorStatus.Z_STREAM_ERROR;
       }
     }
 
@@ -1511,10 +1511,10 @@ class Inflate
     //---
 
     if (state.wsize != 0 || (_out != strm.avail_out && state.mode < BAD &&
-                        (state.mode < CHECK || flush != Z_FINISH))) {
+                        (state.mode < CHECK || flush != Flush.Z_FINISH))) {
       if (updatewindow(strm, strm.output, strm.next_out, _out - strm.avail_out) != 0) {
         state.mode = MEM;
-        return Z_MEM_ERROR;
+        return ErrorStatus.Z_MEM_ERROR;
       }
     }
     _in -= strm.avail_in;
@@ -1529,8 +1529,8 @@ class Inflate
     strm.data_type = state.bits + (state.last ? 64 : 0) +
                       (state.mode == TYPE ? 128 : 0) +
                       (state.mode == LEN_ || state.mode == COPY_ ? 256 : 0);
-    if (((_in == 0 && _out == 0) || flush == Z_FINISH) && ret == Z_OK) {
-      ret = Z_BUF_ERROR;
+    if (((_in == 0 && _out == 0) || flush == Flush.Z_FINISH) && ret == ErrorStatus.Z_OK) {
+      ret = ErrorStatus.Z_BUF_ERROR;
     }
     return ret;
   }
@@ -1538,7 +1538,7 @@ class Inflate
   static public function inflateEnd(strm:ZStream) {
 
     if (strm == null || strm.inflateState == null /*|| strm->zfree == (free_func)0*/) {
-      return Z_STREAM_ERROR;
+      return ErrorStatus.Z_STREAM_ERROR;
     }
 
     var state = strm.inflateState;
@@ -1546,21 +1546,21 @@ class Inflate
       state.window = null;
     }
     strm.inflateState = null;
-    return Z_OK;
+    return ErrorStatus.Z_OK;
   }
 
   static public function inflateGetHeader(strm:ZStream, head) {
     var state:InflateState;
 
     /* check state */
-    if (strm == null || strm.inflateState == null) { return Z_STREAM_ERROR; }
+    if (strm == null || strm.inflateState == null) { return ErrorStatus.Z_STREAM_ERROR; }
     state = strm.inflateState;
-    if ((state.wrap & 2) == 0) { return Z_STREAM_ERROR; }
+    if ((state.wrap & 2) == 0) { return ErrorStatus.Z_STREAM_ERROR; }
 
     /* save header structure */
     state.head = head;
     head.done = false;
-    return Z_OK;
+    return ErrorStatus.Z_OK;
   }
 }
 

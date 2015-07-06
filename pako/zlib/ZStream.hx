@@ -26,7 +26,7 @@ class ZStream
   public var deflateState:DeflateState = null;
   public var inflateState:InflateState = null;
   /* best guess about the data type: binary or text */
-  public var data_type:Constants.DataType = Constants.DataType.Z_UNKNOWN /*Z_UNKNOWN*/;
+  public var data_type:Int = Constants.DataType.Z_UNKNOWN /*Z_UNKNOWN*/;
   /* adler32 value of the uncompressed data */
   public var adler:Int = 0;
   
