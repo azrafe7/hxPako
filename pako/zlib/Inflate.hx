@@ -318,7 +318,7 @@ class Inflate
     return 0;
   }
 
-  static public function inflate(strm:ZStream, flush:Int):Int {
+  static public function inflate(?strm:ZStream, flush:Int):Int {
     var state:InflateState;
     var input, output;          // input/output buffers
     var next;                   /* next input INDEX */
@@ -592,7 +592,7 @@ class Inflate
               len = state.head.extra_len - state.length;
               if (state.head.extra == null) {
                 // Use untyped array for more conveniend processing later
-                state.head.extra = new UInt16Array(state.head.extra_len);
+                state.head.extra = new UInt8Array(state.head.extra_len);
               }
               Common.arraySet(
                 cast state.head.extra,
@@ -1535,7 +1535,7 @@ class Inflate
     return ret;
   }
 
-  static public function inflateEnd(strm:ZStream) {
+  static public function inflateEnd(?strm:ZStream) {
 
     if (strm == null || strm.inflateState == null /*|| strm->zfree == (free_func)0*/) {
       return ErrorStatus.Z_STREAM_ERROR;

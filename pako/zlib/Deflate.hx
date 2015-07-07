@@ -1109,7 +1109,7 @@ class Deflate
   }
 
 
-  static public function deflateSetHeader(strm:ZStream, head) {
+  static public function deflateSetHeader(?strm:ZStream, ?head) {
     if (strm == null || strm.deflateState == null) { return ErrorStatus.Z_STREAM_ERROR; }
     if (strm.deflateState.wrap != 2) { return ErrorStatus.Z_STREAM_ERROR; }
     strm.deflateState.gzhead = head;
@@ -1189,7 +1189,7 @@ class Deflate
     return deflateReset(strm);
   }
 
-  static public function deflateInit(strm:ZStream, level:Int) {
+  static public function deflateInit(?strm:ZStream, level:Int = CompressionLevel.Z_NO_COMPRESSION) {
     return deflateInit2(strm, level, Method.Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL, Strategy.Z_DEFAULT_STRATEGY);
   }
 
