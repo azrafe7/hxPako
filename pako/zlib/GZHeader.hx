@@ -1,6 +1,6 @@
 package pako.zlib;
 
-import haxe.io.UInt16Array;
+import haxe.io.UInt8Array;
 
 
 class GZHeader
@@ -14,7 +14,7 @@ class GZHeader
   /* operating system */
   public var os:Int          = 0;
   /* pointer to extra field or Z_NULL if none */
-  public var extra:UInt16Array = null;
+  public var extra:UInt8Array = null;
   /* extra field length (valid if extra != Z_NULL) */
   public var extra_len:Int   = 0; // Actually, we don't need it in JS,
                        // but leave for few code modifications
@@ -39,5 +39,6 @@ class GZHeader
   /* true when done reading gzip header (not used when writing a gzip file) */
   public var done:Bool       = false;
   
+  //NOTE(hx): change GZHeader to accept a GZOptions typedef?
   public function new() { }
 }
