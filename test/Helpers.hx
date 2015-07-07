@@ -1,6 +1,8 @@
 package;
 
+import haxe.io.ArrayBufferView;
 import haxe.io.UInt8Array;
+import haxe.Resource;
 import pako.Deflate;
 import pako.Inflate;
 
@@ -10,34 +12,31 @@ class Helpers
   // Load fixtures to test
   // return: { 'filename1': content1, 'filename2': content2, ...}
   //
-  static public function loadSamples(subdir) {
-    var result = {};
-    /*var dir = path.join(__dirname, 'fixtures', subdir || 'samples');
-
-    fs.readdirSync(dir).sort().forEach(function (sample) {
-      var filepath = path.join(dir, sample),
-          extname  = path.extname(filepath),
-          basename = path.basename(filepath, extname),
-          content  = new Uint8Array(fs.readFileSync(filepath));
-
-      if (basename[0] === '_') { return; } // skip files with name, started with dash
-
-      result[basename] = content;
-    });
-
-    return result;*/
+  static public var samples(get, null):Map<String, UInt8Array> = null;
+  static function get_samples():Map<String, UInt8Array> {
+    if (samples != null) return samples;
+    
+    samples = new Map<String, UInt8Array>();
+    for (name in Resource.listNames()) samples[name] = UInt8Array.fromBytes(Resource.getBytes(name));
+    return samples;
   }
-
-
+  
+  static public function getSample(name:String) {
+    var sample = samples[name];
+    if (sample == null) throw 'Resource "$name" not found.';
+    return sample;
+  }
+  
   // Compare 2 buffers (can be Array, Uint8Array, Buffer).
   //
-  static public function cmpBuf(a:UInt8Array, b:UInt8Array) {
-    if (a.length != b.length) {
+  //NOTE(hx): need to use `cast ` to work with all typed arrays
+  static public function cmpBuf(a:ArrayBufferView, b:ArrayBufferView) {
+    if (a.byteLength != b.byteLength) {
       return false;
     }
 
-    for (i in 0...a.length) {
-      if (a[i] != b[i]) {
+    for (i in 0...a.byteLength) {
+      if (a.buffer.get(a.byteOffset + i) != b.buffer.get(b.byteOffset + i)) {
         //console.log('pos: ' +i+ ' - ' + a[i].toString(16) + '/' + b[i].toString(16));
         return false;
       }
@@ -128,7 +127,7 @@ class Helpers
   }*/
 
 
-    static public function testInflate(samples:Map<String, UInt8Array>, inflateOptions:InflateOptions, deflateOptions:DeflateOptions, callback:String->Void) {
+  static public function testInflate(samples:Map<String, UInt8Array>, inflateOptions:InflateOptions, deflateOptions:DeflateOptions, callback:String->Void) {
     var name, data, deflated, inflated;
 
     // inflate options have windowBits = 0 to force autodetect window size
@@ -145,7 +144,7 @@ class Helpers
       inflated = Inflate.inflate(deflated, inflateOptions);
       //pako_utils.setTyped(true);
 
-      if (!cmpBuf(inflated, data)) {
+      if (!cmpBuf(cast inflated, cast data)) {
         callback('Error in "' + name + '" - inflate result != original');
         return;
       }
@@ -153,7 +152,7 @@ class Helpers
       // with typed arrays
       inflated = Inflate.inflate(deflated, inflateOptions);
 
-      if (!cmpBuf(inflated, data)) {
+      if (!cmpBuf(cast inflated, cast data)) {
         callback('Error in "' + name + '" - inflate result != original');
         return;
       }

@@ -1,4 +1,20 @@
+#fixtures/samples
 -resource fixtures\samples\lorem_utf_100k.txt@lorem_utf_100k.txt
+-resource fixtures\samples\lorem_en_100k.txt@lorem_en_100k.txt
+-resource fixtures\samples\blank.gif@blank.gif
+-resource fixtures\samples\lorem.txt@lorem.txt
+-resource fixtures\samples\lorem_cat.jpeg@lorem_cat.jpeg
+-resource fixtures\samples\utf8.zip@utf8.zip
+
+#fixtures/samples
+-resource fixtures\gzip-headers.gz@gzip-headers.gz
+-resource fixtures\gzip-joined.gz@gzip-joined.gz
+
+#fixtures/samples_deflated_raw
+-resource fixtures\samples_deflated_raw\sheet2.compressed@sheet2.compressed
+-resource fixtures\samples_deflated_raw\sheet3.compressed@sheet3.compressed
+-resource fixtures\samples_deflated_raw\sheet4.compressed@sheet4.compressed
+
 -cp ..
 -main Main
 -debug
