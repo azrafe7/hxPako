@@ -3,6 +3,7 @@ package;
 import haxe.io.ArrayBufferView;
 import haxe.io.UInt8Array;
 import haxe.Resource;
+import pako.Pako;
 import pako.Deflate;
 import pako.Inflate;
 import utest.Assert;
@@ -138,11 +139,11 @@ class Helpers
 
       // always use the same data type to generate sample
       //pako_utils.setTyped(true);
-      deflated = Deflate.deflate(data, deflateOptions);
+      deflated = Pako.deflate(data, deflateOptions);
 
       // with untyped arrays
       //pako_utils.setTyped(false);
-      inflated = Inflate.inflate(deflated, inflateOptions);
+      inflated = Pako.inflate(deflated, inflateOptions);
       //pako_utils.setTyped(true);
 
       if (!cmpBuf(cast inflated, cast data)) {
@@ -151,7 +152,7 @@ class Helpers
       }
 
       // with typed arrays
-      inflated = Inflate.inflate(deflated, inflateOptions);
+      inflated = Pako.inflate(deflated, inflateOptions);
 
       if (!cmpBuf(cast inflated, cast data)) {
         Assert.fail('Error in "' + name + '" - inflate result != original');
