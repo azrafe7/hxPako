@@ -1,7 +1,5 @@
 package;
 
-import buddy.reporting.ConsoleReporter;
-import buddy.reporting.TraceReporter;
 import haxe.io.ArrayBufferView;
 import haxe.io.Bytes;
 import haxe.io.Int32Array;
@@ -174,7 +172,7 @@ class TestChunks extends BuddySuite {
   function testChunk(buf:UInt8Array, expected, packer:Dynamic, chunkSize) {
     var i, _in, count, pos, size, expFlushCount;
 
-    var onData = @:privateAccess packer._onData;
+    var onData = packer.onData;
     var flushCount = 0;
 
     packer.onData = function(buffer) {
