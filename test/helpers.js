@@ -10,7 +10,8 @@ var pako_utils = require('../lib/utils/common');
 var pako  = require('../index');
 
 function writeToFile(buffer, name) {
-	var filename = 'test/fixtures/zlib_output/' + name;
+	var filename = path.join(__dirname, 'fixtures/zlib_output/' + name);
+	//console.log(filename + "  (" + buffer.length + ")");
 	fs.writeFileSync(filename, buffer);
 }
 
@@ -71,7 +72,8 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback, name) {
   zlibStream.on('error', function(err) {
     zlibStream.removeAllListeners();
     zlibStream=null;
-    callback(err);
+    console.log("zlib err");
+	callback(err);
   });
 
   zlibStream.on('data', function(chunk) {
@@ -87,7 +89,10 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback, name) {
 
     var pako_result = pako_deflate(data, options);
 
-    if (name) writeToFile(buffer, name);
+    if (name) {
+		writeToFile(buffer, name);
+		//console.log(options);
+	}
 	
 	if (!cmpBuf(buffer, pako_result)) {
       callback(new Error('zlib result != pako result'));
@@ -107,7 +112,7 @@ function testSamples(zlib_factory, pako_deflate, samples, options, callback, pre
 
   _.forEach(samples, function(data, name) {
     // with untyped arrays
-    queue.push(function (done) {
+    /*queue.push(function (done) {
       pako_utils.setTyped(false);
 
       testSingle(zlib_factory, pako_deflate, data, options, function (err) {
@@ -117,7 +122,7 @@ function testSamples(zlib_factory, pako_deflate, samples, options, callback, pre
         }
         done();
       });
-    });
+    });*/
 
     // with typed arrays
     queue.push(function (done) {
