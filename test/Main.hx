@@ -624,10 +624,10 @@ class TestInflate extends BuddySuite
         Helpers.testInflate(samples, { raw: true }, { raw: true }, done);
       });
 
-      it('inflate raw from compressed samples'/*, function(done) {
-        var compressed_samples = Helpers.getSamplesWithPrefix("sample_deflated_raw/");
-        //Helpers.testSamples(zlib.createInflateRaw, pako.inflateRaw, compressed_samples, {}, done);
-      }*/);
+      it('inflate raw from compressed samples', function(done) {
+        var compressed_samples = Helpers.getSamplesWithPrefix("samples_deflated_raw/");
+        Helpers.testSamples(null, Pako.inflateRaw, compressed_samples, {}, done, 'inflate_raw');
+      });
     });
 
 
