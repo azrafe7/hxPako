@@ -413,7 +413,7 @@ class Deflate
    * The same as [[deflate]], but create gzip wrapper instead of
    * deflate one.
    **/
-  function gzip(input:UInt8Array, ?options:DeflateOptions) {
+  static public function gzip(input:UInt8Array, ?options:DeflateOptions) {
     if (options == null) options = { };
     options.gzip = true;
     return deflate(input, options);
