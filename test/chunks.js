@@ -116,15 +116,29 @@ describe('Edge condition', function () {
       data[i] = Math.floor(Math.random() * 255.999);
     }
 
+	data = new Uint8Array([
+	  89,36,247,140,224,206,66,198,102,210,
+	  84,1,234,115,95,52,136,111,215,99,
+	  233,86,228,170,109,112,193,75,57,81,
+	  181,108,117,190,3,41,68,110,54,75,
+	  69,134,245,12,80,14,152,35,189
+	]);
     var deflated = pako.deflate(data);
 
     var inflator = new pako.Inflate();
-
+	var debugStr = "";
+	
     for (i = 0; i < deflated.length; i++) {
-      inflator.push(deflated.subarray(i, i+1), false);
+	  if (i == 7) {
+		var x = i;
+	  }
+	  inflator.push(deflated.subarray(i, i+1), false);
+	  debugStr += "hold: " + inflator
       assert.ok(!inflator.err, 'Inflate failed with status ' + inflator.err);
     }
 
+	var str = "";
+	for (i = 0; i<deflated.length; i++) str += deflated[i] + ",";
     inflator.push(new Uint8Array(0), true);
 
     assert.ok(!inflator.err, 'Inflate failed with status ' + inflator.err);

@@ -9,6 +9,11 @@ var async = require('async');
 var pako_utils = require('../lib/utils/common');
 var pako  = require('../index');
 
+function writeToFile(buffer, name) {
+	var filename = 'test/fixtures/zlib_output/' + name;
+	fs.writeFileSync(filename, buffer);
+}
+
 // Load fixtures to test
 // return: { 'filename1': content1, 'filename2': content2, ...}
 //
@@ -52,7 +57,7 @@ function cmpBuf(a, b) {
 // Helper to test deflate/inflate with different options.
 // Use zlib streams, because it's the only way to define options.
 //
-function testSingle(zlib_factory, pako_deflate, data, options, callback) {
+function testSingle(zlib_factory, pako_deflate, data, options, callback, name) {
 
   var zlib_options = _.clone(options);
 
@@ -82,7 +87,9 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback) {
 
     var pako_result = pako_deflate(data, options);
 
-    if (!cmpBuf(buffer, pako_result)) {
+    if (name) writeToFile(buffer, name);
+	
+	if (!cmpBuf(buffer, pako_result)) {
       callback(new Error('zlib result != pako result'));
       return;
     }
@@ -95,7 +102,7 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback) {
   zlibStream.end();
 }
 
-function testSamples(zlib_factory, pako_deflate, samples, options, callback) {
+function testSamples(zlib_factory, pako_deflate, samples, options, callback, prefix) {
   var queue = [];
 
   _.forEach(samples, function(data, name) {
@@ -122,7 +129,7 @@ function testSamples(zlib_factory, pako_deflate, samples, options, callback) {
           return;
         }
         done();
-      });
+      }, prefix + "-" + name);
     });
   });
 

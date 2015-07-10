@@ -26,17 +26,21 @@ import buddy.*;
 import utest.Assert;
 import Helpers;
 
+import unifill.Utf8;
+import unifill.Utf16;
+
+using unifill.Unifill;
 using buddy.Should;
 
 
-class Main implements Buddy<[Misc, Chunks/*, InflateCoverPorted, DeflateCover*/, GZipSpecials]> { }
+class Main implements Buddy<[Misc, Chunks, TestInflate/*, InflateCoverPorted, DeflateCover*/, GZipSpecials]> { }
 
 class Misc extends BuddySuite {
     public function new() {
       
       describe('ArrayBuffer', {
         
-        var sample = Helpers.getSample('lorem_utf_100k.txt');
+        var sample = Helpers.getSample('samples/lorem_utf_100k.txt');
         var deflated = Deflate.deflate(sample);
 
         it('Deflate ArrayBuffer', {
@@ -85,7 +89,7 @@ class Chunks extends BuddySuite {
     describe('Dummy push (force end)', {
 
       it('deflate end', {
-        var data = Helpers.getSample('lorem_utf_100k.txt');
+        var data = Helpers.getSample('samples/lorem_utf_100k.txt');
 
         var deflator = new pako.Deflate();
         deflator.push(data);
@@ -95,7 +99,7 @@ class Chunks extends BuddySuite {
       });
 
       it('inflate end', {
-        var data = Deflate.deflate(Helpers.getSample('lorem_utf_100k.txt'));
+        var data = Deflate.deflate(Helpers.getSample('samples/lorem_utf_100k.txt'));
 
         var inflator = new pako.Inflate();
         inflator.push(data);
@@ -419,7 +423,7 @@ class InflateCoverPorted extends BuddySuite
 class DeflateCover extends BuddySuite
 {
   var short_sample = UInt8Array.fromBytes(Bytes.ofString('hello world'));
-  var long_sample = Helpers.samples['lorem_en_100k.txt'];
+  var long_sample = Helpers.getSample('samples/lorem_en_100k.txt');
 
   function testDeflate(data, opts, flush) {
     var deflator = new pako.Deflate(opts);
@@ -577,5 +581,170 @@ class GZipSpecials extends BuddySuite
       });
 
     });
+  }
+}
+
+class TestInflate extends BuddySuite
+{
+  public function new() { 
+
+    // only files in the fixture/samples
+    var samples = Helpers.getSamplesWithPrefix("samples/");
+  
+    describe('Inflate defaults', {
+
+      it('inflate, no options', function(done) {
+        Helpers.testInflate(samples, {}, {}, done);
+      });
+
+      it('inflate raw, no options', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { raw: true }, done);
+      });
+
+      it('inflate raw from compressed samples'/*, function(done) {
+        var compressed_samples = Helpers.getSamplesWithPrefix("sample_deflated_raw/");
+        //Helpers.testSamples(zlib.createInflateRaw, pako.inflateRaw, compressed_samples, {}, done);
+      }*/);
+    });
+
+
+    describe('Inflate ungzip', {
+      it('with autodetect', function(done) {
+        Helpers.testInflate(samples, {}, { gzip: true }, done);
+      });
+
+      it('with method set directly', function(done) {
+        Helpers.testInflate(samples, { windowBits: 16 }, { gzip: true }, done);
+      });
+    });
+
+
+    describe('Inflate levels', {
+
+      it('level 9', function(done) {
+        Helpers.testInflate(samples, {}, { level: 9 }, done);
+      });
+      it('level 8', function(done) {
+        Helpers.testInflate(samples, {}, { level: 8 }, done);
+      });
+      it('level 7', function(done) {
+        Helpers.testInflate(samples, {}, { level: 7 }, done);
+      });
+      it('level 6', function(done) {
+        Helpers.testInflate(samples, {}, { level: 6 }, done);
+      });
+      it('level 5', function(done) {
+        Helpers.testInflate(samples, {}, { level: 5 }, done);
+      });
+      it('level 4', function(done) {
+        Helpers.testInflate(samples, {}, { level: 4 }, done);
+      });
+      it('level 3', function(done) {
+        Helpers.testInflate(samples, {}, { level: 3 }, done);
+      });
+      it('level 2', function(done) {
+        Helpers.testInflate(samples, {}, { level: 2 }, done);
+      });
+      it('level 1', function(done) {
+        Helpers.testInflate(samples, {}, { level: 1 }, done);
+      });
+      it('level 0', function(done) {
+        Helpers.testInflate(samples, {}, { level: 0 }, done);
+      });
+
+    });
+
+
+    describe('Inflate windowBits', {
+
+      it('windowBits 15', function(done) {
+        Helpers.testInflate(samples, {}, { windowBits: 15 }, done);
+      });
+      it('windowBits 14', function(done) {
+        Helpers.testInflate(samples, {}, { windowBits: 14 }, done);
+      });
+      it('windowBits 13', function(done) {
+        Helpers.testInflate(samples, {}, { windowBits: 13 }, done);
+      });
+      it('windowBits 12', function(done) {
+        Helpers.testInflate(samples, {}, { windowBits: 12 }, done);
+      });
+      it('windowBits 11', function(done) {
+        Helpers.testInflate(samples, {}, { windowBits: 11 }, done);
+      });
+      it('windowBits 10', function(done) {
+        Helpers.testInflate(samples, {}, { windowBits: 10 }, done);
+      });
+      it('windowBits 9', function(done) {
+        Helpers.testInflate(samples, {}, { windowBits: 9 }, done);
+      });
+      it('windowBits 8', function(done) {
+        Helpers.testInflate(samples, {}, { windowBits: 8 }, done);
+      });
+
+    });
+
+    describe('Inflate strategy', {
+
+      it('Z_DEFAULT_STRATEGY', function(done) {
+        Helpers.testInflate(samples, {}, { strategy: 0 }, done);
+      });
+      it('Z_FILTERED', function(done) {
+        Helpers.testInflate(samples, {}, { strategy: 1 }, done);
+      });
+      it('Z_HUFFMAN_ONLY', function(done) {
+        Helpers.testInflate(samples, {}, { strategy: 2 }, done);
+      });
+      it('Z_RLE', function(done) {
+        Helpers.testInflate(samples, {}, { strategy: 3 }, done);
+      });
+      it('Z_FIXED', function(done) {
+        Helpers.testInflate(samples, {}, { strategy: 4 }, done);
+      });
+
+    });
+
+
+    describe('Inflate RAW', {
+      // Since difference is only in rwapper, test for store/fast/slow methods are enougth
+      it('level 9', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 9, raw: true }, done);
+      });
+      it('level 8', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 8, raw: true }, done);
+      });
+      it('level 7', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 7, raw: true }, done);
+      });
+      it('level 6', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 6, raw: true }, done);
+      });
+      it('level 5', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 5, raw: true }, done);
+      });
+      it('level 4', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 4, raw: true }, done);
+      });
+      it('level 3', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 3, raw: true }, done);
+      });
+      it('level 2', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 2, raw: true }, done);
+      });
+      it('level 1', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 1, raw: true }, done);
+      });
+      it('level 0', function(done) {
+        Helpers.testInflate(samples, { raw: true }, { level: 0, raw: true }, done);
+      });
+
+    });
+  }
+}
+
+class TestDeflate extends BuddySuite
+{
+  public function new() { 
+
   }
 }

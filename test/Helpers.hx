@@ -5,6 +5,7 @@ import haxe.io.UInt8Array;
 import haxe.Resource;
 import pako.Deflate;
 import pako.Inflate;
+import utest.Assert;
 
 
 class Helpers
@@ -21,9 +22,16 @@ class Helpers
     return samples;
   }
   
-  static public function getSample(name:String) {
-    var sample = samples[name];
-    if (sample == null) throw 'Resource "$name" not found.';
+  static public function getSamplesWithPrefix(prefix:String = "samples") {
+    var filteredSamples = new Map<String, UInt8Array>();
+    for (k in samples.keys()) if (k.indexOf(prefix) == 0) filteredSamples[k] = samples[k];
+    if (!filteredSamples.keys().hasNext()) throw 'No resource prefixed with "$prefix" found.';
+    return filteredSamples;
+  }
+  
+  static public function getSample(fullname:String) {
+    var sample = samples[fullname];
+    if (sample == null) throw 'Resource "$fullname" not found.';
     return sample;
   }
   
@@ -37,7 +45,6 @@ class Helpers
 
     for (i in 0...a.byteLength) {
       if (a.buffer.get(a.byteOffset + i) != b.buffer.get(b.byteOffset + i)) {
-        //console.log('pos: ' +i+ ' - ' + a[i].toString(16) + '/' + b[i].toString(16));
         return false;
       }
     }
@@ -127,7 +134,7 @@ class Helpers
   }*/
 
 
-  static public function testInflate(samples:Map<String, UInt8Array>, inflateOptions:InflateOptions, deflateOptions:DeflateOptions, callback:String->Void) {
+  static public function testInflate(samples:Map<String, UInt8Array>, inflateOptions:InflateOptions, deflateOptions:DeflateOptions, callback:?Bool->Void) {
     var name, data, deflated, inflated;
 
     // inflate options have windowBits = 0 to force autodetect window size
@@ -145,7 +152,7 @@ class Helpers
       //pako_utils.setTyped(true);
 
       if (!cmpBuf(cast inflated, cast data)) {
-        callback('Error in "' + name + '" - inflate result != original');
+        Assert.fail('Error in "' + name + '" - inflate result != original');
         return;
       }
 
@@ -153,11 +160,11 @@ class Helpers
       inflated = Inflate.inflate(deflated, inflateOptions);
 
       if (!cmpBuf(cast inflated, cast data)) {
-        callback('Error in "' + name + '" - inflate result != original');
+        Assert.fail('Error in "' + name + '" - inflate result != original');
         return;
       }
     }
 
-    callback("");
+    callback();
   }
 }

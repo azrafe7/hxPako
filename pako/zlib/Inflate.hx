@@ -393,7 +393,7 @@ class Inflate
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (inf_leave) continue; //inf_leave
+        if (inf_leave) break; //inf_leave
         //===//
         if ((state.wrap & 2 != 0) && hold == 0x8b1f) {  /* gzip header */
           state.check = 0/*crc32(0L, Z_NULL, 0)*/;
@@ -458,7 +458,7 @@ class Inflate
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (inf_leave) continue; //inf_leave
+        if (inf_leave) break; //inf_leave
         //===//
         state.flags = hold;
         if ((state.flags & 0xff) != Method.Z_DEFLATED) {
@@ -498,7 +498,7 @@ class Inflate
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (inf_leave) continue; //inf_leave
+        if (inf_leave) break; //inf_leave
         //===//
         if (state.head != null) {
           state.head.time = hold;
@@ -529,7 +529,7 @@ class Inflate
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (inf_leave) continue; //inf_leave
+        if (inf_leave) break; //inf_leave
         //===//
         if (state.head != null) {
           state.head.xflags = (hold & 0xff);
@@ -560,7 +560,7 @@ class Inflate
             hold += input[next++] << bits;
             bits += 8;
           }
-          if (inf_leave) continue; //inf_leave
+          if (inf_leave) break; //inf_leave
           //===//
           state.length = hold;
           if (state.head != null) {
@@ -617,7 +617,7 @@ class Inflate
           }
           if (state.length != 0) {
             inf_leave = true;
-            continue; //inf_leave
+            break; //inf_leave
           }
         }
         state.length = 0;
@@ -627,7 +627,7 @@ class Inflate
         if (state.flags & 0x0800 != 0) {
           if (have == 0) {
             inf_leave = true;
-            continue; //inf_leave
+            break; //inf_leave
           }
           copy = 0;
           do {
@@ -647,7 +647,7 @@ class Inflate
           next += copy;
           if (len != 0) {
             inf_leave = true;
-            continue; //inf_leave
+            break; //inf_leave
           }
         }
         else if (state.head != null) {
@@ -660,7 +660,7 @@ class Inflate
         if (state.flags & 0x1000 != 0) {
           if (have == 0) {
             inf_leave = true;
-            continue; //inf_leave
+            break; //inf_leave
           }
           copy = 0;
           do {
@@ -678,7 +678,7 @@ class Inflate
           next += copy;
           if (len != 0) {
             inf_leave = true;
-            continue; //inf_leave
+            break; //inf_leave
           }
         }
         else if (state.head != null) {
@@ -698,7 +698,7 @@ class Inflate
             hold += input[next++] << bits;
             bits += 8;
           }
-          if (inf_leave) continue; //inf_leave
+          if (inf_leave) break; //inf_leave
           //===//
           if (hold != (state.check & 0xffff)) {
             strm.msg = 'header crc mismatch';
@@ -727,7 +727,7 @@ class Inflate
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (inf_leave) continue;
+        if (inf_leave) break; //inf_leave
         //===//
         strm.adler = state.check = ZSWAP32(hold);
         //=== INITBITS();
@@ -774,7 +774,7 @@ class Inflate
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (inf_leave) continue;
+        if (inf_leave) break; //inf_leave
         //===//
         state.last = (hold & 0x01) == 1/*BITS(1)*/;
         //--- DROPBITS(1) ---//
@@ -798,7 +798,7 @@ class Inflate
             bits -= 2;
             //---//
             inf_leave = true;
-            continue; //inf_leave
+            break; //inf_leave
           }
         case 2:                             /* dynamic block */
           //Tracev((stderr, "inflate:     dynamic codes block%s\n",
@@ -827,7 +827,7 @@ class Inflate
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (inf_leave) continue; //inf_leave
+        if (inf_leave) break; //inf_leave
         //===//
         if ((hold & 0xffff) != ((hold >>> 16) ^ 0xffff)) {
           strm.msg = 'invalid stored block lengths';
@@ -844,7 +844,7 @@ class Inflate
         state.mode = COPY_;
         if (flush == Flush.Z_TREES) {
           inf_leave = true;
-          continue; //inf_leave
+          break; //inf_leave
         }
         /* falls through */
       case COPY_:
@@ -857,7 +857,7 @@ class Inflate
           if (copy > left) { copy = left; }
           if (copy == 0) {
             inf_leave = true;
-            continue; //inf_leave
+            break; //inf_leave
           }
           //--- zmemcpy(put, next, copy); ---
           Common.arraySet(cast output, cast input, next, copy, put);
@@ -882,7 +882,7 @@ class Inflate
           hold += input[next++] << bits;
           bits += 8;
         }
-        if (inf_leave) continue; //inf_leave
+        if (inf_leave) break; //inf_leave
         //===//
         state.nlen = (hold & 0x1f)/*BITS(5)*/ + 257;
         //--- DROPBITS(5) ---//
@@ -930,7 +930,7 @@ class Inflate
           bits -= 3;
           //---//
         }
-        if (inf_leave) continue; //inf_leave
+        if (inf_leave) break; //inf_leave
         while (state.have < 19) {
           state.lens[order[state.have++]] = 0;
         }
