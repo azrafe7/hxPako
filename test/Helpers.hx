@@ -102,11 +102,6 @@ class Helpers
     var pako_result = pako_deflate(data, options);
     var zlib_result = getSample("zlib_output/" + zlib_filename);
 
-  #if sys
-    trace((zlib_result.length == pako_result.length) + " " + zlib_result.length + " vs " + pako_result.length);
-    sys.io.File.saveBytes("fixtures/zlib_output/" + zlib_filename + "_neko", pako_result.view.buffer);
-  #end
-    
     if (!Helpers.cmpBuf(cast zlib_result, cast pako_result)) {
       callback(true);
       return;
