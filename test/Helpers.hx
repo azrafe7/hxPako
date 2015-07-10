@@ -22,7 +22,7 @@ class Helpers
     return samples;
   }
   
-  static public function getSamplesWithPrefix(prefix:String = "samples") {
+  static public function getSamplesWithPrefix(prefix:String = "samples/") {
     var filteredSamples = new Map<String, UInt8Array>();
     for (k in samples.keys()) if (k.indexOf(prefix) == 0) filteredSamples[k] = samples[k];
     if (!filteredSamples.keys().hasNext()) throw 'No resource prefixed with "$prefix" found.';
@@ -53,12 +53,13 @@ class Helpers
   }
 
 
+  //NOTE(hx): zlib output has been precomputed and saved as resource, so we compare against them
   // Helper to test deflate/inflate with different options.
   // Use zlib streams, because it's the only way to define options.
   //
-  /*static public function testSingle(zlib_factory, pako_deflate, data, options, callback) {
+  static public function testSingle(zlib_factory, pako_deflate, data, options, callback, zlib_filename) {
 
-    var zlib_options = _.clone(options);
+    /*var zlib_options = _.clone(options);
 
     // hack for testing negative windowBits
     if (zlib_options.windowBits < 0) { zlib_options.windowBits = -zlib_options.windowBits; }
@@ -96,42 +97,40 @@ class Helpers
 
 
     zlibStream.write(new Buffer(data));
-    zlibStream.end();
+    zlibStream.end();*/
+    
+    var pako_result = pako_deflate(data, options);
+    var zlib_result = getSample("zlib_output/" + zlib_filename);
+
+  #if sys
+    trace((zlib_result.length == pako_result.length) + " " + zlib_result.length + " vs " + pako_result.length);
+    sys.io.File.saveBytes("fixtures/zlib_output/" + zlib_filename + "_neko", pako_result.view.buffer);
+  #end
+    
+    if (!Helpers.cmpBuf(cast zlib_result, cast pako_result)) {
+      callback(true);
+      return;
+    }
+    
+    callback(false);
   }
 
-  function testSamples(zlib_factory, pako_deflate, samples, options, callback) {
-    var queue = [];
+  static public function testSamples(zlib_factory, pako_deflate, samples:Map<String, UInt8Array>, options, callback:?Bool->Void, prefix) {
 
-    _.forEach(samples, function(data, name) {
-      // with untyped arrays
-      queue.push(function (done) {
-        pako_utils.setTyped(false);
-
-        testSingle(zlib_factory, pako_deflate, data, options, function (err) {
-          if (err) {
-            done('Error in "' + name + '" - zlib result != pako result');
-            return;
-          }
-          done();
-        });
-      });
-
-      // with typed arrays
-      queue.push(function (done) {
-        pako_utils.setTyped(true);
-
-        testSingle(zlib_factory, pako_deflate, data, options, function (err) {
-          if (err) {
-            done('Error in "' + name + '" - zlib result != pako result');
-            return;
-          }
-          done();
-        });
-      });
-    });
-
-    async.series(queue, callback);
-  }*/
+    for (k in samples.keys()) {
+      var data = samples[k];
+      
+      // extract filename without ext
+      var tmp = k.split("/").pop().split(".");
+      tmp.pop();
+      var name = tmp.join("");
+      
+      testSingle(zlib_factory, pako_deflate, data, options, function (err) {
+        Assert.isFalse(err, 'Error in "' + name + '" (' + prefix + '): zlib result != pako result');
+      }, prefix + "-" + name);
+    }
+    callback();
+  }
 
 
   static public function testInflate(samples:Map<String, UInt8Array>, inflateOptions:InflateOptions, deflateOptions:DeflateOptions, callback:?Bool->Void) {
