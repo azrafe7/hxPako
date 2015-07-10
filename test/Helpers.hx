@@ -111,7 +111,7 @@ class Helpers
     callback(false);
   }
 
-  static public function testSamples(zlib_factory, pako_deflate, samples:Map<String, UInt8Array>, options, callback:?Bool->Void, prefix) {
+  static public function testSamples(zlib_factory, pako_deflate:Null<UInt8Array>->Dynamic->UInt8Array, samples:Map<String, UInt8Array>, options, callback:?Bool->Void, prefix) {
 
     for (k in samples.keys()) {
       var data = samples[k];
