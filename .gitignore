@@ -3,3 +3,9 @@ node_modules/
 coverage/
 test/browser/pako.js
 v8.log
+
+include/
+obj/
+*.cpp
+bin/srcview/
+haxe/
