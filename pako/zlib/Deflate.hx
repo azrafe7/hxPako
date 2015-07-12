@@ -1022,7 +1022,7 @@ class Deflate
 
   //NOTE(hx): Config moved to end of file
   
-  static var configuration_table;
+  static var configuration_table:Array<Config>;
   
   static function __init__() {
     configuration_table = [
