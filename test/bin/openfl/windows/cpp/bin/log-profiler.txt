@@ -1,0 +1,476 @@
+extern::cffi ./lime-legacy@lime_legacy_create_main_frame__MULT 100.00%/0.00%
+   openfl._legacy.display.Stage.__processStageEvent 100.0%
+   (internal) 0.0%
+*._Function_1_1 100.00%/0.00%
+   Main.main 49.9%
+   buddy.tools.AsyncTools.iterateAsyncBool 48.5%
+   promhx.Promise.pipe 1.4%
+   MochaReporter.progress 0.2%
+   promhx.Deferred.resolve 0.0%
+   (internal) 0.0%
+buddy.SuitesRunner.run 100.00%/0.00%
+   promhx.Promise.then 100.0%
+   (internal) 0.0%
+Main.main 100.00%/0.00%
+   buddy.SuitesRunner.run 100.0%
+   (internal) 0.0%
+openfl._legacy.Lib.create 100.00%/0.00%
+   extern::cffi ./lime-legacy@lime_legacy_create_main_frame__MULT 100.0%
+   (internal) 0.0%
+openfl._legacy.display.Stage.__doProcessStageEvent 100.00%/0.00%
+   openfl._legacy.display.Stage.__pollTimers 100.0%
+   (internal) 0.0%
+openfl._legacy.display.Stage.__processStageEvent 100.00%/0.00%
+   openfl._legacy.display.Stage.__doProcessStageEvent 100.0%
+   (internal) 0.0%
+ApplicationMain.main 100.00%/0.00%
+   openfl._legacy.Lib.create 100.0%
+   (internal) 0.0%
+openfl._legacy.display.Stage.__pollTimers 100.00%/0.00%
+   haxe.Timer.__checkTimers 100.0%
+   (internal) 0.0%
+haxe.Timer.__check 100.00%/0.00%
+   *._Function_1_1 100.0%
+   (internal) 0.0%
+haxe.Timer.__checkTimers 100.00%/0.00%
+   haxe.Timer.__check 100.0%
+   (internal) 0.0%
+promhx.base.AsyncBase.immediateLinkUpdate 100.00%/0.00%
+   *._Function_2_1 93.2%
+   *._Function_1_1 6.8%
+   *._Function_1_7 0.0%
+   *._Function_3_1 0.0%
+   promhx.Promise.handleResolve 0.0%
+   (internal) 0.0%
+promhx.Promise.then 100.00%/0.02%
+   promhx.base.AsyncBase.immediateLinkUpdate 100.0%
+   (internal) 0.0%
+*._Function_2_1 100.00%/0.13%
+   buddy.tools.AsyncTools.next 92.1%
+   *._Function_1_5 6.5%
+   Helpers.testInflate 0.5%
+   Helpers.testSamples 0.3%
+   *._Function_3_1 0.2%
+   *._Function_1_2 0.2%
+   MochaReporter.println 0.2%
+   pako.Inflate.push 0.0%
+   *._Function_1_1 0.0%
+   pako.Pako.deflate 0.0%
+   (internal) 0.0%
+   GC::new 0.0%
+   haxe.io.ArrayBufferViewImpl.subarray 0.0%
+   pako.Deflate.push 0.0%
+   *._Function_1_6 0.0%
+   utest.Assert.isTrue 0.0%
+   pako.Deflate.new 0.0%
+   TestDeflateCover.testDeflate 0.0%
+promhx.Promise.pipe 99.50%/0.03%
+   *._Function_2_1 100.0%
+   (internal) 0.0%
+buddy.SuitesRunner.runSuite 97.15%/0.00%
+   buddy.internal.SuiteRunner.run 100.0%
+   (internal) 0.0%
+buddy.tools.AsyncTools.iterateAsyncBool 97.15%/0.00%
+   buddy.tools.AsyncTools.iterateAsync 100.0%
+   (internal) 0.0%
+buddy.internal.SuiteRunner.run 97.15%/0.00%
+   buddy.tools.AsyncTools.iterateAsyncBool 100.0%
+   promhx.Promise.then 0.0%
+   (internal) 0.0%
+buddy.tools.AsyncTools.next 97.15%/0.00%
+   promhx.Promise.then 87.6%
+   buddy.SuitesRunner.runSuite 6.2%
+   buddy.internal.SuiteRunner.runSteps 6.2%
+   promhx.Deferred.resolve 0.0%
+   (internal) 0.0%
+buddy.tools.AsyncTools.iterateAsync 97.15%/0.02%
+   buddy.tools.AsyncTools.next 100.0%
+   promhx.Deferred.promise 0.0%
+   (internal) 0.0%
+buddy.internal.SuiteRunner.runSteps 97.08%/0.00%
+   buddy.internal.SuiteRunner.runSpec 100.0%
+   promhx.Promise.then 0.0%
+   promhx.Deferred.promise 0.0%
+   (internal) 0.0%
+buddy.internal.SuiteRunner.runSpec 97.06%/0.01%
+   promhx.Promise.pipe 99.6%
+   promhx.Promise.then 0.4%
+   buddy.tools.AsyncTools.iterateAsyncBool 0.0%
+   (internal) 0.0%
+*._Function_1_5 96.39%/0.20%
+   *._Function_2_8 13.4%
+   *._Function_2_2 13.0%
+   *._Function_2_7 13.0%
+   *._Function_2_1 12.7%
+   *._Function_2_3 11.0%
+   *._Function_2_5 10.2%
+   *._Function_2_4 9.8%
+   *._Function_2_6 8.9%
+   *._Function_2_9 7.1%
+   *._Function_2_10 0.4%
+   buddy.tools.AsyncTools.wait 0.3%
+   (internal) 0.2%
+   *._Function_2_11 0.1%
+   promhx.Promise.then 0.0%
+   *._Function_1_3 0.0%
+   *._Function_2_18 0.0%
+   *._Function_2_20 0.0%
+pako.Deflate.push 85.13%/0.16%
+   pako.zlib.Deflate.deflate 99.4%
+   pako.Deflate._onEnd 0.2%
+   (internal) 0.2%
+   haxe.io.Bytes.alloc 0.2%
+   pako.utils.Common.shrinkBuf 0.0%
+   pako.Deflate._onData 0.0%
+pako.Pako.deflate 81.82%/0.04%
+   pako.Deflate.push 98.5%
+   pako.Deflate.new 1.5%
+   (internal) 0.1%
+pako.zlib.Deflate.deflate 73.24%/11.52%
+   pako.zlib.Deflate.deflate_slow 74.0%
+   (internal) 13.6%
+   pako.zlib.Deflate.deflate_fast 6.8%
+   pako.zlib.Deflate.deflate_huff 2.7%
+   pako.zlib.Deflate.deflate_rle 2.6%
+   pako.zlib.Deflate.deflate_stored 0.4%
+   pako.zlib.Deflate.flush_pending 0.0%
+Helpers.testSamples 44.56%/0.01%
+   Helpers.testSingle 100.0%
+   (internal) 0.0%
+Helpers.testSingle 44.30%/0.25%
+   pako.Pako.deflate 94.2%
+   pako.Pako.deflateRaw 4.4%
+   pako.Pako.gzip 0.7%
+   (internal) 0.6%
+   pako.Pako.inflateRaw 0.2%
+Helpers.testInflate 44.23%/1.22%
+   pako.Pako.deflate 82.2%
+   pako.Pako.inflate 15.1%
+   (internal) 2.7%
+pako.zlib.Deflate.flush_block_only 27.41%/0.00%
+   pako.zlib.Trees._tr_flush_block 100.0%
+   pako.zlib.Deflate.flush_pending 0.0%
+   (internal) 0.0%
+pako.zlib.Deflate.deflate_slow 21.86%/40.84%
+   (internal) 65.1%
+   pako.zlib.Deflate.flush_block_only 33.3%
+   pako.zlib.Deflate.fill_window 1.0%
+   pako.zlib.Trees._tr_tally 0.6%
+pako.zlib.Trees._tr_flush_block 20.92%/6.47%
+   pako.zlib.Trees.compress_block 47.0%
+   pako.zlib.Trees.build_tree 27.0%
+   (internal) 23.6%
+   pako.zlib.Trees.build_bl_tree 1.4%
+   pako.zlib.Trees.send_all_trees 1.0%
+   pako.zlib.Trees._tr_stored_block 0.1%
+*._Function_2_8 12.91%/0.00%
+   Helpers.testSamples 54.1%
+   Helpers.testInflate 45.9%
+   (internal) 0.0%
+*._Function_2_7 12.52%/0.00%
+   Helpers.testSamples 54.9%
+   Helpers.testInflate 45.1%
+   (internal) 0.0%
+*._Function_2_2 12.50%/0.05%
+   Helpers.testInflate 53.2%
+   Helpers.testSamples 37.0%
+   TestDeflateCover.testDeflate 7.8%
+   pako.Pako.deflate 0.8%
+   TestChunks.testChunk 0.5%
+   (internal) 0.4%
+   pako.Pako.inflate 0.2%
+   pako.Inflate.push 0.1%
+   TestInflateCover.testInflate 0.1%
+*._Function_2_3 10.62%/0.00%
+   Helpers.testInflate 39.7%
+   Helpers.testSamples 39.2%
+   TestDeflateCover.testDeflate 21.0%
+   TestChunks.testChunk 0.1%
+   (internal) 0.0%
+*._Function_2_5 9.82%/0.00%
+   Helpers.testInflate 50.8%
+   Helpers.testSamples 41.3%
+   TestDeflateCover.testDeflate 7.9%
+   (internal) 0.0%
+*._Function_2_4 9.41%/0.03%
+   Helpers.testInflate 49.9%
+   Helpers.testSamples 40.4%
+   TestDeflateCover.testDeflate 8.5%
+   TestChunks.testChunk 0.4%
+   pako.Pako.deflate 0.4%
+   (internal) 0.4%
+*._Function_2_6 8.60%/0.00%
+   Helpers.testInflate 52.2%
+   Helpers.testSamples 47.7%
+   TestInflateCover.testInflate 0.1%
+   (internal) 0.0%
+pako.Inflate.push 6.98%/0.39%
+   pako.zlib.Inflate.inflate 89.6%
+   (internal) 5.3%
+   pako.Inflate._onEnd 2.6%
+   haxe.io.Bytes.alloc 2.4%
+pako.Pako.inflate 6.96%/0.02%
+   pako.Inflate.push 99.1%
+   pako.Inflate.new 0.6%
+   (internal) 0.2%
+*._Function_2_9 6.87%/0.00%
+   Helpers.testSamples 74.3%
+   Helpers.testInflate 25.7%
+   (internal) 0.0%
+pako.zlib.Trees.compress_block 5.98%/6.89%
+   (internal) 53.5%
+   pako.zlib.Trees.send_code 44.5%
+   pako.zlib.Trees.send_bits 2.0%
+TestDeflateCover.testDeflate 4.68%/0.12%
+   pako.Deflate.push 95.8%
+   (internal) 2.5%
+   pako.Deflate.new 1.8%
+pako.zlib.Deflate.deflate_fast 3.56%/2.19%
+   pako.zlib.Deflate.flush_block_only 59.9%
+   (internal) 38.1%
+   pako.zlib.Deflate.fill_window 1.2%
+   pako.zlib.Trees._tr_tally 0.9%
+pako.zlib.Trees.build_tree 3.45%/4.16%
+   (internal) 54.7%
+   pako.zlib.Trees.pqdownheap 42.9%
+   pako.zlib.Trees.gen_codes 2.5%
+*._Function_3_1 3.25%/0.02%
+   MochaReporter.done 70.7%
+   *._Function_3_1 9.9%
+   promhx.Promise.handleResolve 9.9%
+   *._Function_2_1 8.8%
+   (internal) 0.4%
+   promhx.Deferred.resolve 0.2%
+MochaReporter.done 2.85%/0.00%
+   Lambda.iter 98.8%
+   MochaReporter.println 1.2%
+   (internal) 0.0%
+Lambda.iter 2.82%/0.00%
+   *._Function_2_1 100.0%
+   (internal) 0.0%
+*._Function_1_2 2.81%/0.00%
+   *._Function_2_1 99.7%
+   MochaReporter.println 0.3%
+   (internal) 0.0%
+MochaReporter.println 2.78%/0.06%
+   Sys.println 97.9%
+   (internal) 2.1%
+pako.Pako.deflateRaw 1.97%/0.00%
+   pako.Pako.deflate 100.0%
+   (internal) 0.0%
+pako.zlib.Deflate.deflate_huff 1.64%/0.61%
+   pako.zlib.Deflate.flush_block_only 70.2%
+   (internal) 27.2%
+   pako.zlib.Deflate.fill_window 2.6%
+pako.zlib.Deflate.deflate_rle 1.58%/0.63%
+   pako.zlib.Deflate.flush_block_only 68.8%
+   (internal) 28.5%
+   pako.zlib.Deflate.fill_window 2.7%
+pako.zlib.Trees.send_code 1.48%/4.33%
+   (internal) 74.6%
+   pako.zlib.Trees.send_bits 25.4%
+pako.Deflate.new 1.31%/0.00%
+   pako.zlib.Deflate.deflateInit2 100.0%
+   (internal) 0.0%
+pako.zlib.Deflate.deflateInit2 1.29%/0.02%
+   haxe.io.Bytes.alloc 81.8%
+   pako.zlib.DeflateState.new 13.0%
+   pako.zlib.Deflate.deflateReset 3.9%
+   (internal) 1.3%
+pako.zlib.Deflate.fill_window 0.71%/0.14%
+   pako.zlib.Deflate.read_buf 81.0%
+   (internal) 16.0%
+   pako.utils.Common.arraySet 3.0%
+haxe.io.Bytes.alloc 0.65%/1.30%
+   (internal) 66.5%
+   GC::new 33.5%
+promhx.base.AsyncBase.handleResolve 0.42%/0.00%
+   promhx.base.AsyncBase._resolve 100.0%
+   (internal) 0.0%
+promhx.Deferred.resolve 0.42%/0.00%
+   promhx.base.AsyncBase.handleResolve 100.0%
+   (internal) 0.0%
+promhx.base.EventLoop.continueOnNextLoop 0.41%/0.00%
+   promhx.base.EventLoop.f 100.0%
+   (internal) 0.0%
+promhx.base.AsyncBase._resolve 0.41%/0.03%
+   promhx.base.EventLoop.continueOnNextLoop 94.9%
+   (internal) 3.1%
+   List.add 2.0%
+promhx.base.EventLoop.f 0.40%/0.02%
+   *._Function_3_1 97.8%
+   (internal) 2.2%
+promhx.Promise.handleResolve 0.39%/0.01%
+   promhx.base.AsyncBase._resolve 97.9%
+   (internal) 2.1%
+*._Function_1_7 0.36%/0.00%
+   promhx.Deferred.resolve 100.0%
+   (internal) 0.0%
+MochaReporter.progress 0.36%/0.00%
+   MochaReporter.print 92.9%
+   MochaReporter.resolveImmediately 7.1%
+   (internal) 0.0%
+*._Function_2_10 0.36%/0.00%
+   Helpers.testInflate 71.4%
+   Helpers.testSamples 26.2%
+   TestInflateCover.testInflate 2.4%
+   (internal) 0.0%
+pako.Pako.gzip 0.31%/0.00%
+   pako.Pako.deflate 100.0%
+   (internal) 0.0%
+pako.utils.Common.flattenChunks 0.28%/0.09%
+   haxe.io.Bytes.alloc 75.0%
+   (internal) 25.0%
+pako.zlib.Inflate.inflate 0.24%/6.37%
+   (internal) 96.4%
+   pako.zlib.Inflate.updatewindow 1.7%
+   haxe.io.Bytes.alloc 0.8%
+   GC::new 0.4%
+   *.closure 0.3%
+   GC::relloc 0.3%
+   pako.zlib.InfTrees.inflate_table 0.1%
+   pako.utils.Common.arraySet 0.1%
+pako.zlib.Trees.build_bl_tree 0.21%/0.17%
+   pako.zlib.Trees.build_tree 55.6%
+   (internal) 44.4%
+*.closure 0.20%/0.03%
+   haxe.io.Bytes.alloc 64.3%
+   GC::new 21.4%
+   (internal) 14.3%
+pako.Inflate._onEnd 0.20%/0.00%
+   pako.utils.Common.flattenChunks 100.0%
+   (internal) 0.0%
+pako.Deflate._onEnd 0.18%/0.03%
+   pako.utils.Common.flattenChunks 87.5%
+   (internal) 12.5%
+pako.zlib.DeflateState.new 0.15%/0.02%
+   *.closure 90.0%
+   (internal) 10.0%
+pako.zlib.Trees.send_all_trees 0.15%/0.11%
+   pako.zlib.Trees.send_tree 58.1%
+   (internal) 41.9%
+pako.zlib.Inflate.updatewindow 0.10%/0.01%
+   pako.utils.Common.arraySet 46.2%
+   haxe.io.Bytes.alloc 46.2%
+   (internal) 7.7%
+*._Function_2_11 0.08%/0.00%
+   Helpers.testSamples 100.0%
+   (internal) 0.0%
+promhx.Deferred.promise 0.08%/0.00%
+   promhx.Promise.new 100.0%
+   (internal) 0.0%
+pako.Pako.inflateRaw 0.08%/0.00%
+   pako.Pako.inflate 100.0%
+   (internal) 0.0%
+TestChunks.testChunk 0.08%/0.03%
+   pako.Inflate.push 38.5%
+   pako.Deflate.push 30.8%
+   (internal) 30.8%
+pako.zlib.Trees.send_tree 0.08%/0.08%
+   pako.zlib.Trees.send_code 50.0%
+   (internal) 50.0%
+promhx.Promise.new 0.07%/0.01%
+   promhx.base.AsyncBase.new 88.9%
+   (internal) 11.1%
+pako.zlib.Deflate.read_buf 0.07%/0.62%
+   (internal) 90.1%
+   pako.utils.Common.arraySet 9.9%
+pako.Inflate.new 0.05%/0.00%
+   pako.zlib.Inflate.inflateInit2 100.0%
+   (internal) 0.0%
+pako.zlib.Inflate.inflateInit2 0.05%/0.00%
+   pako.zlib.Inflate.inflateReset2 66.7%
+   pako.zlib.InflateState.new 33.3%
+   (internal) 0.0%
+pako.zlib.Deflate.deflateReset 0.05%/0.00%
+   pako.zlib.Deflate.lm_init 83.3%
+   pako.zlib.Deflate.deflateResetKeep 16.7%
+   (internal) 0.0%
+promhx.base.AsyncBase.new 0.05%/0.02%
+   *.closure 75.0%
+   (internal) 25.0%
+haxe.io.ArrayBufferViewImpl.subarray 0.05%/0.03%
+   haxe.io.ArrayBufferViewImpl.sub 66.7%
+   (internal) 33.3%
+*._Function_1_6 0.04%/0.00%
+   buddy.tools.AsyncTools.iterateAsyncBool 80.0%
+   promhx.Promise.reject 20.0%
+   (internal) 0.0%
+TestInflateCover.testInflate 0.04%/0.00%
+   pako.Inflate.push 60.0%
+   pako.Inflate.new 20.0%
+   TestInflateCover.h2b 20.0%
+   (internal) 0.0%
+pako.zlib.Deflate.lm_init 0.04%/0.00%
+   pako.utils.Common.zero 100.0%
+   (internal) 0.0%
+pako.zlib.Deflate.flush_pending 0.03%/0.00%
+   pako.utils.Common.arraySet 100.0%
+   (internal) 0.0%
+pako.zlib.Inflate.inflateReset 0.03%/0.00%
+   pako.zlib.Inflate.inflateResetKeep 100.0%
+   (internal) 0.0%
+pako.zlib.Inflate.inflateReset2 0.03%/0.00%
+   pako.zlib.Inflate.inflateReset 100.0%
+   (internal) 0.0%
+pako.zlib.Deflate.deflate_stored 0.03%/0.27%
+   (internal) 88.9%
+   pako.zlib.Deflate.fill_window 11.1%
+MochaReporter.resolveImmediately 0.03%/0.00%
+   promhx.Deferred.resolve 66.7%
+   promhx.Deferred.promise 33.3%
+   (internal) 0.0%
+pako.zlib.Inflate.inflateResetKeep 0.03%/0.01%
+   haxe.io.Bytes.alloc 75.0%
+   (internal) 25.0%
+pako.zlib.InflateState.new 0.02%/0.00%
+   *.closure 100.0%
+   (internal) 0.0%
+utest.Assert.isTrue 0.02%/0.01%
+   List.add 66.7%
+   (internal) 33.3%
+promhx.Promise.reject 0.01%/0.00%
+   promhx.Promise.handleError 100.0%
+   (internal) 0.0%
+*._Function_2_18 0.01%/0.00%
+   TestInflateCover.testInflate 100.0%
+   (internal) 0.0%
+pako.zlib.Deflate.deflateResetKeep 0.01%/0.00%
+   pako.zlib.Trees._tr_init 100.0%
+   (internal) 0.0%
+*._Function_1_3 0.01%/0.00%
+   promhx.Deferred.resolve 100.0%
+   (internal) 0.0%
+promhx.base.AsyncBase._handleError 0.01%/0.00%
+   List.add 100.0%
+   (internal) 0.0%
+*._Function_2_20 0.01%/0.00%
+   TestInflateCover.testInflate 100.0%
+   (internal) 0.0%
+promhx.Promise.handleError 0.01%/0.00%
+   promhx.base.AsyncBase._handleError 100.0%
+   (internal) 0.0%
+pako.zlib.Trees._tr_stored_block 0.01%/0.01%
+   pako.zlib.Trees.copy_block 50.0%
+   (internal) 50.0%
+List.add 0.01%/0.03%
+   (internal) 80.0%
+   GC::new 20.0%
+pako.zlib.Trees._tr_init 0.00%/0.01%
+pako.Deflate._onData 0.00%/0.01%
+pako.zlib.InfTrees.inflate_table 0.00%/0.01%
+TestInflateCover.h2b 0.00%/0.01%
+pako.zlib.Trees.copy_block 0.00%/0.01%
+pako.utils.Common.shrinkBuf 0.00%/0.02%
+GC::relloc 0.00%/0.02%
+pako.utils.Common.zero 0.00%/0.04%
+haxe.io.ArrayBufferViewImpl.sub 0.00%/0.05%
+pako.zlib.Trees.gen_codes 0.00%/0.19%
+pako.utils.Common.arraySet 0.00%/0.19%
+buddy.tools.AsyncTools.wait 0.00%/0.25%
+MochaReporter.print 0.00%/0.33%
+pako.zlib.Trees._tr_tally 0.00%/0.42%
+GC::new 0.00%/0.82%
+pako.zlib.Trees.send_bits 0.00%/1.73%
+Sys.println 0.00%/2.78%
+pako.zlib.Trees.pqdownheap 0.00%/3.26%

@@ -1,0 +1,204 @@
+Main.hx:62: ArrayBufferView.EMULATED: false
+Main.hx:67: DEBUG: false
+...........X................XXX.........X............................XXX........
+...............................................................
+
+  ArrayBuffer
+    [ OK ] Deflate ArrayBuffer  (0.298s)
+    [ OK ] Inflate ArrayBuffer  (0.048s)
+
+  Small input chunks
+    [ OK ] deflate 100b by 1b chunk  (0.014s)
+    [ OK ] deflate 20000b by 10b chunk  (0.331s)
+    [ OK ] inflate 100b result by 1b chunk  (0.012s)
+    [ OK ] inflate 20000b result by 10b chunk  (0.215s)
+
+  Dummy push (force end)
+    [ OK ] deflate end  (0.77s)
+    [ OK ] inflate end  (0.405s)
+
+  Edge condition
+    [ OK ] should be ok on buffer border  (0.327s)
+
+  Deflate defaults
+    [ OK ] deflate, no options  (1.364s)
+    [ OK ] deflate raw, no options  (1.311s)
+    [FAIL] gzip, no options (ERROR: Resource "zlib_output/gzip_no_opt-lorem_utf_
+100k" not found.)  (0.213s)
+      @ Helpers.hx:35
+      @ Helpers.hx:104
+      @ Helpers.hx:126
+      @ Main.hx:807
+
+  Deflate levels
+    [ OK ] level 9  (1.375s)
+    [ OK ] level 8  (1.388s)
+    [ OK ] level 7  (1.353s)
+    [ OK ] level 6  (1.334s)
+    [ OK ] level 5  (1.284s)
+    [ OK ] level 4  (1.212s)
+    [ OK ] level 3  (0.976s)
+    [ OK ] level 2  (0.941s)
+    [ OK ] level 1  (1.114s)
+    [ OK ] level 0  (0.209s)
+    [ OK ] level -1 (implicit default)  (0.208s)
+
+  Deflate windowBits
+    [ OK ] windowBits 15  (1.367s)
+    [ OK ] windowBits 14  (1.399s)
+    [ OK ] windowBits 13  (1.599s)
+    [ OK ] windowBits 12  (1.962s)
+    [ OK ] windowBits 11  (3.198s)
+    [FAIL] windowBits 10 (ERROR: Timeout after 5000 ms)  (5.281s)
+    [FAIL] windowBits 9 (ERROR: Timeout after 5000 ms)  (8.895s)
+    [FAIL] windowBits 8 (ERROR: Timeout after 5000 ms)  (12.28s)
+    [ OK ] windowBits -15 (implicit raw)  (1.527s)
+
+  Deflate memLevel
+    [ OK ] memLevel 9  (1.579s)
+    [ OK ] memLevel 8  (1.462s)
+    [ OK ] memLevel 7  (1.607s)
+    [ OK ] memLevel 6  (1.76s)
+    [ OK ] memLevel 5  (1.77s)
+    [ OK ] memLevel 4  (2.29s)
+    [ OK ] memLevel 3  (3.102s)
+    [ OK ] memLevel 2  (4.028s)
+    [FAIL] memLevel 1 (ERROR: Timeout after 5000 ms)  (5.212s)
+
+  Deflate strategy
+    [ OK ] Z_DEFAULT_STRATEGY  (1.635s)
+    [ OK ] Z_FILTERED  (1.576s)
+    [ OK ] Z_HUFFMAN_ONLY  (1.347s)
+    [ OK ] Z_RLE  (1.416s)
+    [ OK ] Z_FIXED  (1.561s)
+
+  Deflate RAW
+    [ OK ] level 4  (1.297s)
+    [ OK ] level 1  (1.023s)
+    [ OK ] level 0  (0.198s)
+
+  Inflate defaults
+    [ OK ] inflate, no options  (1.846s)
+    [ OK ] inflate raw, no options  (1.725s)
+    [ OK ] inflate raw from compressed samples  (0.167s)
+
+  Inflate ungzip
+    [ OK ] with autodetect  (1.898s)
+    [ OK ] with method set directly  (1.959s)
+
+  Inflate levels
+    [ OK ] level 9  (1.891s)
+    [ OK ] level 8  (1.878s)
+    [ OK ] level 7  (1.837s)
+    [ OK ] level 6  (1.801s)
+    [ OK ] level 5  (1.774s)
+    [ OK ] level 4  (1.667s)
+    [ OK ] level 3  (1.444s)
+    [ OK ] level 2  (1.354s)
+    [ OK ] level 1  (1.369s)
+    [ OK ] level 0  (0.32s)
+
+  Inflate windowBits
+    [ OK ] windowBits 15  (1.814s)
+    [ OK ] windowBits 14  (1.935s)
+    [ OK ] windowBits 13  (2.184s)
+    [ OK ] windowBits 12  (2.464s)
+    [ OK ] windowBits 11  (4.02s)
+    [FAIL] windowBits 10 (ERROR: Timeout after 5000 ms)  (5.861s)
+    [FAIL] windowBits 9 (ERROR: Timeout after 5000 ms)  (9.687s)
+    [FAIL] windowBits 8 (ERROR: Timeout after 5000 ms)  (9.939s)
+
+  Inflate strategy
+    [ OK ] Z_DEFAULT_STRATEGY  (1.868s)
+    [ OK ] Z_FILTERED  (1.863s)
+    [ OK ] Z_HUFFMAN_ONLY  (1.762s)
+    [ OK ] Z_RLE  (1.899s)
+    [ OK ] Z_FIXED  (1.868s)
+
+  Inflate RAW
+    [ OK ] level 9  (1.842s)
+    [ OK ] level 8  (1.854s)
+    [ OK ] level 7  (1.808s)
+    [ OK ] level 6  (1.826s)
+    [ OK ] level 5  (1.701s)
+    [ OK ] level 4  (1.643s)
+    [ OK ] level 3  (1.354s)
+    [ OK ] level 2  (1.324s)
+    [ OK ] level 1  (1.298s)
+    [ OK ] level 0  (0.246s)
+
+  Inflate states
+    [ OK ] inflate bad parameters  (0s)
+    [ OK ] bad gzip method  (0s)
+    [ OK ] bad gzip flags  (0s)
+    [ OK ] bad zlib method  (0s)
+    [ OK ] set window size from header  (0s)
+    [ OK ] bad zlib window size  (0.001s)
+    [ OK ] check adler32  (0s)
+    [ OK ] bad header crc  (0s)
+    [ OK ] check gzip length  (0s)
+    [ OK ] bad zlib header check  (0.002s)
+    [ OK ] need dictionary  (0s)
+    [ OK ] compute adler32  (0s)
+
+  Inflate cover
+    [ OK ] invalid stored block lengths  (0s)
+    [ OK ] fixed  (0s)
+    [ OK ] invalid block type  (0s)
+    [ OK ] stored  (0s)
+    [ OK ] too many length or distance symbols  (0s)
+    [ OK ] invalid code lengths set  (0s)
+    [ OK ] invalid bit length repeat  (0s)
+    [ OK ] invalid bit length repeat  (0s)
+    [ OK ] invalid code -- missing end-of-block  (0s)
+    [ OK ] invalid literal/lengths set  (0.001s)
+    [ OK ] invalid literal/length code  (0s)
+    [ OK ] invalid distance code  (0s)
+    [ OK ] invalid distance too far back  (0s)
+    [ OK ] incorrect data check  (0s)
+    [ OK ] incorrect length check  (0s)
+    [ OK ] pull 17  (0.001s)
+    [ OK ] long code  (0s)
+    [ OK ] length extra  (0s)
+    [ OK ] long distance and extra  (0s)
+    [ OK ] window end  (0.006s)
+    [ OK ] inflate_fast TYPE return  (0s)
+    [ OK ] window wrap  (0s)
+
+  cover trees
+    [ OK ] inflate_table not enough errors  (0s)
+
+  Inflate fast
+    [ OK ] fast length extra bits  (0.001s)
+    [ OK ] fast distance extra bits  (0s)
+    [ OK ] fast invalid literal/length code  (0s)
+    [ OK ] fast 2nd level codes and too far back  (0s)
+    [ OK ] very common case  (0s)
+    [ OK ] contiguous and wrap around window  (0s)
+    [ OK ] copy direct from output  (0.001s)
+
+  Inflate support
+    [ OK ] force window allocation  (0s)
+    [ OK ] force window replacement  (0s)
+    [ OK ] force split window update  (0s)
+    [ OK ] use fixed blocks  (0s)
+    [ OK ] bad window size  (0s)
+
+  Deflate support
+    [ OK ] stored  (0.01s)
+    [ OK ] fast  (1.572s)
+    [ OK ] slow  (2.892s)
+    [ OK ] rle  (1.069s)
+    [ OK ] huffman  (1.003s)
+
+  Deflate states
+    [ OK ] inflate bad parameters  (0.003s)
+
+  Gzip special cases
+    [ OK ] Read custom headers  (0s)
+    [ OK ] Write custom headers  (0.005s)
+    [ OK ] Read stream with SYNC marks  (0.002s)
+
+143 specs, 135 passed, 8 failed, 0 pending
+total time: 178.632
+
