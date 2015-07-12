@@ -105,7 +105,7 @@ class Inflate
   static inline var DEF_WBITS = MAX_WBITS;
 
 
-  static function ZSWAP32(q:Int):Int {
+  static inline function ZSWAP32(q:Int):Int {
     return  (((q >>> 24) & 0xff) +
             ((q >>> 8) & 0xff00) +
             ((q & 0xff00) << 8) +
@@ -207,7 +207,7 @@ class Inflate
     return ret;
   }
 
-  static public function inflateInit(strm:ZStream) {
+  static inline public function inflateInit(strm:ZStream) {
     return inflateInit2(strm, DEF_WBITS);
   }
 
@@ -1624,9 +1624,7 @@ class InflateState
   var back:Int = 0;                   /* bits back of last unprocessed length/lit */
   var was:Int = 0;                    /* initial length of match */
   
-  function new() {
-    
-  }
+  function new() { }
 }
 
 /*exports.inflateReset = inflateReset;

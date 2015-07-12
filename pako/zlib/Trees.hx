@@ -167,7 +167,7 @@ class Trees
   static var static_bl_desc:StaticTreeDesc;
 
 
-  static function d_code(dist) {
+  static inline function d_code(dist) {
     return dist < 256 ? _dist_code[dist] : _dist_code[256 + (dist >>> 7)];
   }
 
@@ -176,7 +176,7 @@ class Trees
    * Output a short LSB first on the stream.
    * IN assertion: there is enough room in pendingBuf.
    */
-  static function put_short (s:DeflateState, w:Int) {
+  static inline function put_short (s:DeflateState, w:Int) {
   //    put_byte(s, (uch)((w) & 0xff));
   //    put_byte(s, (uch)((ush)(w) >> 8));
     s.pending_buf[s.pending++] = (w) & 0xff;
@@ -201,7 +201,7 @@ class Trees
   }
 
 
-  static function send_code(s:DeflateState, c, tree:UInt16Array) {
+  static inline function send_code(s:DeflateState, c, tree:UInt16Array) {
     send_bits(s, tree[c*2]/*.Code*/, tree[c*2 + 1]/*.Len*/);
   }
 
@@ -554,7 +554,7 @@ class Trees
    * Compares to subtrees, using the tree depth as tie breaker when
    * the subtrees have equal frequency. This minimizes the worst case length.
    */
-  static function smaller(tree:UInt16Array, n, m, depth:UInt16Array) {
+  static inline function smaller(tree:UInt16Array, n, m, depth:UInt16Array) {
     var _n2 = n*2;
     var _m2 = m*2;
     return (tree[_n2]/*.Freq*/ < tree[_m2]/*.Freq*/ ||
@@ -1039,7 +1039,7 @@ class Trees
   /* ===========================================================================
    * Send a stored block
    */
-  static public function _tr_stored_block(s:DeflateState, buf, stored_len, last)
+  static inline public function _tr_stored_block(s:DeflateState, buf, stored_len, last)
   //DeflateState *s;
   //charf *buf;       /* input block */
   //ulg stored_len;   /* length of input block */
@@ -1054,7 +1054,7 @@ class Trees
    * Send one empty static block to give enough lookahead for inflate.
    * This takes 10 bits, of which 7 may remain in the bit buffer.
    */
-  static public function _tr_align(s:DeflateState) {
+  static inline public function _tr_align(s:DeflateState) {
     send_bits(s, STATIC_TREES<<1, 3);
     send_code(s, END_BLOCK, static_ltree);
     bi_flush(s);

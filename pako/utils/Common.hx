@@ -6,12 +6,12 @@ import haxe.io.UInt8Array;
 class Common
 {
   //NOTE(hx): blit (reset pos to respective offsets?)
-  static public function arraySet(dest:ArrayBufferView, src:ArrayBufferView, src_offs:Int, len:Int, dest_offs:Int) {
+  static inline public function arraySet(dest:ArrayBufferView, src:ArrayBufferView, src_offs:Int, len:Int, dest_offs:Int) {
     dest.buffer.blit(dest.byteOffset + dest_offs, src.buffer, src.byteOffset + src_offs, len);
   }
   
   //NOTE(hx): moved here from Trees and Deflate
-  static public function zero(buf:ArrayBufferView) { 
+  static inline public function zero(buf:ArrayBufferView) { 
     var start = buf.byteOffset;
     var len = buf.byteLength; 
     buf.buffer.fill(start, len, 0);
@@ -19,9 +19,11 @@ class Common
   
   //NOTE(hx): if ArrayBufferView.EMULATED it will be a copy
   // reduce buffer size, avoiding mem copy
-  static public function shrinkBuf(buf:UInt8Array, size:Int) {
-    if (buf.length == size) { return buf; }
-    return buf.subarray(0, size);
+  static inline public function shrinkBuf(buf:UInt8Array, size:Int) {
+    if (buf.length != size) { 
+      buf = cast buf.subarray(0, size);
+    }
+    return buf;
   }
   
   //NOTE(hx): blit

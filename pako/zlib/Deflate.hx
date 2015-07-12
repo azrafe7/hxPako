@@ -112,12 +112,12 @@ class Deflate
   static inline var OS_CODE = 0x03; // Unix :) . Don't detect, use this default.
 
   
-  static function err(strm:ZStream, errorCode) {
+  static inline function err(strm:ZStream, errorCode) {
     strm.msg = Messages.get(errorCode);
     return errorCode;
   }
 
-  static function rank(f) {
+  static inline function rank(f) {
     return ((f) << 1) - ((f) > 4 ? 9 : 0);
   }
 
@@ -150,14 +150,14 @@ class Deflate
   }
 
 
-  static function flush_block_only (s:DeflateState, last) {
+  static inline function flush_block_only (s:DeflateState, last) {
     Trees._tr_flush_block(s, (s.block_start >= 0 ? s.block_start : -1), s.strstart - s.block_start, last);
     s.block_start = s.strstart;
     flush_pending(s.strm);
   }
 
 
-  static function put_byte(s:DeflateState, b) {
+  static inline function put_byte(s:DeflateState, b) {
     s.pending_buf[s.pending++] = b;
   }
 
@@ -167,7 +167,7 @@ class Deflate
    * IN assertion: the stream state is correct and there is enough room in
    * pending_buf.
    */
-  static function putShortMSB(s:DeflateState, b) {
+  static inline function putShortMSB(s:DeflateState, b) {
   //  put_byte(s, (Byte)(b >> 8));
   //  put_byte(s, (Byte)(b & 0xff));
     s.pending_buf[s.pending++] = (b >>> 8) & 0xff;
@@ -1189,7 +1189,7 @@ class Deflate
     return deflateReset(strm);
   }
 
-  static public function deflateInit(?strm:ZStream, level:Int = CompressionLevel.Z_NO_COMPRESSION) {
+  static inline public function deflateInit(?strm:ZStream, level:Int = CompressionLevel.Z_NO_COMPRESSION) {
     return deflateInit2(strm, level, Method.Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL, Strategy.Z_DEFAULT_STRATEGY);
   }
 
@@ -1772,7 +1772,7 @@ class Config
   var max_chain:Int;
   var func:Function;
 
-  function new(good_length, max_lazy, nice_length, max_chain, func) {
+  function new(good_length, max_lazy, nice_length, max_chain, func:DeflateState->Int->Int) {
     this.good_length = good_length;
     this.max_lazy = max_lazy;
     this.nice_length = nice_length;
