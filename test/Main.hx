@@ -35,10 +35,17 @@ using unifill.Unifill;
 using buddy.Should;
 
 
-class Main 
+class Main
 { 
+  static var count:Int = 0;
   
   static public function main():Void {
+    
+    // workaround for openfl html5, where SuitesRunner runs twice (not sure why)
+    if (++count > 1) {
+      trace("Prevented running again!");
+      return; 
+    }
     
     var reporter = new MochaReporter();
   
@@ -53,10 +60,24 @@ class Main
     ], reporter);
     
     trace("ArrayBufferView.EMULATED: " + ArrayBufferView.EMULATED);
-    
+  
+  #if debug
+    trace("DEBUG: true");
+  #else
+    trace("DEBUG: false");
+  #end
+  
+  #if cpp
+    cpp.vm.Profiler.start("log-profiler.txt");
+  #end
+  
     runner.run();
+    
+  #if cpp
+    cpp.vm.Profiler.stop();
+  #end
   }
-}
+}  
 
 class TestMisc extends BuddySuite {
     public function new() {

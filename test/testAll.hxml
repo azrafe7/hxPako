@@ -1,6 +1,6 @@
 -cp ..
 -main Main
--debug
+#-debug
 -lib unifill
 -lib utest
 -lib buddy
@@ -15,7 +15,7 @@
 -resource fixtures\samples\lorem_cat.jpeg@samples/lorem_cat.jpeg
 -resource fixtures\samples\utf8.zip@samples/utf8.zip
 
-#fixtures/samples
+#fixtures
 -resource fixtures\gzip-headers.gz@gzip-headers.gz
 -resource fixtures\gzip-joined.gz@gzip-joined.gz
 
