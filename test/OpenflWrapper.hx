@@ -40,7 +40,7 @@ class OpenflWrapper extends Sprite
   #end
   
     // delayed so we have time to append the textfield
-    Timer.delay(Main.main, 100);
+    Timer.delay(TestAll.main, 100);
   }
   
   function onEnterFrame(event:Event): Void {

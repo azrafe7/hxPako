@@ -35,7 +35,7 @@ using unifill.Unifill;
 using buddy.Should;
 
 
-class Main
+class TestAll
 { 
   static var count:Int = 0;
   
@@ -80,22 +80,22 @@ class Main
 }  
 
 class TestMisc extends BuddySuite {
-    public function new() {
+  public function new() {
+    
+    describe('ArrayBuffer', {
       
-      describe('ArrayBuffer', {
-        
-        var sample = Helpers.getSample('samples/lorem_utf_100k.txt');
-        var deflated = Pako.deflate(sample);
+      var sample = Helpers.getSample('samples/lorem_utf_100k.txt');
+      var deflated = Pako.deflate(sample);
 
-        it('Deflate ArrayBuffer', {
-          Assert.isTrue(Helpers.cmpBuf(cast deflated, cast Pako.deflate(sample)));
-        });
-
-        it('Inflate ArrayBuffer', {
-          Assert.isTrue(Helpers.cmpBuf(cast sample, cast Pako.inflate(deflated)));
-        });
+      it('Deflate ArrayBuffer', {
+        Assert.isTrue(Helpers.cmpBuf(cast deflated, cast Pako.deflate(sample)));
       });
-    }
+
+      it('Inflate ArrayBuffer', {
+        Assert.isTrue(Helpers.cmpBuf(cast sample, cast Pako.inflate(deflated)));
+      });
+    });
+  }
 }
 
 class TestChunks extends BuddySuite {

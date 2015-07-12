@@ -1,5 +1,5 @@
 -cp ..
--main Main
+-main TestAll
 #-debug
 -lib unifill
 -lib utest
