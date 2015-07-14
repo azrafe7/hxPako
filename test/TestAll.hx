@@ -28,12 +28,6 @@ import buddy.*;
 import utest.Assert;
 import Helpers;
 
-import unifill.Utf8;
-import unifill.Utf16;
-
-using unifill.Unifill;
-using buddy.Should;
-
 
 class TestAll
 { 
@@ -68,13 +62,13 @@ class TestAll
   #end
   
   #if cpp
-    cpp.vm.Profiler.start("log-profiler.txt");
+    //cpp.vm.Profiler.start("log-profiler.txt");
   #end
   
     runner.run();
     
   #if cpp
-    cpp.vm.Profiler.stop();
+    //cpp.vm.Profiler.stop();
   #end
   }
 }  

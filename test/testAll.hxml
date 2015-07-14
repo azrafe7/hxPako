@@ -1,7 +1,6 @@
 -cp ..
 -main TestAll
 #-debug
--lib unifill
 -lib utest
 -lib buddy
 -D fdb

@@ -23,7 +23,6 @@
 	<!--haxeflag name="--no-traces" if="release" /-->	
 	
   <!--haxelib name="hxtelemetry" /-->
-  <haxelib name="unifill" />
 	<haxelib name="utest" />
 	<haxelib name="buddy" />
 	<haxelib name="openfl" />

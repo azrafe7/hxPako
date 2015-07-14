@@ -29,7 +29,6 @@
   </build>
   <!-- haxelib libraries -->
   <haxelib>
-    <library name="unifill" />
     <library name="utest" />
     <library name="buddy" />
   </haxelib>
