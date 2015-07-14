@@ -165,7 +165,6 @@
   <file name="src/pako/zlib/Inflate.cpp">
    <depend name="include/haxe/io/ArrayBufferViewImpl.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
-   <depend name="include/pako/utils/Common.h"/>
    <depend name="include/pako/zlib/Adler32.h"/>
    <depend name="include/pako/zlib/CRC32.h"/>
    <depend name="include/pako/zlib/GZHeader.h"/>
@@ -195,7 +194,6 @@
   <file name="src/pako/zlib/DeflateState.cpp">
    <depend name="include/haxe/io/ArrayBufferViewImpl.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
-   <depend name="include/pako/utils/Common.h"/>
    <depend name="include/pako/zlib/DeflateState.h"/>
    <depend name="include/pako/zlib/GZHeader.h"/>
    <depend name="include/pako/zlib/TreeDesc.h"/>
@@ -205,7 +203,6 @@
    <depend name="include/Std.h"/>
    <depend name="include/haxe/io/ArrayBufferViewImpl.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
-   <depend name="include/pako/utils/Common.h"/>
    <depend name="include/pako/zlib/Adler32.h"/>
    <depend name="include/pako/zlib/CRC32.h"/>
    <depend name="include/pako/zlib/Config.h"/>
@@ -218,12 +215,12 @@
   </file>
   <file name="src/pako/zlib/Config.cpp">
    <depend name="include/pako/zlib/Config.h"/>
+   <depend name="include/pako/zlib/DeflateState.h"/>
   </file>
   <file name="src/pako/zlib/Trees.cpp">
    <depend name="include/haxe/io/ArrayBufferViewImpl.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
    <depend name="include/haxe/io/_UInt16Array/UInt16Array_Impl_.h"/>
-   <depend name="include/pako/utils/Common.h"/>
    <depend name="include/pako/zlib/DeflateState.h"/>
    <depend name="include/pako/zlib/StaticTreeDesc.h"/>
    <depend name="include/pako/zlib/TreeDesc.h"/>
@@ -277,6 +274,7 @@
    <depend name="include/Std.h"/>
    <depend name="include/haxe/io/ArrayBufferViewImpl.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
+   <depend name="include/haxe/io/_UInt8Array/UInt8Array_Impl_.h"/>
    <depend name="include/pako/Inflate.h"/>
    <depend name="include/pako/utils/Common.h"/>
    <depend name="include/pako/zlib/GZHeader.h"/>
@@ -288,6 +286,7 @@
    <depend name="include/Std.h"/>
    <depend name="include/haxe/io/ArrayBufferViewImpl.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
+   <depend name="include/haxe/io/_UInt8Array/UInt8Array_Impl_.h"/>
    <depend name="include/pako/Deflate.h"/>
    <depend name="include/pako/utils/Common.h"/>
    <depend name="include/pako/zlib/Deflate.h"/>
@@ -532,50 +531,6 @@
   <file name="src/ValueType.cpp">
    <depend name="include/ValueType.h"/>
   </file>
-  <file name="src/Sys.cpp">
-   <depend name="include/Sys.h"/>
-   <depend name="include/cpp/Lib.h"/>
-  </file>
-  <file name="src/StringTools.cpp">
-   <depend name="include/StringTools.h"/>
-  </file>
-  <file name="src/StringBuf.cpp">
-   <depend name="include/Std.h"/>
-   <depend name="include/StringBuf.h"/>
-  </file>
-  <file name="src/Std.cpp">
-   <depend name="include/Std.h"/>
-  </file>
-  <file name="src/Reflect.cpp">
-   <depend name="include/Reflect.h"/>
-  </file>
-  <file name="src/MochaReporter.cpp">
-   <depend name="include/Lambda.h"/>
-   <depend name="include/List.h"/>
-   <depend name="include/MochaReporter.h"/>
-   <depend name="include/Std.h"/>
-   <depend name="include/StringBuf.h"/>
-   <depend name="include/StringTools.h"/>
-   <depend name="include/Sys.h"/>
-   <depend name="include/buddy/Spec.h"/>
-   <depend name="include/buddy/Suite.h"/>
-   <depend name="include/buddy/TestStatus.h"/>
-   <depend name="include/buddy/TestStep.h"/>
-   <depend name="include/buddy/reporting/Reporter.h"/>
-   <depend name="include/haxe/IMap.h"/>
-   <depend name="include/haxe/StackItem.h"/>
-   <depend name="include/haxe/Timer.h"/>
-   <depend name="include/haxe/ds/ObjectMap.h"/>
-   <depend name="include/promhx/Deferred.h"/>
-   <depend name="include/promhx/Promise.h"/>
-   <depend name="include/promhx/base/AsyncBase.h"/>
-  </file>
-  <file name="src/buddy/reporting/Reporter.cpp">
-   <depend name="include/buddy/Spec.h"/>
-   <depend name="include/buddy/reporting/Reporter.h"/>
-   <depend name="include/promhx/Promise.h"/>
-   <depend name="include/promhx/base/AsyncBase.h"/>
-  </file>
   <file name="src/TestDeflate.cpp">
    <depend name="include/Helpers.h"/>
    <depend name="include/TestDeflate.h"/>
@@ -607,7 +562,6 @@
    <depend name="include/haxe/io/_UInt8Array/UInt8Array_Impl_.h"/>
    <depend name="include/pako/Deflate.h"/>
    <depend name="include/pako/Inflate.h"/>
-   <depend name="include/pako/utils/Common.h"/>
    <depend name="include/pako/zlib/GZHeader.h"/>
    <depend name="include/pako/zlib/ZStream.h"/>
    <depend name="include/utest/Assert.h"/>
@@ -655,7 +609,6 @@
    <depend name="include/pako/Deflate.h"/>
    <depend name="include/pako/Inflate.h"/>
    <depend name="include/pako/Pako.h"/>
-   <depend name="include/pako/utils/Common.h"/>
    <depend name="include/utest/Assert.h"/>
   </file>
   <file name="src/TestMisc.cpp">
@@ -677,9 +630,9 @@
    <depend name="include/buddy/TestStep.h"/>
    <depend name="include/haxe/StackItem.h"/>
   </file>
-  <file name="src/Main.cpp">
-   <depend name="include/Main.h"/>
+  <file name="src/TestAll.cpp">
    <depend name="include/MochaReporter.h"/>
+   <depend name="include/TestAll.h"/>
    <depend name="include/TestChunks.h"/>
    <depend name="include/TestDeflate.h"/>
    <depend name="include/TestDeflateCover.h"/>
@@ -692,6 +645,50 @@
    <depend name="include/buddy/reporting/Reporter.h"/>
    <depend name="include/cpp/vm/Profiler.h"/>
    <depend name="include/haxe/Log.h"/>
+   <depend name="include/promhx/Promise.h"/>
+   <depend name="include/promhx/base/AsyncBase.h"/>
+  </file>
+  <file name="src/Sys.cpp">
+   <depend name="include/Sys.h"/>
+   <depend name="include/cpp/Lib.h"/>
+  </file>
+  <file name="src/StringTools.cpp">
+   <depend name="include/StringTools.h"/>
+  </file>
+  <file name="src/StringBuf.cpp">
+   <depend name="include/Std.h"/>
+   <depend name="include/StringBuf.h"/>
+  </file>
+  <file name="src/Std.cpp">
+   <depend name="include/Std.h"/>
+  </file>
+  <file name="src/Reflect.cpp">
+   <depend name="include/Reflect.h"/>
+  </file>
+  <file name="src/MochaReporter.cpp">
+   <depend name="include/Lambda.h"/>
+   <depend name="include/List.h"/>
+   <depend name="include/MochaReporter.h"/>
+   <depend name="include/Std.h"/>
+   <depend name="include/StringBuf.h"/>
+   <depend name="include/StringTools.h"/>
+   <depend name="include/Sys.h"/>
+   <depend name="include/buddy/Spec.h"/>
+   <depend name="include/buddy/Suite.h"/>
+   <depend name="include/buddy/TestStatus.h"/>
+   <depend name="include/buddy/TestStep.h"/>
+   <depend name="include/buddy/reporting/Reporter.h"/>
+   <depend name="include/haxe/IMap.h"/>
+   <depend name="include/haxe/StackItem.h"/>
+   <depend name="include/haxe/Timer.h"/>
+   <depend name="include/haxe/ds/ObjectMap.h"/>
+   <depend name="include/promhx/Deferred.h"/>
+   <depend name="include/promhx/Promise.h"/>
+   <depend name="include/promhx/base/AsyncBase.h"/>
+  </file>
+  <file name="src/buddy/reporting/Reporter.cpp">
+   <depend name="include/buddy/Spec.h"/>
+   <depend name="include/buddy/reporting/Reporter.h"/>
    <depend name="include/promhx/Promise.h"/>
    <depend name="include/promhx/base/AsyncBase.h"/>
   </file>
@@ -741,7 +738,6 @@
    <depend name="include/utest/Assert.h"/>
    <depend name="include/unifill/Unicode.h"/>
    <depend name="include/promhx/base/EventLoop.h"/>
-   <depend name="include/promhx/base/AsyncBase.h"/>
    <depend name="include/pako/zlib/Messages.h"/>
    <depend name="include/pako/zlib/Inflate.h"/>
    <depend name="include/pako/zlib/InfTrees.h"/>
@@ -758,9 +754,9 @@
    <depend name="include/pako/Inflate.h"/>
    <depend name="include/pako/Deflate.h"/>
    <depend name="include/haxe/Log.h"/>
-   <depend name="include/Sys.h"/>
    <depend name="include/buddy/BuddySuite.h"/>
-   <depend name="include/Main.h"/>
+   <depend name="include/TestAll.h"/>
+   <depend name="include/Sys.h"/>
    <depend name="include/Helpers.h"/>
    <depend name="include/EReg.h"/>
   </file>
@@ -772,13 +768,13 @@
 <files id="__lib__">
 <compilerflag value="-Iinclude"/>
   <file name="src/__lib__.cpp">
-   <depend name="include/Main.h"/>
+   <depend name="include/TestAll.h"/>
   </file>
 </files>
 <files id="__main__">
 <compilerflag value="-Iinclude"/>
   <file name="src/__main__.cpp">
-   <depend name="include/Main.h"/>
+   <depend name="include/TestAll.h"/>
   </file>
 </files>
 <files id="__resources__">
@@ -1033,6 +1029,6 @@
 </files>
 <files id="__externs__">
 </files>
-<set name="HAXE_OUTPUT" value="Main" />
+<set name="HAXE_OUTPUT" value="TestAll" />
 <include name="${HXCPP}/build-tool/BuildCommon.xml"/>
 </xml>
