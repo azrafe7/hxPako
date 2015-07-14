@@ -1,0 +1,1 @@
+This folder contains the original pako source code, only used to test and compare the results against the ported lib.
