@@ -64,16 +64,17 @@ hxPako only supports `UInt8Array` (unlike pako, which also works with strings an
 ###Test Suite Timings
 Current timings (`node.js` refers to the original suite from pako, which you can test by running `mocha` in the top folder). See [testAll.hxml](test/testAll.hxml).
 
-| platform   | time |
-|:-----------|:-----|
-|node.js     |  5.8s|
-|cpp         |  6.8s|
-|js          | 12.8s|
-|flash       | 40.8s|
-|neko        |158.5s|
+| platform   | release | debug |
+|:-----------|--------:|------:|
+|node.js     |  5.8s   |     - |
+|cpp         |  6.7s   |  96.7s|
+|js          | 11.5s   |  13.2s|
+|flash       | 40.8s   | 141.4s|
+|neko        |158.5s   | 177.1s|
   
 ###Authors
-Andrey Tupitsin and Vitaly Puzrin (original pako lib)
+ - Andrey Tupitsin and Vitaly Puzrin (original pako lib)
+ - Me (haxe port)
 
 ###License
 MIT
