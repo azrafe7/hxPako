@@ -3,7 +3,6 @@
 #-debug
 -lib utest
 -lib buddy
--D fdb
 
 
 #fixtures/samples

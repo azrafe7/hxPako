@@ -24,7 +24,8 @@ import pako.zlib.Inflate as ZlibInflate;
 import pako.Deflate;
 import pako.Inflate;
 import pako.utils.Common;
-import buddy.*;
+import buddy.BuddySuite;
+import buddy.SuitesRunner;
 import utest.Assert;
 import Helpers;
 
@@ -33,6 +34,10 @@ class TestAll
 { 
   static var count:Int = 0;
   
+#if (cpp && telemetry)
+  static public var hxt:hxtelemetry.HxTelemetry;
+#end  
+
   static public function main():Void {
     
     // workaround for openfl html5, where SuitesRunner runs twice (not sure why)
@@ -40,6 +45,12 @@ class TestAll
       trace("Prevented running again!");
       return; 
     }
+    
+  #if (cpp && telemetry)
+    var cfg = new hxtelemetry.HxTelemetry.Config();
+    cfg.allocations = false;
+    hxt = new hxtelemetry.HxTelemetry(cfg);
+  #end
     
     var reporter = new MochaReporter();
   
@@ -67,8 +78,9 @@ class TestAll
   
     runner.run();
     
-  #if cpp
+  #if sys
     //cpp.vm.Profiler.stop();
+    Sys.exit(0);
   #end
   }
 }  
@@ -77,7 +89,12 @@ class TestMisc extends BuddySuite {
   public function new() {
     
     describe('ArrayBuffer', {
-      
+    
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       var sample = Helpers.getSample('samples/lorem_utf_100k.txt');
       var deflated = Pako.deflate(sample);
 
@@ -97,6 +114,11 @@ class TestChunks extends BuddySuite {
     
     describe('Small input chunks', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('deflate 100b by 1b chunk', {
         var buf = randomBuf(100);
         var deflated = Pako.deflate(buf);
@@ -126,6 +148,11 @@ class TestChunks extends BuddySuite {
 
     describe('Dummy push (force end)', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('deflate end', {
         var data = Helpers.getSample('samples/lorem_utf_100k.txt');
 
@@ -151,6 +178,11 @@ class TestChunks extends BuddySuite {
 
     describe('Edge condition', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('should be ok on buffer border', {
         var data = new UInt8Array(1024 * 16 + 1);
 
@@ -248,6 +280,12 @@ class TestInflateCover extends BuddySuite
 
   public function new():Void {
     describe('Inflate states', {
+    
+      #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       //in port checking input parameters was removed
       it('inflate bad parameters', {
         var ret;
@@ -298,6 +336,12 @@ class TestInflateCover extends BuddySuite
     });
 
     describe('Inflate cover', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('invalid stored block lengths', {
         testInflate('0 0 0 0 0', -15, ErrorStatus.Z_DATA_ERROR);
       });
@@ -368,6 +412,12 @@ class TestInflateCover extends BuddySuite
     });
 
     describe('cover trees', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('inflate_table not enough errors', {
         //NOTE(hx): check sizes (512 should be enough)
         var ret, bits, next:Int32Array, table = new Int32Array(512), lens = new UInt16Array(512), work = new UInt16Array(512);
@@ -390,6 +440,12 @@ class TestInflateCover extends BuddySuite
     });
 
     describe('Inflate fast', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('fast length extra bits', {
         testInflate('e5 e0 81 ad 6d cb b2 2c c9 01 1e 59 63 ae 7d ee fb 4d fd b5 35 41 68' +
           ' ff 7f 0f 0 0 0', -8, ErrorStatus.Z_DATA_ERROR);
@@ -416,6 +472,12 @@ class TestInflateCover extends BuddySuite
     });
 
     describe('Inflate support', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       // `inflatePrime` not implemented
       /*it('prime', {
         var ret;
@@ -473,6 +535,12 @@ class TestDeflateCover extends BuddySuite
 
   public function new():Void {
     describe('Deflate support', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('stored', {
         testDeflate(short_sample, {level: 0, chunkSize: 200}, 0);
         testDeflate(short_sample, {level: 0, chunkSize: 10}, 5);
@@ -499,6 +567,12 @@ class TestDeflateCover extends BuddySuite
     });
 
     describe('Deflate states', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       //in port checking input parameters was removed
       it('inflate bad parameters', {
         var ret, strm;
@@ -554,6 +628,11 @@ class TestGZipSpecials extends BuddySuite
   public function new():Void {
     describe('Gzip special cases', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('Read custom headers', {
         var data = Helpers.getSample('gzip-headers.gz');
         var inflator = new pako.Inflate();
@@ -631,6 +710,11 @@ class TestInflate extends BuddySuite
 
     describe('Inflate defaults', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('inflate, no options', function(done) {
         Helpers.testInflate(samples, {}, {}, done);
       });
@@ -647,6 +731,12 @@ class TestInflate extends BuddySuite
 
 
     describe('Inflate ungzip', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('with autodetect', function(done) {
         Helpers.testInflate(samples, {}, { gzip: true }, done);
       });
@@ -659,6 +749,11 @@ class TestInflate extends BuddySuite
 
     describe('Inflate levels', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('level 9', function(done) {
         Helpers.testInflate(samples, {}, { level: 9 }, done);
       });
@@ -695,6 +790,11 @@ class TestInflate extends BuddySuite
 
     describe('Inflate windowBits', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('windowBits 15', function(done) {
         Helpers.testInflate(samples, {}, { windowBits: 15 }, done);
       });
@@ -724,6 +824,11 @@ class TestInflate extends BuddySuite
 
     describe('Inflate strategy', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('Z_DEFAULT_STRATEGY', function(done) {
         Helpers.testInflate(samples, {}, { strategy: 0 }, done);
       });
@@ -744,6 +849,12 @@ class TestInflate extends BuddySuite
 
 
     describe('Inflate RAW', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       // Since difference is only in rwapper, test for store/fast/slow methods are enougth
       it('level 9', function(done) {
         Helpers.testInflate(samples, { raw: true }, { level: 9, raw: true }, done);
@@ -787,6 +898,11 @@ class TestDeflate extends BuddySuite
     
     describe('Deflate defaults', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('deflate, no options', function(done) {
         Helpers.testSamples(null, Pako.deflate, samples, {}, done, 'deflate_no_opt');
       });
@@ -805,6 +921,11 @@ class TestDeflate extends BuddySuite
 
     describe('Deflate levels', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('level 9', function(done) {
         Helpers.testSamples(null, Pako.deflate, samples, { level: 9 }, done, 'deflate_lev9');
       });
@@ -843,6 +964,11 @@ class TestDeflate extends BuddySuite
 
     describe('Deflate windowBits', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('windowBits 15', function(done) {
         Helpers.testSamples(null, Pako.deflate, samples, { windowBits: 15 }, done, 'deflate_wb15');
       });
@@ -876,6 +1002,11 @@ class TestDeflate extends BuddySuite
 
     describe('Deflate memLevel', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('memLevel 9', function(done) {
         Helpers.testSamples(null, Pako.deflate, samples, { memLevel: 9 }, done, 'deflate_mem9');
       });
@@ -909,6 +1040,11 @@ class TestDeflate extends BuddySuite
 
     describe('Deflate strategy', {
 
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       it('Z_DEFAULT_STRATEGY', function(done) {
         Helpers.testSamples(null, Pako.deflate, samples, { strategy: 0 }, done, 'deflate_strat_def');
       });
@@ -929,6 +1065,12 @@ class TestDeflate extends BuddySuite
 
 
     describe('Deflate RAW', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
       // Since difference is only in rwapper, test for store/fast/slow methods are enougth
       it('level 4', function(done) {
         Helpers.testSamples(null, Pako.deflateRaw, samples, { level: 4 }, done, 'deflate_raw_lev4');
