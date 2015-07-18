@@ -1770,7 +1770,7 @@ class Config
   var max_lazy:Int;
   var nice_length:Int;
   var max_chain:Int;
-  var func:Function;
+  var func:DeflateState->Int->Int;
 
   function new(good_length, max_lazy, nice_length, max_chain, func:DeflateState->Int->Int) {
     this.good_length = good_length;
