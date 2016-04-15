@@ -7,7 +7,7 @@ import promhx.Promise;
 import buddy.reporting.Reporter;
 import buddy.BuddySuite.Spec;
 import buddy.BuddySuite.Suite;
-import buddy.BuddySuite.TestStatus;
+import buddy.BuddySuite.SpecStatus;
 
 using Lambda;
 using StringTools;
@@ -61,10 +61,10 @@ class MochaReporter implements Reporter
     startTime = Timer.stamp();
     
 		print(switch(spec.status) {
-			case TestStatus.Failed: "X";
-			case TestStatus.Passed: ".";
-			case TestStatus.Pending: "P";
-			case TestStatus.Unknown: "?";
+			case SpecStatus.Failed: "X";
+			case SpecStatus.Passed: ".";
+			case SpecStatus.Pending: "P";
+			case SpecStatus.Unknown: "?";
 		});
 
 		return resolveImmediately(spec);
@@ -91,9 +91,9 @@ class MochaReporter implements Reporter
 			for (sp in s.steps) switch sp {
 				case TSpec(sp):
 					total++;
-					if (sp.status == TestStatus.Failed) failures++;
-					if (sp.status == TestStatus.Passed) successes++;
-					else if (sp.status == TestStatus.Pending) pending++;
+					if (sp.status == SpecStatus.Failed) failures++;
+					if (sp.status == SpecStatus.Passed) successes++;
+					else if (sp.status == SpecStatus.Pending) pending++;
 				case TSuite(s):
 					countTests(s);
 			}
@@ -105,22 +105,22 @@ class MochaReporter implements Reporter
 		{
 			var print = function(str : String) println(str.lpad(" ", str.length + (indentLevel + 1) * 2));
 
-      var statusToStr = function(status : TestStatus) {
+      var statusToStr = function(status : SpecStatus) {
         return switch (status) {
-          case TestStatus.Failed:  "[FAIL]";
-          case TestStatus.Passed:  "[ OK ]";
-          case TestStatus.Pending: "[PEND]";
-          case TestStatus.Unknown: "[ ?? ]";
+          case SpecStatus.Failed:  "[FAIL]";
+          case SpecStatus.Passed:  "[ OK ]";
+          case SpecStatus.Pending: "[PEND]";
+          case SpecStatus.Unknown: "[ ?? ]";
         }
       }
       
       println("");
-			print(s.name);
+			print(s.description);
       
 			for (step in s.steps) switch step
 			{
 				case TSpec(sp):
-					if (sp.status == TestStatus.Failed)
+					if (sp.status == SpecStatus.Failed)
 					{
 						print("  " + statusToStr(sp.status) + " " + sp.description + " (ERROR: " + sp.error + ")" + "  (" + timings[sp] + "s)");
             

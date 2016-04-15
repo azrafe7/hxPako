@@ -111,7 +111,7 @@ class Helpers
     callback(false);
   }
 
-  static public function testSamples(zlib_factory, pako_deflate:Null<UInt8Array>->Dynamic->UInt8Array, samples:Map<String, UInt8Array>, options, callback:?Bool->Void, prefix) {
+  static public function testSamples(zlib_factory, pako_deflate:Null<UInt8Array>->Dynamic->UInt8Array, samples:Map<String, UInt8Array>, options, callback:Void->Void, prefix) {
 
     for (k in samples.keys()) {
       var data = samples[k];
@@ -129,7 +129,7 @@ class Helpers
   }
 
 
-  static public function testInflate(samples:Map<String, UInt8Array>, inflateOptions:InflateOptions, deflateOptions:DeflateOptions, callback:?Bool->Void) {
+  static public function testInflate(samples:Map<String, UInt8Array>, inflateOptions:InflateOptions, deflateOptions:DeflateOptions, callback:Void->Void) {
     var name, data, deflated, inflated;
 
     // inflate options have windowBits = 0 to force autodetect window size
