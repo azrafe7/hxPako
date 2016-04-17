@@ -25,13 +25,24 @@ import pako.Deflate;
 import pako.Inflate;
 import pako.utils.Common;
 import buddy.BuddySuite;
+import buddy.Buddy;
 import buddy.SuitesRunner;
 import utest.Assert;
 import Helpers;
 
 
-class TestAll
-{ 
+@reporter("MochaReporter")
+class TestAll implements Buddy <[
+    TestMisc, 
+    TestChunks, 
+    TestDeflate,
+    TestInflate, 
+    TestInflateCover, 
+    TestDeflateCover,
+    TestGZipSpecials,
+  ]> { 
+
+  
   static var count:Int = 0;
   
 #if (cpp && telemetry)
@@ -52,7 +63,7 @@ class TestAll
     hxt = new hxtelemetry.HxTelemetry(cfg);
   #end
     
-    var reporter = new MochaReporter();
+    /*var reporter = new MochaReporter();
   
     var runner = new SuitesRunner([
       new TestMisc(), 
@@ -62,7 +73,7 @@ class TestAll
       new TestInflateCover(), 
       new TestDeflateCover(),
       new TestGZipSpecials(),
-    ], reporter);
+    ], reporter);*/
     
     trace("ArrayBufferView.EMULATED: " + ArrayBufferView.EMULATED);
   
@@ -76,11 +87,11 @@ class TestAll
     //cpp.vm.Profiler.start("log-profiler.txt");
   #end
   
-    runner.run();
+    //runner.run();
     
   #if sys
     //cpp.vm.Profiler.stop();
-    Sys.exit(0);
+    //Sys.exit(0);
   #end
   }
 }  
@@ -813,9 +824,12 @@ class TestInflate extends BuddySuite
       it('windowBits 10', function(done) {
         Helpers.testInflate(samples, {}, { windowBits: 10 }, done);
       });
+        
+      timeoutMs = 10000; // set timeout to 10.0s
       it('windowBits 9', function(done) {
         Helpers.testInflate(samples, {}, { windowBits: 9 }, done);
       });
+      timeoutMs = 10000; // set timeout to 10.0s
       it('windowBits 8', function(done) {
         Helpers.testInflate(samples, {}, { windowBits: 8 }, done);
       });
@@ -1031,6 +1045,8 @@ class TestDeflate extends BuddySuite
       it('memLevel 2', function(done) {
         Helpers.testSamples(null, Pako.deflate, samples, { memLevel: 2 }, done, 'deflate_mem2');
       });
+      
+      timeoutMs = 10000; // set timeout to 10.0s
       it('memLevel 1', function(done) {
         Helpers.testSamples(null, Pako.deflate, samples, { memLevel: 1 }, done, 'deflate_mem1');
       });
