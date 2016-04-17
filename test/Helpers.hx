@@ -58,7 +58,7 @@ class Helpers
   // Helper to test deflate/inflate with different options.
   // Use zlib streams, because it's the only way to define options.
   //
-  static public function testSingle(zlib_factory, pako_deflate, data, options, callback, zlib_filename) {
+  static public function testSingle(zlib_factory, pako_deflate, data, options, errorCallback:Bool->Void, zlib_filename) {
 
     /*var zlib_options = _.clone(options);
 
@@ -104,11 +104,11 @@ class Helpers
     var zlib_result = getSample("zlib_output/" + zlib_filename);
 
     if (!Helpers.cmpBuf(cast zlib_result, cast pako_result)) {
-      callback(true);
+      errorCallback(true);
       return;
     }
     
-    callback(false);
+    errorCallback(false);
   }
 
   static public function testSamples(zlib_factory, pako_deflate:Null<UInt8Array>->Dynamic->UInt8Array, samples:Map<String, UInt8Array>, options, callback:Void->Void, prefix) {
