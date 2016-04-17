@@ -39,7 +39,7 @@ class TestAll implements Buddy <[
     TestInflate, 
     TestInflateCover, 
     TestDeflateCover,
-    TestGZipSpecials,
+    TestGZipSpecials
   ]> { 
 
   
@@ -263,7 +263,7 @@ class TestInflateCover extends BuddySuite
 {
   static public function toStr(arr:ArrayBufferView) {
     var str = "[";
-    for (i in arr.byteOffset...arr.byteOffset + arr.byteLength) str += arr.buffer.get(i) + ",";
+    for (i in arr.byteOffset...arr.byteOffset + arr.byteLength) str += "" + arr.buffer.get(i) + ",";
     return str + "]";
   }
   

@@ -2,6 +2,7 @@ doc/
 node_modules/
 coverage/
 test/browser/pako.js
+bin/
 v8.log
 
 include/
