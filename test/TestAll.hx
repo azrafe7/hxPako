@@ -262,15 +262,17 @@ class TestChunks extends BuddySuite {
 class TestInflateCover extends BuddySuite
 {
   static public function toStr(arr:ArrayBufferView) {
-    var str = "[";
-    for (i in arr.byteOffset...arr.byteOffset + arr.byteLength) str += "" + arr.buffer.get(i) + ",";
-    return str + "]";
+    var sb = new StringBuf();
+    sb.add("[");
+    for (i in arr.byteOffset...arr.byteOffset + arr.byteLength) sb.add("" + arr.buffer.get(i) + ",");
+    sb.add("]");
+    return sb.toString();
   }
   
   function h2b(hex:String) {
     var array = hex.split(' ').map(function(hx) { return Std.parseInt("0x" + hx); } );
     var data8:UInt8Array = UInt8Array.fromArray(array);
-    var data8str = toStr(cast data8);
+    //var data8str = toStr(cast data8); // debug
     return data8;
   }
 
@@ -629,7 +631,7 @@ class TestGZipSpecials extends BuddySuite
 {
   function a2s(typedArray:UInt8Array) {
     var str = "";
-    var arrStr = TestInflateCover.toStr(typedArray.view);
+    //var arrStr = TestInflateCover.toStr(typedArray.view); // debug
     for (i in 0...typedArray.length) {
       str += String.fromCharCode(typedArray[i]);
     }
