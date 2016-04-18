@@ -66,11 +66,14 @@ Current timings (`node.js` refers to the original suite from pako, which you can
 
 | platform   | release | debug |
 |:-----------|--------:|------:|
-|node.js     |  5.8s   |     - |
-|cpp         |  6.7s   |  96.7s|
-|js          | 11.5s   |  13.2s|
-|flash       | 40.8s   | 141.4s|
-|neko        |158.5s   | 177.1s|
+|node.js     |    5.8s |     - |
+|java        |    5.6s |   6.0s|
+|cs          |    5.9s |  20.5s|
+|cpp         |    6.7s |  62.1s|
+|js          |    9.8s |  13.2s|
+|flash       |   39.6s | 151.5s|
+|pypy3.2 *   |   97.8s | 101.3s| * (2 failed tests)
+|neko        |  168.6s | 181.2s|
   
 ###Authors
  - Andrey Tupitsin and Vitaly Puzrin (original pako lib)
