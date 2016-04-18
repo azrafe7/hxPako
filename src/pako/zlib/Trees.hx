@@ -531,7 +531,7 @@ class Trees
    * Copy a stored block, storing first the length and its
    * one's complement if requested.
    */
-  static function copy_block(s:DeflateState, buf, len, header)
+  static inline function copy_block(s:DeflateState, buf, len, header)
   //DeflateState *s;
   //charf    *buf;    /* the input data */
   //unsigned len;     /* its length */
@@ -1152,7 +1152,7 @@ class Trees
    * Save the match info and tally the frequency counts. Return true if
    * the current block must be flushed.
    */
-  static public function _tr_tally(s:DeflateState, dist, lc)
+  static inline public function _tr_tally(s:DeflateState, dist, lc)
   //    deflate_state *s;
   //    unsigned dist;  /* distance of matched string */
   //    unsigned lc;    /* match length-MIN_MATCH or unmatched char (if dist==0) */
