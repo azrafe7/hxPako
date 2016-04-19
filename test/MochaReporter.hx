@@ -79,7 +79,7 @@ class MochaReporter implements Reporter
         println(overallProgress.toString());
     #end
   
-        println("");
+        println();
 
 		var total = 0;
 		var failures = 0;
@@ -129,7 +129,7 @@ class MochaReporter implements Reporter
 				for (t in spec.traces) printIndent("    " + t);
 			}
             
-            println("");
+            println();
 			if (s.description.length > 0) printIndent(s.description);
 			
 			if (s.error != null) {
@@ -160,14 +160,14 @@ class MochaReporter implements Reporter
 
 		suites.iter(printTests.bind(_, -1));
 
-        println("");
+        println();
 		println('$total specs, $successes passed, $failures failed, $pending pending');
 
         var totalTime:Float = .0;
         for (t in timings) totalTime += t;
         totalTime = Std.int(totalTime * 1000) / 1000;
         println("total time: " + totalTime + "s");
-		println("");
+		println();
     
     #if php
 		if(!cli) println("</pre>");
@@ -185,10 +185,10 @@ class MochaReporter implements Reporter
     #end
 	}
 
-	private function println(s : String)
+	private function println(s : String = "")
 	{
     #if js
-		trace(s);
+		untyped __js__("console.log(s)");
     #else
         Sys.println(s);
     #end
