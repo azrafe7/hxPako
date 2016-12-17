@@ -59,7 +59,8 @@ class InfFast
     var wsize;                  /* window size or zero if not using window */
     var whave;                  /* valid bytes in the window */
     var wnext;                  /* window write index */
-    var window;                 /* allocated sliding window, if wsize != 0 */
+  // Use `s_window` instead `window`, avoid conflict with instrumentation tools
+    var s_window;                 /* allocated sliding window, if wsize != 0 */
     var hold;                   /* local strm.hold */
     var bits;                   /* local strm.bits */
     var lcode:Int32Array;                  /* local strm.lencode */
@@ -93,7 +94,7 @@ class InfFast
     wsize = state.wsize;
     whave = state.whave;
     wnext = state.wnext;
-    window = state.window;
+    s_window = state.window;
     hold = state.hold;
     bits = state.bits;
     lcode = state.lencode;
@@ -217,13 +218,13 @@ class InfFast
   //#endif
                 }
                 from = 0; // window index
-                from_source = window;
+                from_source = s_window;
                 if (wnext == 0) {           /* very common case */
                   from += wsize - op;
                   if (op < len) {         /* some from window */
                     len -= op;
                     do {
-                      output[_out++] = window[from++];
+                      output[_out++] = s_window[from++];
                     } while (--op != 0);
                     from = _out - dist;  /* rest from output */
                     from_source = output;
@@ -235,14 +236,14 @@ class InfFast
                   if (op < len) {         /* some from end of window */
                     len -= op;
                     do {
-                      output[_out++] = window[from++];
+                      output[_out++] = s_window[from++];
                     } while (--op != 0);
                     from = 0;
                     if (wnext < len) {  /* some from start of window */
                       op = wnext;
                       len -= op;
                       do {
-                        output[_out++] = window[from++];
+                        output[_out++] = s_window[from++];
                       } while (--op != 0);
                       from = _out - dist;      /* rest from output */
                       from_source = output;
@@ -254,7 +255,7 @@ class InfFast
                   if (op < len) {         /* some from window */
                     len -= op;
                     do {
-                      output[_out++] = window[from++];
+                      output[_out++] = s_window[from++];
                     } while (--op != 0);
                     from = _out - dist;  /* rest from output */
                     from_source = output;

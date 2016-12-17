@@ -1562,7 +1562,44 @@ class Inflate
     head.done = false;
     return ErrorStatus.Z_OK;
   }
+  
+  static public function inflateSetDictionary(strm:ZStream, dictionary:UInt8Array) {
+    var dictLength = dictionary.length;
+
+    var state:InflateState;
+    var dictid:Int;
+    var ret;
+
+    /* check state */
+    if (strm == null/* == Z_NULL */ || strm.inflateState == null/* == Z_NULL */) { return ErrorStatus.Z_STREAM_ERROR; }
+    state = strm.inflateState;
+
+    if (state.wrap != 0 && state.mode != DICT) {
+      return ErrorStatus.Z_STREAM_ERROR;
+    }
+
+    /* check for correct dictionary identifier */
+    if (state.mode == DICT) {
+      dictid = 1; /* adler32(0, null, 0)*/
+      /* dictid = adler32(dictid, dictionary, dictLength); */
+      dictid = Adler32.adler32(dictid, dictionary, dictLength, 0);
+      if (dictid != state.check) {
+        return ErrorStatus.Z_DATA_ERROR;
+      }
+    }
+    /* copy dictionary to window using updatewindow(), which will amend the
+     existing dictionary if appropriate */
+    ret = updatewindow(strm, dictionary, dictLength, dictLength);
+    if (ret != 0) {
+      state.mode = MEM;
+      return ErrorStatus.Z_MEM_ERROR;
+    }
+    state.havedict = true;
+    // Tracev((stderr, "inflate:   dictionary set\n"));
+    return ErrorStatus.Z_OK;
+  }
 }
+
 
 @:allow(pako.zlib.Inflate)
 @:allow(pako.zlib.InfFast)
@@ -1635,6 +1672,7 @@ exports.inflateInit2 = inflateInit2;
 exports.inflate = inflate;
 exports.inflateEnd = inflateEnd;
 exports.inflateGetHeader = inflateGetHeader;
+exports.inflateSetDictionary = inflateSetDictionary;
 exports.inflateInfo = 'pako inflate (from Nodeca project)';
 */
 
@@ -1643,7 +1681,6 @@ exports.inflateCopy = inflateCopy;
 exports.inflateGetDictionary = inflateGetDictionary;
 exports.inflateMark = inflateMark;
 exports.inflatePrime = inflatePrime;
-exports.inflateSetDictionary = inflateSetDictionary;
 exports.inflateSync = inflateSync;
 exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;

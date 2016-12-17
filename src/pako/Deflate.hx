@@ -22,6 +22,7 @@ typedef DeflateOptions = {
   @:optional var raw:Bool;
   @:optional var gzip:Bool;
   @:optional var header:GZHeader;
+  @:optional var dictionary:UInt8Array;
   //to: ''
 }
 
@@ -95,7 +96,8 @@ var Z_DEFLATED  = 8;
  * - `windowBits`
  * - `memLevel`
  * - `strategy`
- *
+ * - `dictionary`
+ * 
  * [http://zlib.net/manual.html#Advanced](http://zlib.net/manual.html#Advanced)
  * for more information on these.
  *
@@ -144,6 +146,7 @@ class Deflate
     raw: false,
     gzip: false,
     header: null,
+    dictionary: null,
     //to: ''
   }
   
@@ -170,6 +173,7 @@ class Deflate
     this.options.raw = (options != null && options.raw != null) ? options.raw : DEFAULT_OPTIONS.raw;
     this.options.gzip = (options != null && options.gzip != null) ? options.gzip : DEFAULT_OPTIONS.gzip;
     this.options.header = (options != null && options.header != null) ? options.header : DEFAULT_OPTIONS.header;
+    this.options.dictionary = (options != null && options.dictionary != null) ? options.dictionary : DEFAULT_OPTIONS.dictionary;
     
     //NOTE(hx): both raw and gzip are false by default?
     if (this.options.raw && (this.options.windowBits > 0)) {
@@ -198,6 +202,15 @@ class Deflate
 
     if (this.options.header != null) {
       ZlibDeflate.deflateSetHeader(this.strm, this.options.header);
+    }
+		
+    //NOTE(hx): only supporting UInt8Array
+    if (this.options.dictionary != null) {
+      status = ZlibDeflate.deflateSetDictionary(this.strm, this.options.dictionary);
+    }
+
+    if (status != ErrorStatus.Z_OK) {
+      throw Messages.get(status);
     }
   }
 

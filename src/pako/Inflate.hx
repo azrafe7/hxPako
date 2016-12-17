@@ -15,6 +15,7 @@ typedef InflateOptions = {
   @:optional var chunkSize:Int;
   @:optional var windowBits:Int;
   @:optional var raw:Bool;
+  @:optional var dictionary:UInt8Array;
   //to: ''
 }
 
@@ -65,6 +66,7 @@ typedef InflateOptions = {
  * on bad params. Supported options:
  *
  * - `windowBits`
+ * - `dictionary`
  *
  * [http://zlib.net/manual.html#Advanced](http://zlib.net/manual.html#Advanced)
  * for more information on these.
@@ -103,6 +105,7 @@ class Inflate
     chunkSize: 16384,
     windowBits: 0,
     raw: false,
+    dictionary: null,
     //to: ''
   }
   
@@ -125,6 +128,7 @@ class Inflate
     this.options.chunkSize = (options != null && options.chunkSize != null) ? options.chunkSize : DEFAULT_OPTIONS.chunkSize;
     this.options.windowBits = (options != null && options.windowBits != null) ? options.windowBits : DEFAULT_OPTIONS.windowBits;
     this.options.raw = (options != null && options.raw != null) ? options.raw : DEFAULT_OPTIONS.raw;
+    this.options.dictionary = (options != null && options.dictionary != null) ? options.dictionary : DEFAULT_OPTIONS.dictionary;
   
     // Force window size for `raw` data, if not set directly,
     // because we have no header for autodetect.
@@ -197,8 +201,13 @@ class Inflate
   public function push(data:UInt8Array, mode:Dynamic = false) {
     var strm = this.strm;
     var chunkSize = this.options.chunkSize;
+    var dictionary = this.options.dictionary;
     var status, _mode:Int;
     var next_out_utf8, tail, utf8str;
+
+    // Flag to properly process Z_BUF_ERROR on testing inflate call
+    // when we check that all output data was flushed.
+    var allowBufError = false;
 
     if (this.ended) { return false; }
     
@@ -231,6 +240,16 @@ class Inflate
 
       status = ZlibInflate.inflate(strm, Flush.Z_NO_FLUSH);    /* no bad return value */
 
+      //NOTE(hx): only supporting UInt8Array
+      if (status == ErrorStatus.Z_NEED_DICT && dictionary != null) {
+        status = ZlibInflate.inflateSetDictionary(this.strm, dictionary);
+      }
+
+      if (status == ErrorStatus.Z_BUF_ERROR && allowBufError) {
+        status = ErrorStatus.Z_OK;
+        allowBufError = false;
+      }
+    
       if (status != ErrorStatus.Z_STREAM_END && status != ErrorStatus.Z_OK) {
         this.onEnd(status);
         this.ended = true;
@@ -260,7 +279,19 @@ class Inflate
           }
         }
       }
-    } while ((strm.avail_in > 0) && status != ErrorStatus.Z_STREAM_END);
+      
+      // When no more input data, we should check that internal inflate buffers
+      // are flushed. The only way to do it when avail_out = 0 - run one more
+      // inflate pass. But if output data not exists, inflate return Z_BUF_ERROR.
+      // Here we set flag to process this error properly.
+      //
+      // NOTE. Deflate does not return error in this case and does not needs such
+      // logic.
+      if (strm.avail_in == 0 && strm.avail_out == 0) {
+        allowBufError = true;
+      }
+
+    } while ((strm.avail_in > 0 || strm.avail_out == 0) && status != ErrorStatus.Z_STREAM_END);
 
     if (status == ErrorStatus.Z_STREAM_END) {
       _mode = Flush.Z_FINISH;
