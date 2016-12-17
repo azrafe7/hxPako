@@ -4,6 +4,8 @@
 #-debug
 -lib utest
 -lib buddy
+#-cs bin/cs
+#-js bin/testAll.js
 
 
 #test/fixtures/samples
