@@ -9,6 +9,12 @@ var async = require('async');
 var pako_utils = require('../lib/utils/common');
 var pako  = require('../index');
 
+//NOTE: whether to generate files in zlib_output folder 
+//     (remember to add the generated files to resources when testing from haxe)
+var GEN_ZLIB_OUTPUT = true;
+
+console.info('\nport_helpers.js: GEN_ZLIB_OUTPUT(' + GEN_ZLIB_OUTPUT + ')');
+
 function writeToFile(buffer, name) {
 	var filename = path.join(__dirname, 'fixtures/zlib_output/' + name);
 	//console.log(filename + "  (" + buffer.length + ")");
@@ -89,7 +95,7 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback, name) {
 
     var pako_result = pako_deflate(data, options);
 
-    if (name) {
+    if (name && GEN_ZLIB_OUTPUT) {
 		writeToFile(buffer, name);
 		//console.log(options);
 	}
@@ -177,16 +183,10 @@ function testInflate(samples, inflateOptions, deflateOptions, callback) {
 }
 
 
+exports.toType = function(obj) {
+  return ({}).toString.call(obj).match(/\s([^\]]+)/)[1].toLowerCase();
+}
 exports.cmpBuf = cmpBuf;
 exports.testSamples = testSamples;
 exports.testInflate = testInflate;
 exports.loadSamples = loadSamples;
-
-
-var portHelpers = require('./port_helpers');
-
-exports.toType = portHelpers.toType;
-exports.cmpBuf = portHelpers.cmpBuf;
-exports.testSamples = portHelpers.testSamples;
-exports.testInflate = portHelpers.testInflate;
-exports.loadSamples = portHelpers.loadSamples;
