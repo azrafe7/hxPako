@@ -1,7 +1,7 @@
 hxPako
 ==========================================
 
-[pako](https://github.com/nodeca/pako) v0.2.7 port to haxe, for cross-platform zlib functionality. 
+[pako](https://github.com/nodeca/pako) v1.0.1 port to haxe, for cross-platform zlib functionality. 
 
 ###Features
 
@@ -54,9 +54,9 @@ For more info you can consult [pako documentation](http://nodeca.github.io/pako/
 hxPako (like pako) does not contain some specific zlib functions:
 
 - __deflate__ -  methods `deflateCopy`, `deflateBound`, `deflateParams`,
-  `deflatePending`, `deflatePrime`, `deflateSetDictionary`, `deflateTune`.
+  `deflatePending`, `deflatePrime`, `deflateTune`.
 - __inflate__ - `inflateGetDictionary`, `inflateCopy`, `inflateMark`,
-  `inflatePrime`, `inflateSetDictionary`, `inflateSync`, `inflateSyncPoint`,
+  `inflatePrime`, `inflateSync`, `inflateSyncPoint`,
   `inflateUndermine`.
 
 hxPako only supports `UInt8Array` (unlike pako, which also works with strings and arrays). But it's easy to extend to those too by using `UInt8Array.fromBytes()` and `UInt8Array.fromArray()`.
