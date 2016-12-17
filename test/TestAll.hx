@@ -261,21 +261,6 @@ class TestChunks extends BuddySuite {
 
 class TestInflateCover extends BuddySuite
 {
-  static public function toStr(arr:ArrayBufferView) {
-    var sb = new StringBuf();
-    sb.add("[");
-    for (i in arr.byteOffset...arr.byteOffset + arr.byteLength) sb.add("" + arr.buffer.get(i) + ",");
-    sb.add("]");
-    return sb.toString();
-  }
-  
-  function h2b(hex:String) {
-    var array = hex.split(' ').map(function(hx):Int { return Std.parseInt("0x" + hx); } );
-    var data8:UInt8Array = UInt8Array.fromArray(array);
-    //var data8str = toStr(cast data8); // debug
-    return data8;
-  }
-
 
   //step argument from original tests is missing because it have no effect
   //we have similar behavior in chunks.js tests
@@ -287,7 +272,7 @@ class TestInflateCover extends BuddySuite
       Assert.isTrue(e.toString() == Messages.get(status));
       return;
     }
-    inflator.push(h2b(hex), true);
+    inflator.push(Helpers.h2b(hex), true);
     Assert.equals(status, inflator.err);
   }
 
@@ -629,15 +614,6 @@ class TestDeflateCover extends BuddySuite
 
 class TestGZipSpecials extends BuddySuite
 {
-  function a2s(typedArray:UInt8Array) {
-    var str = "";
-    //var arrStr = TestInflateCover.toStr(typedArray.view); // debug
-    for (i in 0...typedArray.length) {
-      str += String.fromCharCode(typedArray[i]);
-    }
-    return str;
-  }
-
   public function new():Void {
     describe('Gzip special cases', {
 
@@ -653,7 +629,7 @@ class TestGZipSpecials extends BuddySuite
 
         Assert.equals('test name', inflator.header.name);
         Assert.equals('test comment', inflator.header.comment);
-        Assert.equals('test extra', a2s(cast inflator.header.extra));
+        Assert.equals('test extra', Helpers.a2s(cast inflator.header.extra));
       });
 
       it('Write custom headers', {
@@ -914,11 +890,11 @@ class TestInflate extends BuddySuite
     #end
 
       it('should throw on the wrong dictionary', function () {
-        var zCompressed = Pako.deflate(TestDeflate.s2a('world'), { dictionary: TestDeflate.s2a('hello') });
+        var zCompressed = Pako.deflate(Helpers.s2a('world'), { dictionary: Helpers.s2a('hello') });
         //var zCompressed = new Buffer([ 120, 187, 6, 44, 2, 21, 43, 207, 47, 202, 73, 1, 0, 6, 166, 2, 41 ]);
 
         try {
-          Pako.inflate(zCompressed, { dictionary: TestDeflate.s2a('world') });
+          Pako.inflate(zCompressed, { dictionary: Helpers.s2a('world') });
         } catch (err : Dynamic) {
           trace(err);
           if (err == 'stream error') {
@@ -932,7 +908,7 @@ class TestInflate extends BuddySuite
       });
 
       it('trivial dictionary', function (done) {
-        var dict = TestDeflate.s2a('abcdefghijklmnoprstuvwxyz');
+        var dict = Helpers.s2a('abcdefghijklmnoprstuvwxyz');
         Helpers.testInflate(samples, { dictionary: dict }, { dictionary: dict }, done);
       });
 
@@ -948,13 +924,7 @@ class TestInflate extends BuddySuite
 }
 
 class TestDeflate extends BuddySuite
-{
-  static public function s2a(s:String) {
-    var bytes = Bytes.ofString(s);
-    var a = UInt8Array.fromBytes(bytes);
-    return a;
-  }
-  
+{ 
   public function new() { 
     var samples = Helpers.getSamplesWithPrefix('samples/');
     
@@ -1157,7 +1127,7 @@ class TestDeflate extends BuddySuite
     #end
     
       it('trivial dictionary', function (done) {
-        var dict = s2a('abcdefghijklmnoprstuvwxyz');
+        var dict = Helpers.s2a('abcdefghijklmnoprstuvwxyz');
         Helpers.testSamples(null, Pako.deflate, samples, { dictionary: dict }, done, 'deflate_dict_trivial');
       });
 
@@ -1168,18 +1138,18 @@ class TestDeflate extends BuddySuite
       });
 
       it('handles multiple pushes', function () {
-        var dict = s2a('abcd');
+        var dict = Helpers.s2a('abcd');
         var deflate = new pako.Deflate({ dictionary: dict });
 
-        deflate.push(s2a('hello'), false);
-        deflate.push(s2a('hello'), false);
-        deflate.push(s2a(' world'), true);
+        deflate.push(Helpers.s2a('hello'), false);
+        deflate.push(Helpers.s2a('hello'), false);
+        deflate.push(Helpers.s2a(' world'), true);
 
         if (deflate.err != ErrorStatus.Z_OK) { throw Messages.get(deflate.err); }
 
         var uncompressed = Pako.inflate(deflate.result, { dictionary: dict });
 
-        if (!Helpers.cmpBuf(cast s2a('hellohello world'), cast uncompressed)) {
+        if (!Helpers.cmpBuf(cast Helpers.s2a('hellohello world'), cast uncompressed)) {
           throw 'Result not equal for p -> z';
         }
       });

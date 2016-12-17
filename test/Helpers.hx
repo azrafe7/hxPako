@@ -1,6 +1,7 @@
 package;
 
 import haxe.io.ArrayBufferView;
+import haxe.io.Bytes;
 import haxe.io.UInt8Array;
 import haxe.Resource;
 import pako.Pako;
@@ -161,5 +162,36 @@ class Helpers
     }
 
     callback();
+  }
+  
+  
+  static public function toStr(arr:ArrayBufferView) {
+    var sb = new StringBuf();
+    sb.add("[");
+    for (i in arr.byteOffset...arr.byteOffset + arr.byteLength) sb.add("" + arr.buffer.get(i) + ",");
+    sb.add("]");
+    return sb.toString();
+  }
+  
+  static public function h2b(hex:String) {
+    var array = hex.split(' ').map(function(hx):Int { return Std.parseInt("0x" + hx); } );
+    var data8:UInt8Array = UInt8Array.fromArray(array);
+    //var data8str = toStr(cast data8); // debug
+    return data8;
+  }
+  
+  static public function s2a(s:String) {
+    var bytes = Bytes.ofString(s);
+    var a = UInt8Array.fromBytes(bytes);
+    return a;
+  }
+  
+  static public function a2s(typedArray:UInt8Array) {
+    var str = "";
+    //var arrStr = TestInflateCover.toStr(typedArray.view); // debug
+    for (i in 0...typedArray.length) {
+      str += String.fromCharCode(typedArray[i]);
+    }
+    return str;
   }
 }
