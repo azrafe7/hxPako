@@ -904,11 +904,57 @@ class TestInflate extends BuddySuite
       });
 
     });
+    
+    
+    describe('Inflate with dictionary', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+
+      it('should throw on the wrong dictionary', function () {
+        var zCompressed = Pako.deflate(TestDeflate.s2a('world'), { dictionary: TestDeflate.s2a('hello') });
+        //var zCompressed = new Buffer([ 120, 187, 6, 44, 2, 21, 43, 207, 47, 202, 73, 1, 0, 6, 166, 2, 41 ]);
+
+        try {
+          Pako.inflate(zCompressed, { dictionary: TestDeflate.s2a('world') });
+        } catch (err : Dynamic) {
+          trace(err);
+          if (err == 'stream error') {
+            return;
+          }
+
+          throw err;
+        }
+
+        throw 'Did not throw';
+      });
+
+      it('trivial dictionary', function (done) {
+        var dict = TestDeflate.s2a('abcdefghijklmnoprstuvwxyz');
+        Helpers.testInflate(samples, { dictionary: dict }, { dictionary: dict }, done);
+      });
+
+      it('spdy dictionary', function (done) {
+        var spdyDict = Helpers.getSample('spdy_dict.txt');
+
+        Helpers.testInflate(samples, { dictionary: spdyDict }, { dictionary: spdyDict }, done);
+      });
+
+  });
+
   }
 }
 
 class TestDeflate extends BuddySuite
 {
+  static public function s2a(s:String) {
+    var bytes = Bytes.ofString(s);
+    var a = UInt8Array.fromBytes(bytes);
+    return a;
+  }
+  
   public function new() { 
     var samples = Helpers.getSamplesWithPrefix('samples/');
     
@@ -1098,6 +1144,44 @@ class TestDeflate extends BuddySuite
       });
       it('level 0', function(done) {
         Helpers.testSamples(null, Pako.deflateRaw, samples, { level: 0 }, done, 'deflate_raw_lev0');
+      });
+
+    });
+    
+    
+    describe('Deflate dictionary', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
+      it('trivial dictionary', function (done) {
+        var dict = s2a('abcdefghijklmnoprstuvwxyz');
+        Helpers.testSamples(null, Pako.deflate, samples, { dictionary: dict }, done, 'deflate_dict_trivial');
+      });
+
+      it('spdy dictionary', function (done) {
+        var spdyDict = Helpers.getSample('spdy_dict.txt');
+
+        Helpers.testSamples(null, Pako.deflate, samples, { dictionary: spdyDict }, done, 'deflate_dict_spdy');
+      });
+
+      it('handles multiple pushes', function () {
+        var dict = s2a('abcd');
+        var deflate = new pako.Deflate({ dictionary: dict });
+
+        deflate.push(s2a('hello'), false);
+        deflate.push(s2a('hello'), false);
+        deflate.push(s2a(' world'), true);
+
+        if (deflate.err != ErrorStatus.Z_OK) { throw Messages.get(deflate.err); }
+
+        var uncompressed = Pako.inflate(deflate.result, { dictionary: dict });
+
+        if (!Helpers.cmpBuf(cast s2a('hellohello world'), cast uncompressed)) {
+          throw 'Result not equal for p -> z';
+        }
       });
 
     });
