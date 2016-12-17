@@ -169,3 +169,12 @@ exports.cmpBuf = cmpBuf;
 exports.testSamples = testSamples;
 exports.testInflate = testInflate;
 exports.loadSamples = loadSamples;
+
+
+var portHelpers = require('./port_helpers');
+
+exports.toType = portHelpers.toType;
+exports.cmpBuf = portHelpers.cmpBuf;
+exports.testSamples = portHelpers.testSamples;
+exports.testInflate = portHelpers.testInflate;
+exports.loadSamples = portHelpers.loadSamples;
