@@ -39,7 +39,8 @@ class TestAll implements Buddy <[
     TestInflate, 
     TestInflateCover, 
     TestDeflateCover,
-    TestGZipSpecials
+    TestGZipSpecials,
+    TestStrings,
   ]> { 
 
   
@@ -73,6 +74,7 @@ class TestAll implements Buddy <[
       new TestInflateCover(), 
       new TestDeflateCover(),
       new TestGZipSpecials(),
+      new TestStrings(),
     ], reporter);*/
     
     trace("ArrayBufferView.EMULATED: " + ArrayBufferView.EMULATED);
@@ -1157,3 +1159,57 @@ class TestDeflate extends BuddySuite
     });
   }
 }
+
+// NOTE(hx): dummy strings tests (not supported in the hx port)
+class TestStrings extends BuddySuite {
+  public function new() {
+    
+    describe('Encode/Decode strings', {
+    
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
+      it('utf-8 border detect', function () {
+        
+      });
+
+      it('Encode string to utf8 buf', function () {
+        
+      });
+
+      it('Decode utf8 buf to string', function () {
+        
+      });
+
+    });
+
+
+    describe('Deflate/Inflate strings', function () {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
+      it('Deflate javascript string (utf16) on input', function () {
+        
+      });
+
+      it('Deflate with binary string output', function () {
+        
+      });
+
+      it('Inflate binary string input', function () {
+        
+      });
+
+      it('Inflate with javascript string (utf16) output', function () {
+        
+      });
+      
+    });
+  }
+}
+
