@@ -264,3 +264,18 @@
 -resource test\fixtures\zlib_output\deflate_no_opt-lorem_cat@zlib_output/deflate_no_opt-lorem_cat
 -resource test\fixtures\zlib_output\deflate_no_opt-lorem@zlib_output/deflate_no_opt-lorem
 -resource test\fixtures\zlib_output\deflate_no_opt-blank@zlib_output/deflate_no_opt-blank
+#zlib output (from pako 1.0.1)
+-resource test\fixtures\zlib_output\deflate_dict_spdy-blank@zlib_output/deflate_dict_spdy-blank
+-resource test\fixtures\zlib_output\deflate_dict_spdy-lorem@zlib_output/deflate_dict_spdy-lorem
+-resource test\fixtures\zlib_output\deflate_dict_spdy-lorem_cat@zlib_output/deflate_dict_spdy-lorem_cat
+-resource test\fixtures\zlib_output\deflate_dict_spdy-lorem_en_100k@zlib_output/deflate_dict_spdy-lorem_en_100k
+-resource test\fixtures\zlib_output\deflate_dict_spdy-lorem_utf_100k@zlib_output/deflate_dict_spdy-lorem_utf_100k
+-resource test\fixtures\zlib_output\deflate_dict_spdy-utf8@zlib_output/deflate_dict_spdy-utf8
+-resource test\fixtures\zlib_output\deflate_dict_trivial-blank@zlib_output/deflate_dict_trivial-blank
+-resource test\fixtures\zlib_output\deflate_dict_trivial-lorem@zlib_output/deflate_dict_trivial-lorem
+-resource test\fixtures\zlib_output\deflate_dict_trivial-lorem_cat@zlib_output/deflate_dict_trivial-lorem_cat
+-resource test\fixtures\zlib_output\deflate_dict_trivial-lorem_en_100k@zlib_output/deflate_dict_trivial-lorem_en_100k
+-resource test\fixtures\zlib_output\deflate_dict_trivial-lorem_utf_100k@zlib_output/deflate_dict_trivial-lorem_utf_100k
+-resource test\fixtures\zlib_output\deflate_dict_trivial-utf8@zlib_output/deflate_dict_trivial-utf8
+-resource test\fixtures\zlib_output\inflate_raw-KW_Rocketry_1@zlib_output/inflate_raw-KW_Rocketry_1
+-resource test\fixtures\zlib_output\inflate_raw-shapefile@zlib_output/inflate_raw-shapefile
