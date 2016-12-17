@@ -9,6 +9,18 @@ var async = require('async');
 var pako_utils = require('../lib/utils/common');
 var pako  = require('../index');
 
+//NOTE: whether to generate files in zlib_output folder 
+//     (remember to add the generated files to resources when testing from haxe)
+var GEN_ZLIB_OUTPUT = true;
+
+console.info('\nport_helpers.js: GEN_ZLIB_OUTPUT(' + GEN_ZLIB_OUTPUT + ')');
+
+function writeToFile(buffer, name) {
+	var filename = path.join(__dirname, 'fixtures/zlib_output/' + name);
+	//console.log(filename + "  (" + buffer.length + ")");
+	fs.writeFileSync(filename, buffer);
+}
+
 // Load fixtures to test
 // return: { 'filename1': content1, 'filename2': content2, ...}
 //
@@ -52,7 +64,7 @@ function cmpBuf(a, b) {
 // Helper to test deflate/inflate with different options.
 // Use zlib streams, because it's the only way to define options.
 //
-function testSingle(zlib_factory, pako_deflate, data, options, callback) {
+function testSingle(zlib_factory, pako_deflate, data, options, callback, name) {
 
   var zlib_options = _.clone(options);
 
@@ -66,7 +78,8 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback) {
   zlibStream.on('error', function(err) {
     zlibStream.removeAllListeners();
     zlibStream=null;
-    callback(err);
+    console.log("zlib err");
+	callback(err);
   });
 
   zlibStream.on('data', function(chunk) {
@@ -82,7 +95,12 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback) {
 
     var pako_result = pako_deflate(data, options);
 
-    if (!cmpBuf(buffer, pako_result)) {
+    if (name && GEN_ZLIB_OUTPUT) {
+		writeToFile(buffer, name);
+		//console.log(options);
+	}
+	
+	if (!cmpBuf(buffer, pako_result)) {
       callback(new Error('zlib result != pako result'));
       return;
     }
@@ -95,12 +113,12 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback) {
   zlibStream.end();
 }
 
-function testSamples(zlib_factory, pako_deflate, samples, options, callback) {
+function testSamples(zlib_factory, pako_deflate, samples, options, callback, prefix) {
   var queue = [];
 
   _.forEach(samples, function(data, name) {
     // with untyped arrays
-    queue.push(function (done) {
+    /*queue.push(function (done) {
       pako_utils.setTyped(false);
 
       testSingle(zlib_factory, pako_deflate, data, options, function (err) {
@@ -110,7 +128,7 @@ function testSamples(zlib_factory, pako_deflate, samples, options, callback) {
         }
         done();
       });
-    });
+    });*/
 
     // with typed arrays
     queue.push(function (done) {
@@ -122,7 +140,7 @@ function testSamples(zlib_factory, pako_deflate, samples, options, callback) {
           return;
         }
         done();
-      });
+      }, prefix + "-" + name);
     });
   });
 
@@ -165,16 +183,10 @@ function testInflate(samples, inflateOptions, deflateOptions, callback) {
 }
 
 
+exports.toType = function(obj) {
+  return ({}).toString.call(obj).match(/\s([^\]]+)/)[1].toLowerCase();
+}
 exports.cmpBuf = cmpBuf;
 exports.testSamples = testSamples;
 exports.testInflate = testInflate;
 exports.loadSamples = loadSamples;
-
-
-var portHelpers = require('./port_helpers');
-
-exports.toType = portHelpers.toType;
-exports.cmpBuf = portHelpers.cmpBuf;
-exports.testSamples = portHelpers.testSamples;
-exports.testInflate = portHelpers.testInflate;
-exports.loadSamples = portHelpers.loadSamples;
