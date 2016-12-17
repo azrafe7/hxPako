@@ -16,7 +16,7 @@ import pako.zlib.GZHeader;
 class Pako
 {
   /** Version of ported pako lib (https://github.com/nodeca/pako). */
-  inline static public var VERSION:String = "0.2.7";
+  inline static public var VERSION:String = "1.0.1";
   
   /**
    * deflate(data[, options]) -> Uint8Array|Array|String
