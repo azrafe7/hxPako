@@ -20,4 +20,4 @@ exports.loadSamples = portHelpers.loadSamples;
  - run `mocha` to generate the files
  - add the generated files as resources in the `.hxml` so they can be tested from the haxe side
  - files in the `lib` folder can be safely replaced with the ones from pako js
- 
+ - tests from `strings.js` do not have a haxe counterpart (thus ~7 tests less)
