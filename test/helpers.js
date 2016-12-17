@@ -9,12 +9,6 @@ var async = require('async');
 var pako_utils = require('../lib/utils/common');
 var pako  = require('../index');
 
-function writeToFile(buffer, name) {
-	var filename = path.join(__dirname, 'fixtures/zlib_output/' + name);
-	//console.log(filename + "  (" + buffer.length + ")");
-	fs.writeFileSync(filename, buffer);
-}
-
 // Load fixtures to test
 // return: { 'filename1': content1, 'filename2': content2, ...}
 //
@@ -58,7 +52,7 @@ function cmpBuf(a, b) {
 // Helper to test deflate/inflate with different options.
 // Use zlib streams, because it's the only way to define options.
 //
-function testSingle(zlib_factory, pako_deflate, data, options, callback, name) {
+function testSingle(zlib_factory, pako_deflate, data, options, callback) {
 
   var zlib_options = _.clone(options);
 
@@ -72,8 +66,7 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback, name) {
   zlibStream.on('error', function(err) {
     zlibStream.removeAllListeners();
     zlibStream=null;
-    console.log("zlib err");
-	callback(err);
+    callback(err);
   });
 
   zlibStream.on('data', function(chunk) {
@@ -89,12 +82,7 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback, name) {
 
     var pako_result = pako_deflate(data, options);
 
-    if (name) {
-		writeToFile(buffer, name);
-		//console.log(options);
-	}
-	
-	if (!cmpBuf(buffer, pako_result)) {
+    if (!cmpBuf(buffer, pako_result)) {
       callback(new Error('zlib result != pako result'));
       return;
     }
@@ -107,12 +95,12 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback, name) {
   zlibStream.end();
 }
 
-function testSamples(zlib_factory, pako_deflate, samples, options, callback, prefix) {
+function testSamples(zlib_factory, pako_deflate, samples, options, callback) {
   var queue = [];
 
   _.forEach(samples, function(data, name) {
     // with untyped arrays
-    /*queue.push(function (done) {
+    queue.push(function (done) {
       pako_utils.setTyped(false);
 
       testSingle(zlib_factory, pako_deflate, data, options, function (err) {
@@ -122,7 +110,7 @@ function testSamples(zlib_factory, pako_deflate, samples, options, callback, pre
         }
         done();
       });
-    });*/
+    });
 
     // with typed arrays
     queue.push(function (done) {
@@ -134,7 +122,7 @@ function testSamples(zlib_factory, pako_deflate, samples, options, callback, pre
           return;
         }
         done();
-      }, prefix + "-" + name);
+      });
     });
   });
 
@@ -181,12 +169,3 @@ exports.cmpBuf = cmpBuf;
 exports.testSamples = testSamples;
 exports.testInflate = testInflate;
 exports.loadSamples = loadSamples;
-
-
-var portHelpers = require('./port_helpers');
-
-exports.toType = portHelpers.toType;
-exports.cmpBuf = portHelpers.cmpBuf;
-exports.testSamples = portHelpers.testSamples;
-exports.testInflate = portHelpers.testInflate;
-exports.loadSamples = portHelpers.loadSamples;
