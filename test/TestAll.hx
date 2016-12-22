@@ -895,18 +895,10 @@ class TestInflate extends BuddySuite
         var zCompressed = Pako.deflate(Helpers.s2a('world'), { dictionary: Helpers.s2a('hello') });
         //var zCompressed = new Buffer([ 120, 187, 6, 44, 2, 21, 43, 207, 47, 202, 73, 1, 0, 6, 166, 2, 41 ]);
 
-        try {
+        Assert.raises(function () {
           Pako.inflate(zCompressed, { dictionary: Helpers.s2a('world') });
-        } catch (err : Dynamic) {
-          trace(err);
-          if (err == 'stream error') {
-            return;
-          }
-
-          throw err;
-        }
-
-        throw 'Did not throw';
+        }, Messages.get(ErrorStatus.Z_DATA_ERROR));
+        
       });
 
       it('trivial dictionary', function (done) {
