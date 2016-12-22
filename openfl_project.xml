@@ -22,11 +22,12 @@
 	<!--haxedef name="next" /-->
 	<!--haxeflag name="--no-traces" if="release" /-->	
 	
-    <!--haxelib name="hxtelemetry" /-->
+  <!--haxelib name="hxtelemetry" /-->
 	<haxelib name="utest" />
 	<haxelib name="buddy" />
 	<haxelib name="openfl" />
 
+	<!--#test/fixtures/samples-->
 	<haxeflag name="-resource" value="test\fixtures\samples\lorem_utf_100k.txt@samples/lorem_utf_100k.txt"/>
 	<haxeflag name="-resource" value="test\fixtures\samples\lorem_en_100k.txt@samples/lorem_en_100k.txt"/>
 	<haxeflag name="-resource" value="test\fixtures\samples\blank.gif@samples/blank.gif"/>
@@ -34,13 +35,19 @@
 	<haxeflag name="-resource" value="test\fixtures\samples\lorem_cat.jpeg@samples/lorem_cat.jpeg"/>
 	<haxeflag name="-resource" value="test\fixtures\samples\utf8.zip@samples/utf8.zip"/>
 
+	<!--#test/fixtures-->
 	<haxeflag name="-resource" value="test\fixtures\gzip-headers.gz@gzip-headers.gz"/>
 	<haxeflag name="-resource" value="test\fixtures\gzip-joined.gz@gzip-joined.gz"/>
+	<haxeflag name="-resource" value="test\fixtures\spdy_dict.txt@spdy_dict.txt"/>
 
+	<!--#test/fixtures/samples_deflated_raw-->
 	<haxeflag name="-resource" value="test\fixtures\samples_deflated_raw\sheet2.compressed@samples_deflated_raw/sheet2.compressed"/>
 	<haxeflag name="-resource" value="test\fixtures\samples_deflated_raw\sheet3.compressed@samples_deflated_raw/sheet3.compressed"/>
 	<haxeflag name="-resource" value="test\fixtures\samples_deflated_raw\sheet4.compressed@samples_deflated_raw/sheet4.compressed"/>
+	<haxeflag name="-resource" value="test\fixtures\samples_deflated_raw\KW_Rocketry_1.compressed@samples_deflated_raw/KW_Rocketry_1.compressed"/>
+	<haxeflag name="-resource" value="test\fixtures\samples_deflated_raw\shapefile.compressed@samples_deflated_raw/shapefile.compressed"/>
 
+	<!--#zlib output-->
 	<haxeflag name="-resource" value="test\fixtures\zlib_output\inflate_raw-sheet4@zlib_output/inflate_raw-sheet4"/>
 	<haxeflag name="-resource" value="test\fixtures\zlib_output\inflate_raw-sheet3@zlib_output/inflate_raw-sheet3"/>
 	<haxeflag name="-resource" value="test\fixtures\zlib_output\inflate_raw-sheet2@zlib_output/inflate_raw-sheet2"/>
@@ -278,5 +285,19 @@
 	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_no_opt-lorem_cat@zlib_output/deflate_no_opt-lorem_cat"/>
 	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_no_opt-lorem@zlib_output/deflate_no_opt-lorem"/>
 	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_no_opt-blank@zlib_output/deflate_no_opt-blank"/>
-
+	<!--#zlib output (from pako 1.0.1)-->
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_spdy-blank@zlib_output/deflate_dict_spdy-blank"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_spdy-lorem@zlib_output/deflate_dict_spdy-lorem"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_spdy-lorem_cat@zlib_output/deflate_dict_spdy-lorem_cat"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_spdy-lorem_en_100k@zlib_output/deflate_dict_spdy-lorem_en_100k"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_spdy-lorem_utf_100k@zlib_output/deflate_dict_spdy-lorem_utf_100k"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_spdy-utf8@zlib_output/deflate_dict_spdy-utf8"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_trivial-blank@zlib_output/deflate_dict_trivial-blank"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_trivial-lorem@zlib_output/deflate_dict_trivial-lorem"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_trivial-lorem_cat@zlib_output/deflate_dict_trivial-lorem_cat"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_trivial-lorem_en_100k@zlib_output/deflate_dict_trivial-lorem_en_100k"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_trivial-lorem_utf_100k@zlib_output/deflate_dict_trivial-lorem_utf_100k"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\deflate_dict_trivial-utf8@zlib_output/deflate_dict_trivial-utf8"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\inflate_raw-KW_Rocketry_1@zlib_output/inflate_raw-KW_Rocketry_1"/>
+	<haxeflag name="-resource" value="test\fixtures\zlib_output\inflate_raw-shapefile@zlib_output/inflate_raw-shapefile"/>
 </project>
