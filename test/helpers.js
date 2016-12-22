@@ -60,7 +60,7 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback) {
   if (zlib_options.windowBits < 0) { zlib_options.windowBits = -zlib_options.windowBits; }
 
   var zlibStream = zlib_factory(zlib_options);
-  var buffers = [], nread = 0;
+  var buffers = [];
 
 
   zlibStream.on('error', function (err) {
@@ -71,7 +71,6 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback) {
 
   zlibStream.on('data', function (chunk) {
     buffers.push(chunk);
-    nread += chunk.length;
   });
 
   zlibStream.on('end', function () {
@@ -100,7 +99,7 @@ function testSamples(zlib_factory, pako_deflate, samples, options, callback) {
 
   _.forEach(samples, function (data, name) {
     // with untyped arrays
-    /*queue.push(function (done) {
+    queue.push(function (done) {
       pako_utils.setTyped(false);
 
       testSingle(zlib_factory, pako_deflate, data, options, function (err) {
@@ -110,7 +109,7 @@ function testSamples(zlib_factory, pako_deflate, samples, options, callback) {
         }
         done();
       });
-    });*/
+    });
 
     // with typed arrays
     queue.push(function (done) {
