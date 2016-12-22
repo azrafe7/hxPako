@@ -1176,10 +1176,20 @@ class Deflate
 
     s.lit_bufsize = 1 << (memLevel + 6); /* 16K elements by default */
 
+
+    //overlay = (ushf *) ZALLOC(strm, s->lit_bufsize, sizeof(ush)+2);
+    //s->pending_buf = (uchf *) overlay;
     s.pending_buf_size = s.lit_bufsize * 4;
+    
     s.pending_buf = new UInt8Array(s.pending_buf_size);
 
-    s.d_buf = s.lit_bufsize >> 1;
+    // NOTE(hx): bugfix https://github.com/nodeca/pako/commit/4a07e05823dbb110e522566c2a2fa8cb5ed6d4ff
+    
+    // It is offset from `s.pending_buf` (size is `s.lit_bufsize * 2`)
+    //s->d_buf = overlay + s->lit_bufsize/sizeof(ush);
+    s.d_buf = 1 * s.lit_bufsize;
+
+    //s->l_buf = s->pending_buf + (1+sizeof(ush))*s->lit_bufsize;
     s.l_buf = (1 + 2) * s.lit_bufsize;
 
     s.level = level;

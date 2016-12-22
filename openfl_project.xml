@@ -39,6 +39,7 @@
 	<haxeflag name="-resource" value="test\fixtures\gzip-headers.gz@gzip-headers.gz"/>
 	<haxeflag name="-resource" value="test\fixtures\gzip-joined.gz@gzip-joined.gz"/>
 	<haxeflag name="-resource" value="test\fixtures\spdy_dict.txt@spdy_dict.txt"/>
+	<haxeflag name="-resource" value="test\fixtures\issue_78.bin@issue_78.bin"/>
 
 	<!--#test/fixtures/samples_deflated_raw-->
 	<haxeflag name="-resource" value="test\fixtures\samples_deflated_raw\sheet2.compressed@samples_deflated_raw/sheet2.compressed"/>

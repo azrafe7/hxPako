@@ -1157,6 +1157,25 @@ class TestDeflate extends BuddySuite
       });
 
     });
+    
+    
+    describe('Deflate issues', {
+
+    #if (cpp && telemetry)
+      before(TestAll.hxt.advance_frame());
+      after(TestAll.hxt.advance_frame());
+    #end
+    
+      it('#78', function () {
+        var data = Helpers.getSample('issue_78.bin');
+        var deflatedPakoData = Pako.deflate(data, { memLevel: 1 });
+        var inflatedPakoData = Pako.inflate(deflatedPakoData);
+
+        Assert.equals(data.length, inflatedPakoData.length);
+
+      });
+
+    });
   }
 }
 

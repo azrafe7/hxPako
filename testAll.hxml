@@ -20,6 +20,7 @@
 -resource test\fixtures\gzip-headers.gz@gzip-headers.gz
 -resource test\fixtures\gzip-joined.gz@gzip-joined.gz
 -resource test\fixtures\spdy_dict.txt@spdy_dict.txt
+-resource test\fixtures\issue_78.bin@issue_78.bin
 
 #test/fixtures/samples_deflated_raw
 -resource test\fixtures\samples_deflated_raw\sheet2.compressed@samples_deflated_raw/sheet2.compressed

@@ -57,8 +57,10 @@ class Pako
     //NOTE(hx): change here if we accept mode as Bool too
     deflator.push(input, Flush.Z_FINISH);
 
-    // That will never happens, if you don't cheat with options :)
-    if (deflator.err != 0) { throw deflator.msg; }
+    // This should never happen, if you don't cheat with options :)
+    if (deflator.err != 0) {
+      throw (deflator.msg != '' ? deflator.msg : Messages.get(deflator.err));
+    }
 
     return deflator.result;
   }
@@ -136,8 +138,10 @@ class Pako
 
     inflator.push(input, true);
 
-    // That will never happens, if you don't cheat with options :)
-    if (inflator.err != ErrorStatus.Z_OK) { throw inflator.msg; }
+    // This should never happen, if you don't cheat with options :)
+    if (inflator.err != ErrorStatus.Z_OK) {
+      throw (inflator.msg != '' ? inflator.msg : Messages.get(inflator.err));
+    }
 
     return inflator.result;
   }
