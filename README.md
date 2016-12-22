@@ -1,7 +1,7 @@
 hxPako
 ==========================================
 
-[pako](https://github.com/nodeca/pako) v1.0.1 port to haxe, for cross-platform zlib functionality. 
+[pako](https://github.com/nodeca/pako) v1.0.4 port to haxe, for cross-platform zlib functionality. 
 
 ###Features
 
