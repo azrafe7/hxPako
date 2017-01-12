@@ -1,8 +1,10 @@
 import haxe.io.Bytes;
 import haxe.io.Path;
 import haxe.io.UInt8Array;
+import pako.Deflate;
 import pako.Pako;
 import pako.zlib.GZHeader;
+import pako.zlib.Constants;
 
 #if (sys)
 import sys.FileSystem;
@@ -20,7 +22,7 @@ class SimpleGzipExample {
     
         var sysArgs = Sys.args();
         
-        if (sysArgs.length != 1) {
+        if (sysArgs.length < 1) {
             exitWithUsage();
         } else {
             var inputFile = sysArgs[0];
@@ -37,9 +39,21 @@ class SimpleGzipExample {
             
             var gzipHeader = new GZHeader();
             gzipHeader.comment = 'created with hxPako (${Date.now().toString()})';
-            var output = Pako.deflate(UInt8Array.fromBytes(input), {gzip:true, header:gzipHeader});
-            Sys.println('\n  Gzip bytes to "${outputFile}"');
-            Sys.println('\n  (added comment: "${gzipHeader.comment}"');
+            Sys.println('\n  Gzipping bytes to "${outputFile}"');
+            Sys.println('\n  (with comment: "${gzipHeader.comment}")');
+            
+            var options = { gzip:true, header:gzipHeader };
+            var deflator = new Deflate(options);
+            
+            deflator.push(UInt8Array.fromBytes(input), true);
+            
+            if (deflator.err != ErrorStatus.Z_OK) {
+              Sys.println('\n  ERROR(${deflator.err}): ${deflator.msg}');
+              Sys.exit(deflator.err);
+            }
+            
+            var output = deflator.result;
+            
             File.saveBytes(outputFile, output.view.buffer);
         }
         

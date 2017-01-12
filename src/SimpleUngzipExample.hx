@@ -4,6 +4,7 @@ import haxe.io.UInt8Array;
 import pako.Inflate;
 import pako.Pako;
 import pako.zlib.GZHeader;
+import pako.zlib.Constants;
 
 #if (sys)
 import sys.FileSystem;
@@ -21,7 +22,7 @@ class SimpleUngzipExample {
     
         var sysArgs = Sys.args();
         
-        if (sysArgs.length != 1) {
+        if (sysArgs.length < 1) {
             exitWithUsage();
         } else {
             var inputFile = sysArgs[0];
@@ -34,15 +35,21 @@ class SimpleUngzipExample {
             var inputPath = new Path(inputFile);
             Sys.println('\n  Processing "${inputPath.toString()}"');
             var programDir = Path.directory(Sys.programPath());
+            var outputFile = Path.join([programDir, inputPath.file + ".ungzipped"]);
             
             // using inflator to extract comments too (otherwise Pako.inflate() is sufficient to get the bytes back)
             var inflator = new Inflate();
             
+            Sys.println('\n  Ungzipping bytes to "${outputFile}"');
             inflator.push(UInt8Array.fromBytes(input), true);
+            
+            if (inflator.err != ErrorStatus.Z_OK) {
+              Sys.println('\n  ERROR(${inflator.err}): ${inflator.msg}');
+              Sys.exit(inflator.err);
+            }
+            
             var output = inflator.result;
-            var outputFile = Path.join([programDir, inputPath.file + ".ungzipped"]);
            
-            Sys.println('\n  Ungzip bytes to "${outputFile}"');
             File.saveBytes(outputFile, output.view.buffer);
             var comment = inflator.header.comment;
             if (comment != null && comment != "") Sys.println('\n  (extracted comment: "${inflator.header.comment}")');
