@@ -1,5 +1,6 @@
 package pako.zlib;
 
+import haxe.ds.Vector;
 import haxe.io.UInt8Array;
 
 // Note: we can't get significant speed boost here.
@@ -9,8 +10,8 @@ import haxe.io.UInt8Array;
 class CRC32
 {
   // Use ordinary array, since untyped makes no boost here
-  static function makeTable():Array<Int> {
-    var c, table = [];
+  static function makeTable():Vector<Int> {
+    var c, table = new Vector<Int>(256);
 
     for (n in 0...256) {
       c = n;
@@ -24,7 +25,7 @@ class CRC32
   }
 
   // Create table on load. Just 255 signed longs. Not a problem.
-  static var crcTable:Array<Int> = makeTable();
+  static var crcTable:Vector<Int> = makeTable();
 
 
   static public function crc32(crc:Int, buf:UInt8Array, len:Int, pos:Int):Int {

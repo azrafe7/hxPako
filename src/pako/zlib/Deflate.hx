@@ -1,6 +1,7 @@
 package pako.zlib;
 
 import haxe.Constraints.Function;
+import haxe.ds.Vector;
 import haxe.io.UInt16Array;
 import haxe.io.UInt8Array;
 import pako.utils.Common;
@@ -1022,10 +1023,10 @@ class Deflate
 
   //NOTE(hx): Config moved to end of file
   
-  static var configuration_table:Array<Config>;
+  static var configuration_table:Vector<Config>;
   
   static function __init__() {
-    configuration_table = [
+    configuration_table = Vector.fromArrayCopy([
       /*      good lazy nice chain */
       new Config(0, 0, 0, 0, deflate_stored),          /* 0 store only */
       new Config(4, 4, 8, 4, deflate_fast),            /* 1 max speed, no lazy matches */
@@ -1038,7 +1039,7 @@ class Deflate
       new Config(8, 32, 128, 256, deflate_slow),       /* 7 */
       new Config(32, 128, 258, 1024, deflate_slow),    /* 8 */
       new Config(32, 258, 258, 4096, deflate_slow)     /* 9 max compression */
-    ];
+    ]);
   }
   
 
