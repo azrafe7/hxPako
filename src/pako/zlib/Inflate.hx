@@ -1434,6 +1434,8 @@ class Inflate
 
           }
           _out = left;
+          //NOTE(hx): force-clamp to 32bits (needed f.e. on python)
+          hold = @:privateAccess haxe.Int32.clamp(hold);
           // NB: crc32 stored as signed 32-bit int, ZSWAP32 returns signed too
           if ((state.flags != 0 ? hold : ZSWAP32(hold)) != state.check) {
             strm.msg = 'incorrect data check';
