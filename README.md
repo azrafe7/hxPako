@@ -3,13 +3,13 @@ hxPako
 
 [pako](https://github.com/nodeca/pako) v1.0.4 port to haxe, for cross-platform zlib functionality. 
 
-###Features
+### Features
 
  - Works in flash/js/neko/cpp.
  - Chunking support for big blobs.
  - Results are binary equal to well known [zlib](http://www.zlib.net/) (now v1.2.8 ported).
 
-###API
+### API
 
 ```haxe
 import pako.Pako;
@@ -50,7 +50,7 @@ var output = inflator.result;
 
 For more info you can consult [pako documentation](http://nodeca.github.io/pako/).
 
-###Notes
+### Notes
 hxPako (like pako) does not contain some specific zlib functions:
 
 - __deflate__ -  methods `deflateCopy`, `deflateBound`, `deflateParams`,
@@ -61,7 +61,7 @@ hxPako (like pako) does not contain some specific zlib functions:
 
 hxPako only supports `UInt8Array` (unlike pako, which also works with strings and arrays). But it's easy to extend to those too by using `UInt8Array.fromBytes()` and `UInt8Array.fromArray()`.
 
-###Test Suite Timings
+### Test Suite Timings
 Current timings (`node.js` refers to the original suite from pako, which you can test by running `mocha` in the top folder). See [testAll.hxml](test/testAll.hxml).
 
 | platform   | release | debug |
@@ -71,13 +71,14 @@ Current timings (`node.js` refers to the original suite from pako, which you can
 |cs          |    5.9s |  20.5s|
 |cpp         |    6.7s |  62.1s|
 |js          |    9.8s |  13.2s|
+|hl (VM)     |   12.2s |  12.4s|
 |flash       |   39.6s | 151.5s|
 |pypy3.2 *   |   97.8s | 101.3s| * (2 failed tests)
 |neko        |  168.6s | 181.2s|
   
-###Authors
+### Authors
  - Andrey Tupitsin and Vitaly Puzrin (original pako lib)
  - Me (haxe port)
 
-###License
+### License
 MIT
