@@ -32,7 +32,7 @@ import Helpers;
 
 
 @reporter("MochaReporter")
-class TestAll implements Buddy <[
+class TestAll /*implements Buddy <[
     TestMisc, 
     TestChunks, 
     TestDeflate,
@@ -41,7 +41,7 @@ class TestAll implements Buddy <[
     TestDeflateCover,
     TestGZipSpecials,
     TestStrings,
-  ]> { 
+  ]>*/ { 
 
   
   static var count:Int = 0;
@@ -64,7 +64,7 @@ class TestAll implements Buddy <[
     hxt = new hxtelemetry.HxTelemetry(cfg);
   #end
     
-    /*var reporter = new MochaReporter();
+    var reporter = new MochaReporter();
   
     var runner = new SuitesRunner([
       new TestMisc(), 
@@ -75,7 +75,7 @@ class TestAll implements Buddy <[
       new TestDeflateCover(),
       new TestGZipSpecials(),
       new TestStrings(),
-    ], reporter);*/
+    ], reporter);
     
     trace("ArrayBufferView.EMULATED: " + ArrayBufferView.EMULATED);
   
@@ -85,15 +85,20 @@ class TestAll implements Buddy <[
     trace("DEBUG: false");
   #end
   
-  #if cpp
-    //cpp.vm.Profiler.start("log-profiler.txt");
+  #if (cpp && HXCPP_PROFILER)
+    trace("start profiler");
+    cpp.vm.Profiler.start("profile.log");
   #end
   
-    //runner.run();
+    runner.run();
     
+  #if (cpp && HXCPP_PROFILER)
+    trace("stop profiler");
+    cpp.vm.Profiler.stop();
+  #end
+  
   #if sys
-    //cpp.vm.Profiler.stop();
-    //Sys.exit(0);
+    Sys.exit(0);
   #end
   }
 }  
