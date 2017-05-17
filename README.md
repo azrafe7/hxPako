@@ -5,7 +5,7 @@ hxPako
 
 ### Features
 
- - Works in flash/js/neko/cpp.
+ - Written in pure haxe (as of now works for js/hxnodejs/java/cs/cpp/hl/flash/neko).
  - Chunking support for big blobs.
  - Results are binary equal to well known [zlib](http://www.zlib.net/) (now v1.2.8 ported).
 
@@ -64,14 +64,15 @@ hxPako only supports `UInt8Array` (unlike pako, which also works with strings an
 ### Test Suite Timings
 Current timings (`node.js` refers to the original suite from pako, which you can test by running `mocha` in the top folder). See [testAll.hxml](test/testAll.hxml).
 
-| platform   | release | debug |
+| target     | release | debug |
 |:-----------|--------:|------:|
 |node.js     |    5.8s |     - |
 |java        |    5.6s |   6.0s|
 |cs          |    5.9s |  20.5s|
+|hxnodejs    |    6.4s |   6.5s|
 |cpp         |    6.7s |  62.1s|
 |js          |    9.8s |  13.2s|
-|hl (VM)     |   12.2s |  12.4s|
+|hl (vm)     |   12.2s |  12.4s|
 |flash       |   39.6s | 151.5s|
 |pypy3.2 *   |   97.8s | 101.3s| * (2 failed tests)
 |neko        |  168.6s | 181.2s|
