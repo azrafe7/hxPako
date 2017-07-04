@@ -1,0 +1,12 @@
+{
+  "name": "hxPako",
+  "url" : "https://github.com/azrafe7/hxPako",
+  "license": "MIT",
+  "tags": ["cross", "zlib"],
+  "description": "pako.js ported to haxe, for cross-platform zlib functionality.",
+  "version": "1.0.4",
+  "releasenote": "Updated to pako 1.0.4 (compliant with zlib 1.2.8).",
+  "contributors": ["azrafe7","andr83","puzrin"],
+  "dependencies": {
+  }
+}
