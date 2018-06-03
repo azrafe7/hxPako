@@ -64,6 +64,7 @@ class TestAll /*implements Buddy <[
     hxt = new hxtelemetry.HxTelemetry(cfg);
   #end
     
+    //var reporter = new buddy.reporting.ConsoleReporter();
     var reporter = new MochaReporter();
   
     var runner = new SuitesRunner([
