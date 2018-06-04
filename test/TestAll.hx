@@ -68,14 +68,14 @@ class TestAll /*implements Buddy <[
     var reporter = new MochaReporter();
   
     var runner = new SuitesRunner([
-      //new TestMisc(), 
-      //new TestChunks(), 
+      new TestMisc(), 
+      new TestChunks(), 
       new TestDeflate(),
-      //new TestInflate(), 
-      //new TestInflateCover(), 
-      //new TestDeflateCover(),
-      //new TestGZipSpecials(),
-      //new TestStrings(),
+      new TestInflate(), 
+      new TestInflateCover(), 
+      new TestDeflateCover(),
+      new TestGZipSpecials(),
+      new TestStrings(),
     ], reporter);
     
     trace("ArrayBufferView.EMULATED: " + ArrayBufferView.EMULATED);
