@@ -267,6 +267,12 @@
 -resource test\fixtures\zlib_output\deflate_no_opt-lorem_cat@zlib_output/deflate_no_opt-lorem_cat
 -resource test\fixtures\zlib_output\deflate_no_opt-lorem@zlib_output/deflate_no_opt-lorem
 -resource test\fixtures\zlib_output\deflate_no_opt-blank@zlib_output/deflate_no_opt-blank
+-resource test\fixtures\zlib_output\gzip_no_opt-blank@zlib_output/gzip_no_opt-blank
+-resource test\fixtures\zlib_output\gzip_no_opt-lorem@zlib_output/gzip_no_opt-lorem
+-resource test\fixtures\zlib_output\gzip_no_opt-lorem_en_100k@zlib_output/gzip_no_opt-lorem_en_100k
+-resource test\fixtures\zlib_output\gzip_no_opt-lorem_utf_100k@zlib_output/gzip_no_opt-lorem_utf_100k
+-resource test\fixtures\zlib_output\gzip_no_opt-lorem_cat@zlib_output/gzip_no_opt-lorem_cat
+-resource test\fixtures\zlib_output\gzip_no_opt-utf8@zlib_output/gzip_no_opt-utf8
 #zlib output (from pako 1.0.1)
 -resource test\fixtures\zlib_output\deflate_dict_spdy-blank@zlib_output/deflate_dict_spdy-blank
 -resource test\fixtures\zlib_output\deflate_dict_spdy-lorem@zlib_output/deflate_dict_spdy-lorem

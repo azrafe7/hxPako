@@ -81,6 +81,14 @@ function testSingle(zlib_factory, pako_deflate, data, options, callback) {
 
     var pako_result = pako_deflate(data, options);
 
+    // One more hack: gzip header contains OS code, that can vary.
+    // Override OS code if requested. For simplicity, we assume it on fixed
+    // position (= no additional gzip headers used)
+    if (options.ignore_os) {
+      console.log("--- IGNORE OS");
+      zlib_result[9] = pako_result[9];
+    }
+
     if (!cmpBuf(buffer, pako_result)) {
       callback(new Error('zlib result != pako result'));
       return;

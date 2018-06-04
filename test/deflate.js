@@ -28,10 +28,9 @@ describe('Deflate defaults', function () {
     testSamples(zlib.createDeflateRaw, pako.deflateRaw, samples, {}, done, 'deflate_raw_no_opt');
   });
 
-  // OS_CODE can differ. Probably should add param to compare function
-  // to ignore some buffer positions
+  // OS code in header can vary. Use hack flag to ignore it.
   it('gzip, no options', function (done) {
-    testSamples(zlib.createGzip, pako.gzip, samples, {}, done, 'gzip_no_opt');
+    testSamples(zlib.createGzip, pako.gzip, samples, { ignore_os:true }, done, 'gzip_no_opt');
   });
 });
 
@@ -69,7 +68,7 @@ describe('Deflate levels', function () {
     testSamples(zlib.createDeflate, pako.deflate, samples, { level: 0 }, done, 'deflate_lev0');
   });
   it('level -1 (implicit default)', function (done) {
-    testSamples(zlib.createDeflate, pako.deflate, samples, { level: 0 }, done, 'deflate_lev-1');
+    testSamples(zlib.createDeflate, pako.deflate, samples, { level: -1 }, done, 'deflate_lev-1');
   });
 });
 
