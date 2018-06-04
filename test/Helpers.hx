@@ -47,6 +47,17 @@ class Helpers
 
     for (i in 0...a.byteLength) {
       if (a.buffer.get(a.byteOffset + i) != b.buffer.get(b.byteOffset + i)) {
+      #if HXPAKO_DEBUG
+        trace('offsets : ${a.byteOffset} ${b.byteOffset}');
+        trace('bLengths: ${a.byteLength} ${b.byteLength}');
+        var win = 10;
+        var asHex = true;
+        trace("\n" + bufferViewToString(a, 0, 1, asHex) + " VS \n" + bufferViewToString(b, 0, 1, asHex));
+        trace("\n" + bufferViewToString(a, i-5 > 0 ? i-5 : i, win, asHex) + " VS \n" + bufferViewToString(b, i-5 > 0 ? i-5 : i, win, asHex));
+        trace("\n" + bufferViewToString(a, i-5 > 0 ? i-5 : i, win, !asHex) + " VS \n" + bufferViewToString(b, i-5 > 0 ? i-5 : i, win, !asHex));
+        trace('--- DIFF AT ${i + a.byteOffset}');
+        trace('--- DIFF AT ${i + b.byteOffset}');
+      #end
         return false;
       }
     }
@@ -54,12 +65,23 @@ class Helpers
     return true;
   }
 
-
+  static function bufferViewToString(buf:ArrayBufferView, offset:Int, size:Int, asHex = false)
+  {
+    var str = "";
+    //var arrStr = TestInflateCover.toStr(typedArray.view); // debug
+    if (buf.byteOffset + size > buf.byteOffset + buf.byteLength) size = buf.byteLength - buf.byteOffset;
+    for (i in buf.byteOffset + offset...buf.byteOffset +offset+ size) {
+      var byte = buf.buffer.get(i);
+      str += asHex ? "0x" + StringTools.hex(byte, 2) + ", " : String.fromCharCode(byte);
+    }
+    return str;
+  }
+  
   //NOTE(hx): zlib output has been precomputed and saved as resource, so we compare against them
   // Helper to test deflate/inflate with different options.
   // Use zlib streams, because it's the only way to define options.
   //
-  static public function testSingle(zlib_factory, pako_deflate, data, options, errorCallback:Bool->Void, zlib_filename) {
+  static public function testSingle(zlib_factory, pako_deflate:Null<UInt8Array>->Dynamic->UInt8Array, data, options:Dynamic, errorCallback:Bool->Void, zlib_filename) {
 
     /*var zlib_options = _.clone(options);
 
@@ -104,7 +126,13 @@ class Helpers
     var pako_result = pako_deflate(data, options);
     var zlib_result = getSample("zlib_output/" + zlib_filename);
 
+    // One more hack: gzip header contains OS code, that can vary.
+    // Override OS code if requested. For simplicity, we assume it on fixed
+    // position (= no additional gzip headers used)
+    if (options.ignore_os) zlib_result.set(9, pako_result.get(9));
+    
     if (!Helpers.cmpBuf(cast zlib_result, cast pako_result)) {
+      trace('--- ERROR');
       errorCallback(true);
       return;
     }

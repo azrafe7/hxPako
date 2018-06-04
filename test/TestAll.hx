@@ -945,10 +945,9 @@ class TestDeflate extends BuddySuite
 
       // OS_CODE can differ. Probably should add param to compare function
       // to ignore some buffer positions
-      //NOTE(hx): skipped
-      it('gzip, no options'/*, function(done) {
-        Helpers.testSamples(null, Pako.gzip, samples, {}, done, 'gzip_no_opt');
-      }*/);
+      it('gzip, no options', function(done) {
+        Helpers.testSamples(null, Pako.gzip, samples, { ignore_os: true }, done, 'gzip_no_opt');
+      });
     });
 
 
