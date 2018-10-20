@@ -18,30 +18,33 @@ class Helpers
   static public var samples(get, null):Map<String, UInt8Array> = null;
   static function get_samples():Map<String, UInt8Array> {
     if (samples != null) return samples;
-    
+
     samples = new Map<String, UInt8Array>();
     for (name in Resource.listNames()) samples[name] = UInt8Array.fromBytes(Resource.getBytes(name));
     return samples;
   }
-  
+
   static public function getSamplesWithPrefix(prefix:String = "samples/") {
     var filteredSamples = new Map<String, UInt8Array>();
     for (k in samples.keys()) if (k.indexOf(prefix) == 0) filteredSamples[k] = samples[k];
     if (!filteredSamples.keys().hasNext()) throw 'No resource prefixed with "$prefix" found.';
     return filteredSamples;
   }
-  
+
   static public function getSample(fullname:String) {
     var sample = samples[fullname];
     if (sample == null) throw 'Resource "$fullname" not found.';
     return sample;
   }
-  
+
   // Compare 2 buffers (can be Array, Uint8Array, Buffer).
   //
   //NOTE(hx): need to use `cast ` to work with all typed arrays
   static public function cmpBuf(a:ArrayBufferView, b:ArrayBufferView) {
     if (a.byteLength != b.byteLength) {
+    #if HXPAKO_DEBUG
+      trace("Length expected vs actual: " + a.byteLength + " != " + b.byteLength);
+    #end
       return false;
     }
 
@@ -76,7 +79,7 @@ class Helpers
     }
     return str;
   }
-  
+
   //NOTE(hx): zlib output has been precomputed and saved as resource, so we compare against them
   // Helper to test deflate/inflate with different options.
   // Use zlib streams, because it's the only way to define options.
@@ -122,7 +125,7 @@ class Helpers
 
     zlibStream.write(new Buffer(data));
     zlibStream.end();*/
-    
+
     var pako_result = pako_deflate(data, options);
     var zlib_result = getSample("zlib_output/" + zlib_filename);
 
@@ -130,13 +133,17 @@ class Helpers
     // Override OS code if requested. For simplicity, we assume it on fixed
     // position (= no additional gzip headers used)
     if (options.ignore_os) zlib_result.set(9, pako_result.get(9));
-    
+
     if (!Helpers.cmpBuf(cast zlib_result, cast pako_result)) {
       trace('--- ERROR');
+    #if HXPAKO_DEBUG
+      trace("Output saved in '" + zlib_filename + ".err'");
+      sys.io.File.saveBytes(zlib_filename + ".err", pako_result.view.buffer);
+    #end
       errorCallback(true);
       return;
     }
-    
+
     errorCallback(false);
   }
 
@@ -144,12 +151,12 @@ class Helpers
 
     for (k in samples.keys()) {
       var data = samples[k];
-      
+
       // extract filename without ext
       var tmp = k.split("/").pop().split(".");
       tmp.pop();
       var name = tmp.join("");
-      
+
       testSingle(zlib_factory, pako_deflate, data, options, function (err) {
         Assert.isFalse(err, 'Error in "' + name + '" (' + prefix + '): zlib result != pako result');
       }, prefix + "-" + name);
@@ -191,8 +198,8 @@ class Helpers
 
     callback();
   }
-  
-  
+
+
   static public function toStr(arr:ArrayBufferView) {
     var sb = new StringBuf();
     sb.add("[");
@@ -200,20 +207,20 @@ class Helpers
     sb.add("]");
     return sb.toString();
   }
-  
+
   static public function h2b(hex:String) {
     var array = hex.split(' ').map(function(hx):Int { return Std.parseInt("0x" + hx); } );
     var data8:UInt8Array = UInt8Array.fromArray(array);
     //var data8str = toStr(cast data8); // debug
     return data8;
   }
-  
+
   static public function s2a(s:String) {
     var bytes = Bytes.ofString(s);
     var a = UInt8Array.fromBytes(bytes);
     return a;
   }
-  
+
   static public function a2s(typedArray:UInt8Array) {
     var str = "";
     //var arrStr = TestInflateCover.toStr(typedArray.view); // debug
