@@ -6,17 +6,11 @@ import pako.Pako;
 import pako.zlib.GZHeader;
 import pako.zlib.Constants;
 
-#if (sys)
-import sys.FileSystem;
-import sys.io.File;
-import sys.io.FileInput;
-#end
-
 
 class SimpleUngzipExample {
 
     static public function main() {
-    #if (!sys)
+    #if (!(sys || nodejs))
         exitWithUsage();
     #else
 
@@ -31,7 +25,7 @@ class SimpleUngzipExample {
                 exitWithUsage();
             }
 
-            var input = File.getBytes(inputFile);
+            var input = sys.io.File.getBytes(inputFile);
             var inputPath = new Path(inputFile);
             Sys.println('\n  Processing "${inputPath.toString()}"');
             var programDir = Path.directory(Sys.programPath());
@@ -50,7 +44,7 @@ class SimpleUngzipExample {
 
             var output = inflator.result;
 
-            File.saveBytes(outputFile, output.view.buffer);
+            sys.io.File.saveBytes(outputFile, output.view.buffer);
             var comment = inflator.header.comment;
             if (comment != null && comment != "") Sys.println('\n  (extracted comment: "${inflator.header.comment}")');
         }
@@ -59,8 +53,8 @@ class SimpleUngzipExample {
     }
 
     static public function exitWithUsage() {
-    #if (!sys)
-        trace("Not supported on non-sys targets!");
+    #if (!(sys || nodejs))
+        trace("This target doesn't support reading/writing files!");
     #else
         var executablePath = new Path(Sys.programPath());
         var programName = executablePath.file + "." + executablePath.ext;
