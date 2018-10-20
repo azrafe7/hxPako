@@ -78,7 +78,9 @@ class TestAll /*implements Buddy <[
       new TestStrings(),
     ], reporter);
 
+  #if (haxe_ver < "4")
     trace("ArrayBufferView.EMULATED: " + ArrayBufferView.EMULATED);
+  #end
 
   #if debug
     trace("DEBUG: true");
