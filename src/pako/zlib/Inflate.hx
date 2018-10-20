@@ -225,8 +225,8 @@ class Inflate
   static var virgin:Bool = true;
 
   // We have no pointers in JS, so keep tables separate
-  static var lenfix;
-  static var distfix;
+  static var lenfix:Int32Array;
+  static var distfix:Int32Array;
 
   static function fixedtables(state:InflateState) {
     /* build fixed huffman tables if first call (may not be thread safe) */
