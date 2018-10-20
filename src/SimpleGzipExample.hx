@@ -14,14 +14,14 @@ import sys.io.FileInput;
 
 
 class SimpleGzipExample {
-    
+
     static public function main() {
-    #if (!sys) 
+    #if (!sys)
         exitWithUsage();
     #else
-    
+
         var sysArgs = Sys.args();
-        
+
         if (sysArgs.length < 1) {
             exitWithUsage();
         } else {
@@ -30,36 +30,36 @@ class SimpleGzipExample {
                 Sys.println('\n  Input file not found "$inputFile"');
                 exitWithUsage();
             }
-            
+
             var input = File.getBytes(inputFile);
             var inputPath = new Path(inputFile);
             Sys.println('\n  Processing "${inputPath.toString()}"');
             var programDir = Path.directory(Sys.programPath());
             var outputFile = Path.join([programDir, inputPath.file + "." + inputPath.ext + ".gz"]);
-            
+
             var gzipHeader = new GZHeader();
             gzipHeader.comment = 'created with hxPako (${Date.now().toString()})';
             Sys.println('\n  Gzipping bytes to "${outputFile}"');
             Sys.println('\n  (with comment: "${gzipHeader.comment}")');
-            
+
             var options = { gzip:true, header:gzipHeader };
             var deflator = new Deflate(options);
-            
+
             deflator.push(UInt8Array.fromBytes(input), true);
-            
+
             if (deflator.err != ErrorStatus.Z_OK) {
               Sys.println('\n  ERROR(${deflator.err}): ${deflator.msg}');
               Sys.exit(deflator.err);
             }
-            
+
             var output = deflator.result;
-            
+
             File.saveBytes(outputFile, output.view.buffer);
         }
-        
+
     #end
     }
-    
+
     static public function exitWithUsage() {
     #if (!sys)
         trace("Not supported on non-sys targets!");
@@ -70,5 +70,5 @@ class SimpleGzipExample {
         Sys.exit(0);
     #end
     }
-    
+
 }
