@@ -4,8 +4,8 @@
   "license": "MIT",
   "tags": ["cross", "zlib"],
   "description": "pako.js ported to haxe, for cross-platform zlib functionality.",
-  "version": "1.0.4",
-  "releasenote": "Updated to pako 1.0.4 (compliant with zlib 1.2.8).",
+  "version": "1.0.10",
+  "releasenote": "Updated to pako 1.0.10 (compliant with zlib 1.2.8).",
   "classPath": "src",
   "contributors": ["azrafe7","andr83","puzrin"],
   "dependencies": {

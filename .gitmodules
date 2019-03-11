@@ -1,0 +1,3 @@
+[submodule "pako"]
+	path = pako
+	url = https://github.com/nodeca/pako
