@@ -168,6 +168,15 @@ class Inflate
     }
 
     ZlibInflate.inflateGetHeader(this.strm, this.header);
+	
+    if (options.dictionary != null) {
+        if (options.raw) {
+            status = ZlibInflate.inflateSetDictionary(this.strm, options.dictionary);
+            if (status != ErrorStatus.Z_OK) {
+                throw Messages.get(status);
+            }
+        }
+    }
   }
 
   /**
